@@ -2,7 +2,7 @@ export default
 
 class boid{
 
-    constructor(count,sizes){
+    constructor(count,sizes,minDistance){
         console.log('you have created a boid!')
 
         this.sizes=sizes
@@ -13,7 +13,7 @@ class boid{
             width : this.sizes.width + this.stagePadding * 2,
             height : this.sizes.height + this.stagePadding * 2
         }
-        this.minDistance=300;
+        this.minDistance=minDistance;
 
         
     }
@@ -125,18 +125,24 @@ class boid{
     }
 
     getCloseBoids(boid,i){
-        const closeBoids=[]
-        for(let n=0;n<this.boidArray.length;n++){
-            if(n!=i){
-                if(getDistance(boid,this.boidArray[n])<=this.minDistance){
-                    closeBoids.push(this.boidArray[n])
-                }
-            }
-        }
+        // const closeBoids=[]
+        // for(let n=0;n<this.boidArray.length;n++){
+        //     if(n!=i){
+        //         if(getDistance(boid,this.boidArray[n])<=this.minDistance){
+        //             closeBoids.push(this.boidArray[n])
+        //         }
+        //     }
+        // }
+        let closeBoids= this.boidArray.filter((nextBoid)=> 
+            {
+                const distance = getDistance(boid,nextBoid)
+                return distance<=this.minDistance&&this.distance!=0
+            })
         return closeBoids;
     }
 
 }
+
 
 
 function getAngle(pos1,pos2){

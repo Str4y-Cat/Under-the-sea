@@ -1,4 +1,4 @@
-import { Container, Sprite } from 'pixi.js';
+import { Container, Sprite, Graphics } from 'pixi.js';
 
 
 export function addBoidsToScene(app, boidSprites, boidPositions)
@@ -38,7 +38,7 @@ export function addBoidsToScene(app, boidSprites, boidPositions)
 
 }
 
-export function animateBoids(app, boidSprites, time , boidPositions )
+export function animateBoids(app, boidSprites, time , boidPositions)
 {
     // Extract the delta time from the Ticker object.
     const delta = time.deltaTime;
@@ -53,17 +53,57 @@ export function animateBoids(app, boidSprites, time , boidPositions )
     {
         
 
-        // boidSprite.direction = boidPositions[i].direction;
+        boidSprite.direction = boidPositions[i].direction;
 
         
-        // boidSprite.position.copyFrom(boidPositions[i].position)
+        boidSprite.position.copyFrom(boidPositions[i].position)
 
         
-        // boidSprite.rotation = -boidSprite.direction - Math.PI / 2;
+        boidSprite.rotation = -boidSprite.direction - Math.PI / 2;
 
-        
+     
       
     });
 }
+
+export function setUpBoidMain(boidClass,app, mainBoid, )
+{
+    mainBoid.eventMode = 'static';
+    mainBoid.cursor = 'pointer';
+    mainBoid.on('pointerdown', ()=>{
+        console.log(boidClass.getCloseBoids(mainBoid,0))
+    });
+
+    let circle = new Graphics()
+    .circle(0, 0, 50)
+    .stroke({ width: 2, color: 0xfeeb77 });
+
+    app.stage.addChild(circle);
+    console.log(app)
+
+    return circle
+}
+
+export function updateMainBoid( mainBoid, circle)
+{
+  circle.position.copyFrom(mainBoid.position)
+//   circle.position.x+=10
+//   circle.position.y=0
+
+//   console.log(mainBoid.position)
+ 
+
+}
+
+export function updateHaloSize(app,halo, size){
+    halo.destroy()
+    let circle = new Graphics()
+    .circle(0, 0, size)
+    .stroke({ width: 2, color: 0xfeeb77 });
+    app.stage.addChild(circle);
+
+    return circle
+}
+
 
 

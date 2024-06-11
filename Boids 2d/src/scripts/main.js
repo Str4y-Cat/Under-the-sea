@@ -1,13 +1,16 @@
 import GUI from "lil-gui"
 // import { Application, Assets } from 'pixi.js';
 import * as PIXI from 'pixi.js';
-import { addBoidsToScene, animateBoids } from './fish';
+import * as ANIMATE from './animate';
 import BOID from "./boids";
+
 
 const gui= new GUI()
 
 const debug={
-    boidCount:5
+    boidCount:100,
+    minDistance:50,
+
 }
 
 const sizes={
@@ -24,7 +27,7 @@ const app = new PIXI.Application();
 const boidSprites = [];
 
 
-const boid= new BOID(debug.boidCount,sizes)
+const boidClass= new BOID(debug.boidCount,sizes,debug.minDistance)
 
 // gui.add(debug,'boidCount').min(1).max(100).step(1)
 
@@ -63,20 +66,29 @@ async function preload()
 
         
 
-        addBoidsToScene(app, boidSprites,boid.boidArray);
+        ANIMATE.addBoidsToScene(app, boidSprites,boidClass.boidArray);
 
-        boidSprites[0].eventMode = 'static';
-        boidSprites[0].cursor = 'pointer';
-        boidSprites[0].on('pointerdown', ()=>{
-            console.log(boid.getCloseBoids(boidSprites[0],0))
-        });
+        const mainBoid=boidSprites[0]
+
+        let mainBoidHalo=ANIMATE.setUpBoidMain(boidClass,app, mainBoid)
+
+        gui.add(debug,'minDistance').min(0).max(200).onChange((size)=>{
+            // console.log(mainBoidHalo)
+            mainBoidHalo=ANIMATE.updateHaloSize(app,mainBoidHalo,size)
+            // console.log(mainBoidHalo)
+
+        })
         
 
         
         app.ticker.add((time) =>
             {   
-                boid.update()
-                animateBoids(app, boidSprites, time, boid.boidArray)
+                boidClass.update()
+                // 
+
+                ANIMATE.animateBoids(app, boidSprites, time, boidClass.boidArray)
+                ANIMATE.updateMainBoid(mainBoid,mainBoidHalo)
+                
                 // console.log(boid.boidArray)
             } );
     
