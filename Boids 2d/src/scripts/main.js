@@ -74,6 +74,7 @@ async function preload()
 
         gui.add(debug,'minDistance').min(0).max(200).onChange((size)=>{
             // console.log(mainBoidHalo)
+            boidClass.minDistance=size
             mainBoidHalo=ANIMATE.updateHaloSize(app,mainBoidHalo,size)
             // console.log(mainBoidHalo)
 

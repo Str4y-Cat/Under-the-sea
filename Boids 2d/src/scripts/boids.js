@@ -74,14 +74,24 @@ class boid{
      * should probably be a exp graph, (normalize the distance)*(exp function)*seperationStrength,
      * 
      */
-    seperation(current, arr){
-        const maxDistance= 100;
+    seperation(currentBoid, avoidBoids){
+    
+    avoidBoids.forEach((avoidBoid)=>{
+        
+        /**find force factor
+         * get distance between boids
+         * normalize distance
+         * apply exp equation to normalized distance
+         */
 
-        const sumDistance= arr.reduce((sum,cur)=>{
-            sum.x+=cur.x
-            sum.y+=cur.y
-          return sum
-        },current)
+        /** Find perpendicular angle
+         *  add/subtract the perpendicular angle multiplied by the force factor
+         *  
+         */
+
+        //return this angle
+    })
+
 
         
         
@@ -124,20 +134,21 @@ class boid{
 
     }
 
-    getCloseBoids(boid,i){
-        // const closeBoids=[]
-        // for(let n=0;n<this.boidArray.length;n++){
-        //     if(n!=i){
-        //         if(getDistance(boid,this.boidArray[n])<=this.minDistance){
-        //             closeBoids.push(this.boidArray[n])
-        //         }
-        //     }
-        // }
+    getCloseBoids(i){
+
+        // console.log(this.boidArray)
+        // console.log(`Min search distance is ${this.minDistance}`)
+        const currentBoid=this.boidArray[i]
+        // console.log(currentBoid)
+
         let closeBoids= this.boidArray.filter((nextBoid)=> 
             {
-                const distance = getDistance(boid,nextBoid)
-                return distance<=this.minDistance&&this.distance!=0
+                const distance = getDistance(currentBoid.position,nextBoid.position)
+                // console.log(distance)
+                return distance<=this.minDistance&&distance!=0
             })
+            
+            // console.log(closeBoids)
         return closeBoids;
     }
 
@@ -154,6 +165,12 @@ function getAngle(pos1,pos2){
 
 }
 
+/**
+ * Determines the distance between two 2d points
+ * @param {vec2} pos1 
+ * @param {vec2} pos2 
+ * @returns int
+ */
 function getDistance(pos1,pos2){
    return Math.sqrt((pos1.x-pos2.x)**2+(pos1.y-pos2.y)**2)
 }

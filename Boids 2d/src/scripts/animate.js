@@ -71,7 +71,7 @@ export function setUpBoidMain(boidClass,app, mainBoid, )
     mainBoid.eventMode = 'static';
     mainBoid.cursor = 'pointer';
     mainBoid.on('pointerdown', ()=>{
-        console.log(boidClass.getCloseBoids(mainBoid,0))
+       boidClass.getCloseBoids(0)
     });
 
     let circle = new Graphics()
