@@ -27,6 +27,7 @@ export function addBoidsToScene(app, boidSprites, boidPositions)
         // Assign additional properties for the animation.
         boidSprite.direction = boid_Obj.direction;
         boidSprite.position.copyFrom(boid_Obj.position) ;
+        // boidSprite.rotation=8;
 
 
         boidContainer.addChild(boidSprite);
@@ -59,7 +60,7 @@ export function animateBoids(app, boidSprites, time , boidPositions)
         boidSprite.position.copyFrom(boidPositions[i].position)
 
         
-        boidSprite.rotation = -boidSprite.direction - Math.PI / 2;
+        boidSprite.rotation = boidSprite.direction - Math.PI / 2;
 
      
       
@@ -71,7 +72,8 @@ export function setUpBoidMain(boidClass,app, mainBoid, )
     mainBoid.eventMode = 'static';
     mainBoid.cursor = 'pointer';
     mainBoid.on('pointerdown', ()=>{
-       boidClass.getCloseBoids(0)
+       console.log(boidClass.arra(0))
+       console.log(boidClass.getCloseBoids(0))
     });
 
     let circle = new Graphics()

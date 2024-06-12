@@ -45,7 +45,7 @@ async function setup()
 async function preload()
 {
     const assets = [
-        { alias: 'boid1', src: '/img/circle-red.png' },
+        { alias: 'boid1', src: '/img/pointy.png' },
 
     ];
     await PIXI.Assets.load(assets);
