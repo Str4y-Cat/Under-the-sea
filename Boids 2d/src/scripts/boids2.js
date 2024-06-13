@@ -120,11 +120,12 @@ export default class Boids2
                                 //if its not in the protected range, is it in the visual range?
                                 else if(distance<this.visualRange)
                                     {
+                                        const exp=(1-(distance/this.visualRange))**2
                                         //add other boids x/y coords and velocity variables to the accum
                                         accum.xpos_avg+=otherBoid.x
                                         accum.ypos_avg+=otherBoid.y
-                                        accum.xvel_avg+=otherBoid.vx
-                                        accum.yvel_avg+=otherBoid.vy
+                                        accum.xvel_avg+=otherBoid.vx*exp
+                                        accum.yvel_avg+=otherBoid.vy*exp
 
                                         //increment number of boids in visual range
                                         accum.neighboring_boids++

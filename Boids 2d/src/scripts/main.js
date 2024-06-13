@@ -22,7 +22,7 @@ const tweaks={
     turnFactor:0.2,
     solidPadding:20,
 
-    minSpeed:0,
+    minSpeed:2,
     maxSpeed:5,
     wallTransparent:false
 }
