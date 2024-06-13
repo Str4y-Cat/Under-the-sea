@@ -21,12 +21,11 @@ export function addBoidsToScene(app, boidSprites, boidPositions)
 
         // Center the sprite anchor.
         boidSprite.anchor.set(0.5);
-        boidSprite.scale.set(0.2);
-        boidSprite.speed = 1;
+        boidSprite.scale.set(0.1);
 
         // Assign additional properties for the animation.
-        boidSprite.direction = boid_Obj.direction;
-        boidSprite.position.copyFrom(boid_Obj.position) ;
+        boidSprite.x=boid_Obj.x ;
+        boidSprite.y=boid_Obj.y ;
         // boidSprite.rotation=8;
 
 
@@ -39,56 +38,101 @@ export function addBoidsToScene(app, boidSprites, boidPositions)
 
 }
 
-export function animateBoids(app, boidSprites, time , boidPositions)
+export function animateBoids(app, boidSprites, time , boidPositions,mousePos)
 {
     // Extract the delta time from the Ticker object.
     const delta = time.deltaTime;
 
     //Parameters
-    const stagePadding = 10;
-    const boundWidth = app.screen.width + stagePadding * 2;
-    const boundHeight = app.screen.height + stagePadding * 2;
+    
 
     // Iterate through each fish sprite.
     boidSprites.forEach((boidSprite,i) =>
     {
         
 
-        boidSprite.direction = boidPositions[i].direction;
+        // boidSprite.direction = boidPositions[i].direction;
 
+        const boid=boidPositions[i]
         
-        boidSprite.position.copyFrom(boidPositions[i].position)
 
+        boidSprite.x=boid.x
+        boidSprite.y=boid.y
+        boidSprite.rotation= Math.atan2((boid.targetY)-boid.y,(boid.targetX)-boid.x)
+        // boidSprite.rotation= 0
+        // console.log(  boidSprite.rotation)
         
-        boidSprite.rotation = boidSprite.direction - Math.PI / 2;
+        // boidSprite.rotation = boidSprite.direction - Math.PI / 2;
+        // boidSprite.rotation =  Math.PI / 2;
 
      
       
     });
 }
 
-export function setUpBoidMain(boidClass,app, mainBoid, )
+export function setUpDebugTools(app, visRange, avoidRange )
 {
-    mainBoid.eventMode = 'static';
-    mainBoid.cursor = 'pointer';
-    mainBoid.on('pointerdown', ()=>{
-       console.log(boidClass.arra(0))
-       console.log(boidClass.getCloseBoids(0))
-    });
+    //vis range circle
+    let visCircle = new Graphics()
+        .circle(0, 0, visRange)
+        .stroke({ width: 2, color: "#42ff33" });
 
-    let circle = new Graphics()
-    .circle(0, 0, 50)
-    .stroke({ width: 2, color: 0xfeeb77 });
+    app.stage.addChild(visCircle);
 
-    app.stage.addChild(circle);
-    console.log(app)
+    //avoid range circle
 
-    return circle
+    let avoidCircle = new Graphics()
+        .circle(0, 0, avoidRange)
+        .stroke({ width: 2, color: "#ff0000" });
+
+    app.stage.addChild(avoidCircle);
+    
+    const temp=
+    {
+        visCircle,
+        avoidCircle
+    }
+
+    return temp
+}
+export function setUpDebugBoundingBox(app, boundingBox,sizes )
+{
+    //vis range circle
+    let box = new Graphics()
+        .rect(boundingBox, boundingBox, sizes.width-boundingBox*2, sizes.height-boundingBox*2)
+        .stroke({ width: 2, color: "#42ff33" });
+
+    app.stage.addChild(box);
+    return box
+}
+export function updateDebugBoundingBox(app, box, boundingBox,sizes )
+{
+    // console.log(box)
+    box.destroy()
+    //vis range circle
+     box= new Graphics()
+        .rect(boundingBox, boundingBox, sizes.width-boundingBox*2, sizes.height-boundingBox*2)
+        .stroke({ width: 2, color: "#42ff33" });
+
+    app.stage.addChild(box);
+    return box
 }
 
-export function updateMainBoid( mainBoid, circle)
+export function updateMainBoid( mainBoid, halos,hide)
 {
-  circle.position.copyFrom(mainBoid.position)
+//   circle.position.copyFrom(mainBoid.position)
+
+
+            halos.visCircle.x=mainBoid.x
+            halos.visCircle.y=mainBoid.y
+        
+            halos.avoidCircle.x=mainBoid.x
+            halos.avoidCircle.y=mainBoid.y
+        
+ 
+
+
+
 //   circle.position.x+=10
 //   circle.position.y=0
 
@@ -97,11 +141,34 @@ export function updateMainBoid( mainBoid, circle)
 
 }
 
-export function updateHaloSize(app,halo, size){
+export function setHaloVisability(halos,hide){
+    if(!hide)
+        {
+            halos.visCircle.visible=true
+            halos.avoidCircle.visible=true
+        }
+    else
+    {
+        halos.visCircle.visible=false
+        halos.avoidCircle.visible=false
+    }
+}
+export function setBoxVisability(box,hide){
+    if(!hide)
+        {
+            box.visible=true
+        }
+    else
+    {
+        box.visible=false
+    }
+}
+
+export function updateDebugRange(app,halo, size, colour){
     halo.destroy()
     let circle = new Graphics()
     .circle(0, 0, size)
-    .stroke({ width: 2, color: 0xfeeb77 });
+    .stroke({ width: 2, color: colour});
     app.stage.addChild(circle);
 
     return circle

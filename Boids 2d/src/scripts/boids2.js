@@ -8,17 +8,13 @@ export default class Boids2
      * @param {object} param2
      * 
      */
-    constructor(boidCount,displaySizes,{visualRange,protectedRange,cohesionFactor,matchingFactor,minSpeed,maxSpeed, wallTransparent})
+    constructor(boidCount,displaySizes,{visualRange,protectedRange,seperationFactor,cohesionFactor,matchingFactor,minSpeed,maxSpeed, wallTransparent,turnFactor})
     {
-        //boid objects
-        this.boidCount=count
-        this.boidArray=this.setUpBoidPositions(this.boidCount)
-
-
         //world variables
-        this.sizes=sizes
+        this.sizes=displaySizes
+
         this.transPadding = 10;
-        this.solidPadding = 20;
+        this.solidPadding = 50;
         this.boundingBoxTransparent={
             width : this.sizes.width + this.transPadding * 2,
             height : this.sizes.height + this.transPadding * 2
@@ -28,7 +24,7 @@ export default class Boids2
             bottom : this.sizes.height - this.solidPadding,
 
             left : this.solidPadding,
-            right : this.sizes.width + this.solidPadding,
+            right : this.sizes.width - this.solidPadding,
         }
 
         //debuggable objects
@@ -36,32 +32,61 @@ export default class Boids2
         this.protectedRange=protectedRange;
         this.cohesionFactor=cohesionFactor
         this.matchingFactor=matchingFactor
+        this.seperationFactor=seperationFactor
         this.minSpeed=minSpeed
         this.maxSpeed=maxSpeed   
         this.wallTransparent=(wallTransparent)
+        this.turnFactor=turnFactor
+
+        //boid objects
+        this.boidCount=boidCount
+        this.boidArray=this.setUpBoidPositions(this.boidCount)
+        // console.log(this.boidArray)
         
+        console.log('success!')
     }
 
     // updateBoids
-
+    updateSolidBoundingBox(padding){
+        this.solidPadding=padding
+        
+        this.boundingBoxSolid.top= padding
+        this.boundingBoxSolid.bottom=this.sizes.height - padding
+        this.boundingBoxSolid.left= padding
+        this.boundingBoxSolid.right=this.sizes.width - padding
+        
+    }
 
     setUpBoidPositions(count){
         const boidArray=[]
+        // console.log(`count:${count}`)
         for(let i = 0; i< count; i++)
             {   
                 const x= Math.random()*this.sizes.width
+
                 const y= Math.random()*this.sizes.height
-                boidArray.push(new Boid(x,y))
+                const vx= (Math.random()-0.5)*2*this.maxSpeed
+                const vy= (Math.random()-0.5)*2*this.maxSpeed
+                boidArray.push(new Boid(x,y,vy,vx))
             }
+        // console.log(boidArray)
         return boidArray
     }
 
-    updateBoids()
+    update()
     {
         this.boidArray.forEach((boid,i)=>
             {
+                //set up the rotation target
+                boid.targetX=boid.x
+                boid.targetY=boid.y
+
+                // console.log('entering loop')s
                 //zero accum variables
                 let accum= this.accumulatorObject()
+                // console.log(`${boid.vx}\n${boid.vy}`)
+                // console.log(boid)
+                // console.log(this.boidArray)
 
                 //loop through every other boid
                 this.boidArray.forEach((otherBoid,n)=>
@@ -92,7 +117,7 @@ export default class Boids2
                                         accum.xpos_avg+=otherBoid.x
                                         accum.ypos_avg+=otherBoid.y
                                         accum.xvel_avg+=otherBoid.vx
-                                        accum.yvel_avg+=otherBoid.yx
+                                        accum.yvel_avg+=otherBoid.vy
 
                                         //increment number of boids in visual range
                                         accum.neighboring_boids++
@@ -104,11 +129,15 @@ export default class Boids2
                 if(accum.neighboring_boids>0)
                     {
                         //average the positions and velocity by number of neighboring boids
+                        // console.log(`yvel_avg before averaging: ${accum.yvel_avg}\n`)
                         accum.xpos_avg/=accum.neighboring_boids
                         accum.ypos_avg/=accum.neighboring_boids
                         accum.xvel_avg/=accum.neighboring_boids
                         accum.yvel_avg/=accum.neighboring_boids
+                        // console.log(`vy : ${boid.vy}`)
+                        // console.log(`yvel_avg after averaging: ${accum.yvel_avg}\n`)
 
+                        
                         //add cohesion and alignment factors
                         boid.vx+= (accum.xpos_avg-boid.x)*this.cohesionFactor
                         boid.vx+= (accum.xvel_avg-boid.vx)*this.matchingFactor
@@ -118,35 +147,16 @@ export default class Boids2
                     }
                 
                 //Add sepperation factor
+                
+
                 boid.vx+= (accum.close_dx*this.seperationFactor) 
                 boid.vy+= (accum.close_dy*this.seperationFactor)
 
-                // if(this.wallType=='solid')
-                    // {
-                        //put into dedicated function
-                        if(this.boundingBoxSolid.top)
-                            {
-                                boid.vy+=this.turnFactor
-                            }
-                        
-                        if(this.boundingBoxSolid)
-                            {
-                                boid.vx+=this.turnFactor
-                            }
-                            
-                        if(this.boundingBoxSolid)
-                            {
-                                boid.vx+=this.turnFactor
-                            }
-                        
-                        if(this.boundingBoxSolid)
-                            {
-                                boid.vy+=this.turnFactor
-                            }
-                    // }
-                // if(this.wallType=='transparent')
-                //     {
-                //     }
+                
+                //the bounding box
+                boid=(this.wallTransparent)?this.transparentWall(boid):this.solidWall(boid)
+                // boid=this.solidWall(boid)
+                 
                 
                 // calculate boids speed
                 const speed = Math.sqrt(boid.vx**2+boid.vy**2)
@@ -158,7 +168,7 @@ export default class Boids2
                         boid.vx= (boid.vx/speed)*this.minSpeed
                         boid.vy= (boid.vy/speed)*this.minSpeed
                     }
-                if (speed> this.this.maxSpeed)
+                if (speed> this.maxSpeed)
                     {
                         boid.vx= (boid.vx/speed)*this.maxSpeed
                         boid.vy= (boid.vy/speed)*this.maxSpeed
@@ -167,6 +177,9 @@ export default class Boids2
                 //update positions
                 boid.x+=boid.vx
                 boid.y+=boid.vy
+
+                // console.log(`${boid.x}\n${boid.y}`)
+                // console.log(`${boid.vx}\n${boid.vy}`)
         })
     }
 
@@ -184,19 +197,64 @@ export default class Boids2
         return accum
     }
 
+    getMain()
+    {
+        return this.boidArray[0]
+    }
+
+    solidWall(boid)
+    {
+        // console.log(this.boundingBoxSolid)
+        if(this.boundingBoxSolid.top>boid.y)
+            {
+                // console.log("bounding top")
+                boid.vy+=this.turnFactor
+            }
+        
+        if(this.boundingBoxSolid.right<boid.x)
+            {
+                // console.log("bounding left")
+
+                boid.vx-=this.turnFactor
+            }
+            
+        if(this.boundingBoxSolid.left>boid.x)
+            {
+                // console.log("bounding right")
+
+                boid.vx+=this.turnFactor
+            }
+        
+        if(this.boundingBoxSolid.bottom<boid.y)
+            {
+                // console.log("bounding bottom")
+
+                boid.vy-=this.turnFactor
+            }
+        return boid
+    }
+
+    transparentWall(boid)
+    {
+        if(boid.x>this.boundingBoxTransparent.width){boid.x=0}
+        if(boid.x<0){boid.x=this.boundingBoxTransparent.width}
+        if(boid.y>this.boundingBoxTransparent.height){boid.y=0}
+        if(boid.y<0){boid.y=this.boundingBoxTransparent.height}
+
+        return boid
+    }
 }
 
 class Boid
 {
-    constructor(x,y)
+    constructor(x,y,vx,vy)
     {
         this.x=x
         this.y=y
-        this.vx=1
-        this.vy=1
+        this.vx=vx
+        this.vy=vy
+        this.targetX=0
+        this.targetY=0
     }
-
-
-
 }
 
