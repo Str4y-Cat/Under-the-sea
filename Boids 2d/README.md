@@ -30,6 +30,6 @@ This project is an implementation of the classic Boids algorithm in a 2D environ
 - **Protected Range:** Define the area in which boids are protected from external disturbances.
 - **Border Type:** Toggle between transparent or solid borders for the simulation area.
 
-## Credits
-- [Pixi.js](https://www.pixijs.com/)
-- [Cornell University Lab] (https://people.ece.cornell.edu/land/courses/ece4760/labs/s2021/Boids/Boids.html)
+## Resources
+- [Cornell University Lab](https://people.ece.cornell.edu/land/courses/ece4760/labs/s2021/Boids/Boids.html)
+- [Original Paper by C.W.Reynolds](https://www.cs.toronto.edu/~dt/siggraph97-course/cwr87/)
