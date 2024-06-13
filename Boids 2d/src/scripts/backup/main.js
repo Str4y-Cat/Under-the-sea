@@ -2,7 +2,7 @@ import GUI from "lil-gui"
 // import { Application, Assets } from 'pixi.js';
 import * as PIXI from 'pixi.js';
 import * as ANIMATE from './animate';
-import BOID from "./backup/boids";
+import BOID from "./boids";
 
 
 const gui= new GUI()
