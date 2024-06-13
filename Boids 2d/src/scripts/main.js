@@ -16,14 +16,14 @@ const tweaks={
     visualRange:114,
     
     protectedRange:55,
-    cohesionFactor:0.0005,
-    matchingFactor:0.0287,
-    seperationFactor:0.00781,
+    cohesionFactor:0.005,
+    matchingFactor:0.05,
+    seperationFactor:0.05,
     turnFactor:0.2,
     solidPadding:20,
 
-    minSpeed:2,
-    maxSpeed:5,
+    minSpeed:3,
+    maxSpeed:7,
     wallTransparent:false
 }
 
