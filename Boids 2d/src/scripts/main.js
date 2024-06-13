@@ -13,12 +13,12 @@ const tweaks={
     boidCount:200,
     // minDistance:50,
 
-    visualRange:114,
+    visualRange:75,
     
-    protectedRange:55,
-    cohesionFactor:0.005,
+    protectedRange:20,
+    cohesionFactor:0.00206,
     matchingFactor:0.05,
-    seperationFactor:0.05,
+    seperationFactor:0.08648,
     turnFactor:0.2,
     solidPadding:20,
 
