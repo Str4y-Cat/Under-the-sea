@@ -105,8 +105,15 @@ export default class Boids2
                                 if(distance< this.protectedRange)
                                     {
                                         //calculate the difference in x/y-coordinates to the nearfield boid
-                                        accum.close_dx+=boid.x-otherBoid.x //!!!!!!!!! can just use dx
-                                        accum.close_dy+=boid.y-otherBoid.y //!!!!!!!!! can just use dy
+                                        // accum.close_dx+=boid.x-otherBoid.x //!!!!!!!!! can just use dx
+                                        // accum.close_dy+=boid.y-otherBoid.y //!!!!!!!!! can just use dy
+                                        const exp=(1-(distance/this.protectedRange))**2
+                                        // if(i==0)
+                                        //     {
+                                        //         console.log(exp)
+                                        //     }
+                                        accum.close_dx+=dx*exp //!!!!!!!!! can just use dx
+                                        accum.close_dy+=dy*exp //!!!!!!!!! can just use dy
 
                                     }
                                 
