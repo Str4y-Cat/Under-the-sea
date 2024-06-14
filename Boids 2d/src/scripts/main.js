@@ -10,7 +10,7 @@ const debug={
     hideDebug:false,
 }
 const tweaks={
-    boidCount:200,
+    boidCount:500,
     // minDistance:50,
 
     visualRange:75,

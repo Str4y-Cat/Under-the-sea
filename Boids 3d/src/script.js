@@ -4,7 +4,7 @@
 import * as THREE from 'three'
 import GUI from 'lil-gui'
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
-
+import BoidController from './boidScripts/BoidController'
 
 
 //set up debug
@@ -50,7 +50,8 @@ window.addEventListener('resize',()=>
 /**
  * and a object
  */
-const floorGeometry= new THREE.PlaneGeometry(10,10,64,64)
+debug.floorSize=5
+const floorGeometry= new THREE.PlaneGeometry(debug.floorSize,debug.floorSize,64,64)
 const floorMaterial= new THREE.MeshBasicMaterial(
     {
         color:"white",
@@ -61,6 +62,7 @@ const floor= new THREE.Mesh(
     floorMaterial
 )
 floor.rotation.x=-Math.PI/2
+floor.position.y-=debug.floorSize/2
 // floor.position.x=1
 
 scene.add(floor)
@@ -69,7 +71,7 @@ scene.add(floor)
  * BOIDS
  */
 
-
+const boidController= new BoidController(100,sizes,scene,debug)
 
 
 
