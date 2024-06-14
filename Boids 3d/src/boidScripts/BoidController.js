@@ -14,10 +14,12 @@ export default class BoidController
     constructor(count, sizes, scene,debug)
     {
         this.scene=scene
-        startValues.sceneSize= debug.floorSize
+        this.sceneSize=debug.floorSize
+        startValues.sceneSize=this.sceneSize
         this.boidLogic=new BoidLogic(count, sizes,startValues)
         this.boidMeshes= this.setUp(this.boidLogic.boidArray)
 
+        this.debug()
     }
 
     /** setUp(boidArray)
@@ -79,7 +81,32 @@ export default class BoidController
      * 
      */
 
+    /**DEBUG
+     */
+    debug()
+    {
+        this.debugSolidBorderBox()
+    }
 
+    //debug border box
+    debugSolidBorderBox()
+    {
+        // const box= new THREE.Mesh(
+        //     new THREE.BoxGeometry(this.sceneSize,this.sceneSize,this.sceneSize),
+        //     new THREE.MeshBasicMaterial({wireframe:true})
+        // )
+        const boxGeometry= new THREE.BoxGeometry(this.sceneSize,this.sceneSize,this.sceneSize)
+        
+
+        const box= new THREE.LineSegments(
+            new THREE.EdgesGeometry(boxGeometry),
+            new THREE.LineBasicMaterial({color:"red"})
+
+        )
+        this.scene.add(box)
+
+
+    }
 
 
 }
@@ -102,5 +129,5 @@ const startValues=
     wallTransparent:(null),
     turnFactor:null,
     boidCount:null,
-    sceneSize:10,
+    sceneSize:null,
 }

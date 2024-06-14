@@ -51,10 +51,10 @@ window.addEventListener('resize',()=>
  * and a object
  */
 debug.floorSize=5
-const floorGeometry= new THREE.PlaneGeometry(debug.floorSize,debug.floorSize,64,64)
+const floorGeometry= new THREE.PlaneGeometry(debug.floorSize,debug.floorSize,8,8)
 const floorMaterial= new THREE.MeshBasicMaterial(
     {
-        color:"white",
+        color:"red",
         wireframe:true
     })
 const floor= new THREE.Mesh(

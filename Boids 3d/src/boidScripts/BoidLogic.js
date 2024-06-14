@@ -12,18 +12,18 @@ export default class BoidLogic
     {
         //world variables
         this.sizes=displaySizes
+        
         this.transPadding = startValues.transPadding || defaultValue(10,"transPadding");
-        this.solidPadding = startValues.solidPadding || defaultValue(50,"solidPadding");
+        this.solidPadding = startValues.solidPadding || defaultValue(1,"solidPadding");
         this.boundingBoxTransparent={
             width : this.sizes.width + this.transPadding * 2,
             height : this.sizes.height + this.transPadding * 2
         }
         this.boundingBoxSolid={
-            top : this.solidPadding,
-            bottom : this.sizes.height - this.solidPadding,
-
-            left : this.solidPadding,
-            right : this.sizes.width - this.solidPadding,
+            top: this.sceneSize,
+            bottom:-this.sceneSize,
+            left: -this.sceneSize,
+            right: this.sizes.width
         }
 
         //debuggable objects
@@ -39,9 +39,9 @@ export default class BoidLogic
 
         //boid objects
         this.boidCount=boidCount|| defaultValue(1,"boidCount")
-        this.sceneSize=startValues.sceneSize|| defaultValue(0.2,"sceneSize")
+        this.sceneSize=startValues.sceneSize|| defaultValue(2,"sceneSize")
         this.boidArray=this.setUpBoidPositions(this.boidCount)
-        // console.log(this.boidArray)
+        
         
         console.log('success!')
     }
@@ -51,10 +51,10 @@ export default class BoidLogic
     updateSolidBoundingBox(padding){
         this.solidPadding=padding
         
-        this.boundingBoxSolid.top= padding
-        this.boundingBoxSolid.bottom=this.sizes.height - padding
-        this.boundingBoxSolid.left= padding
-        this.boundingBoxSolid.right=this.sizes.width - padding
+        this.boundingBoxSolid.top= this.sceneSize
+        this.boundingBoxSolid.bottom=-this.sceneSize
+        this.boundingBoxSolid.left= -this.sceneSize
+        this.boundingBoxSolid.right= this.sizes.width
         
     }
 
