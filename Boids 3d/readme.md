@@ -3,21 +3,23 @@
 ## Description
 This project extends the classic Boids algorithm into a 3D environment using JavaScript, Three.js, and the power of WebGL rendering. It simulates the collective motion of autonomous agents (boids) in a three-dimensional space, mimicking the flocking behavior observed in nature.
 
-## Features
-- Real-time simulation of flocking behavior in a 3D space.
-- Smooth and immersive rendering powered by Three.js and WebGL.
-
-## Future Goals
+### Future Goals
 - I aim to optimize this algorithim so that it runs on the gpu, using glsl
 - I aim to use rays to allow the boids to "see" their environement
 - i would like to add predetor/prey interactions
 
+### Features
+- Real-time simulation of flocking behavior in a 3D space.
+- Smooth and immersive rendering powered by Three.js and WebGL.
+
+
+
 ### Boids Simulation
-![Boids in a Box](./public/img/3d_boids_screenshot.png)
-![Boids in a Box 2](./public/img/3d_boids_screenshot.png)
-<!-- ![Boids Simulation](./public/img/3d_boids_screenshot.png) -->
-![Close up of flock](./public/img/3d_boids_screenshot.png)
-![No debug](./public/img/3d_boids_screenshot.png)
+![Boids in a Box](./static/img/Capture.png)
+![Boids in a Box 2](./static/img/Capture2.png)
+<!-- ![Boids Simulation](./static/img/Capture.png) -->
+![Close up of flock](./static/img/Capture4.png)
+![No debug](./static/img/Capture5.png)
 
 ## Instructions
 1. Clone or download the repository to your local machine.
