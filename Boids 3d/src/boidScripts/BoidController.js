@@ -51,12 +51,14 @@ export default class BoidController
         const boidMeshes=[]
 
         //create geometry
-        // const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
-        const geometry = new THREE.IcosahedronGeometry( 0.05); 
+        const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
+        // const geometry = new THREE.IcosahedronGeometry( 0.05); 
+        // const geometry = new THREE.IcosahedronGeometry( 0.05); 
         // const geometry = new THREE.SphereGeometry( 0.05); 
 
         //create material
         const material = new THREE.MeshMatcapMaterial( {matcap:this.texture} );
+        geometry.rotateX(-Math.PI * 0.5);
         // const material = new THREE.MeshPhongMaterial();
         // const material = new THREE.MeshLambertMaterial();
         material.shininess=0.5
@@ -64,9 +66,14 @@ export default class BoidController
         console.log(`texture`)
         console.log(this.texture)
 
-        boidArray.forEach(boid => {
+        boidArray.forEach((boid,i) => {
 
             const boidMesh= new THREE.Mesh(geometry,material)
+            // if(i==0){
+            //     boidMesh.geometry.rotateX
+
+            // }
+
             boidMesh.position.y= boid.y
             boidMesh.position.x= boid.x
             boidMesh.position.z= boid.z
@@ -99,7 +106,8 @@ export default class BoidController
             boidMesh.position.y=boid.y
             boidMesh.position.z=boid.z
             // console.log(boid.z)
-            // boidMesh.rotation.z= Math.PI/2-Math.atan2((boid.targetY)-boid.y,(boid.targetX)-boid.x)
+            boidMesh.lookAt(new THREE.Vector3(boid.targetX,boid.targetY,boid.targetZ))
+            
 
             if(i==0&&this.debugHalos.protectedCircle)
                 {

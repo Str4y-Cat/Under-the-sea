@@ -88,7 +88,7 @@ scene.add(camera)
  * BOIDS
  */
 
-const boidController= new BoidController(50,sizes,scene,debug,gui,camera, matCapTexture)
+const boidController= new BoidController(300,sizes,scene,debug,gui,camera, matCapTexture)
 
 
 /**
