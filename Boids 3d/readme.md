@@ -15,7 +15,7 @@ This project extends the classic Boids algorithm into a 3D environment using Jav
 
 
 ### Boids Simulation
-![Boids in a Box](./static/img/Capture.png)
+![Boids in a Box](./img/Capture.png)
 ![Boids in a Box 2](./static/img/Capture2.png)
 <!-- ![Boids Simulation](./static/img/Capture.png) -->
 ![Close up of flock](./static/img/Capture4.png)
