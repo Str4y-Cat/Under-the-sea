@@ -88,9 +88,40 @@ scene.add(camera)
  * BOIDS
  */
 
-const boidController= new BoidController(200,sizes,scene,debug,gui,camera, matCapTexture)
+const boidController= new BoidController(50,sizes,scene,debug,gui,camera, matCapTexture)
 
 
+/**
+ * lights
+ */
+// debug.lightColor= "#ffffff"
+// console.log(debug.lightColor)
+// const pointLight= new THREE.PointLight("#ffffff",10)
+// gui.addColor(debug,'lightColor').onChange((color)=>
+// {
+//     pointLight.color= new THREE.Color(color)
+// })
+
+// const pointLight = new THREE.PointLight( debug.lightColor, 10, 100 );
+// pointLight.position.set( 0, 0, 0 );
+// scene.add( pointLight );
+// gui.addColor(debug,'lightColor').onChange((color)=>
+// {
+//     pointLight.color= new THREE.Color(color)
+// })
+
+// const sphereSize = 0.3;
+// const pointLightHelper = new THREE.PointLightHelper( pointLight, sphereSize );
+// scene.add( pointLightHelper );
+// debug.ambientLightColor= "#ffffff"
+
+// const ambientLight = new THREE.AmbientLight( debug.ambientLightColor,0.01, 100 );
+// // pointLight.position.set( 0, 0, 0 );
+// scene.add( ambientLight );
+// gui.addColor(debug,'ambientLightColor').onChange((color)=>
+// {
+//     pointLight.color= new THREE.Color(color)
+// })
 
 /**
  * add controls
