@@ -19,8 +19,8 @@ const canvas = document.querySelector('.webgl')
 //create scene
 const scene = new THREE.Scene()
 
-const axisHelper= new THREE.AxesHelper(4)
-scene.add(axisHelper)
+// const axisHelper= new THREE.AxesHelper(4)
+// scene.add(axisHelper)
 /**
  * Handle sizes and resize
  */
@@ -67,12 +67,6 @@ floor.position.y-=debug.floorSize/2
 
 scene.add(floor)
 
-/**
- * BOIDS
- */
-
-const boidController= new BoidController(100,sizes,scene,debug)
-
 
 
 
@@ -85,6 +79,14 @@ camera.position.x = 1
 camera.position.y = 1
 camera.position.z = 2
 scene.add(camera)
+
+/**
+ * BOIDS
+ */
+
+const boidController= new BoidController(200,sizes,scene,debug,gui,camera)
+
+
 
 /**
  * add controls
@@ -108,6 +110,7 @@ renderer.setPixelRatio(Math.min(2,window.devicePixelRatio))
 const tick =()=>
     {
 
+        boidController.update()
 
         //controls
         controls.update()

@@ -11,15 +11,25 @@ export default class BoidController
      *  
      * 
      */
-    constructor(count, sizes, scene,debug)
+    constructor(count, sizes, scene,debug,gui,camera)
     {
+        this.camera=camera
+
         this.scene=scene
         this.sceneSize=debug.floorSize
         startValues.sceneSize=this.sceneSize
+
+
         this.boidLogic=new BoidLogic(count, sizes,startValues)
         this.boidMeshes= this.setUp(this.boidLogic.boidArray)
 
+        console.log(this.boidMeshes)
         this.debug()
+        console.log('success')
+
+        this.gui=gui
+        this.addControls()
+        
     }
 
     /** setUp(boidArray)
@@ -32,7 +42,8 @@ export default class BoidController
         const boidMeshes=[]
 
         //create geometry
-        const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
+        // const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
+        const geometry = new THREE.IcosahedronGeometry( 0.05); 
 
         //create material
         const material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
@@ -42,14 +53,17 @@ export default class BoidController
             const boidMesh= new THREE.Mesh(geometry,material)
             boidMesh.position.y= boid.y
             boidMesh.position.x= boid.x
-            // boidMesh.position.z= boid.z
+            boidMesh.position.z= boid.z
+
+
             // console.log()
             this.scene.add(boidMesh)
             boidMeshes.push(boidMesh)
             
 
         });
-        console.log(boidMeshes)
+        // console.log(boidMeshes)
+        return boidMeshes
     }
 
     /** Update()
@@ -57,6 +71,32 @@ export default class BoidController
      * Updates the movement of the boid objects
      * 
      */
+    update()
+    {
+        this.boidLogic.update()
+
+        this.boidMeshes.forEach((boidMesh,i)=>
+        {
+            const boid= this.boidLogic.boidArray[i]
+
+            boidMesh.position.x=boid.x
+            boidMesh.position.y=boid.y
+            boidMesh.position.z=boid.z
+            // console.log(boid.z)
+            // boidMesh.rotation.z= Math.PI/2-Math.atan2((boid.targetY)-boid.y,(boid.targetX)-boid.x)
+
+            if(i==0&&this.debugHalos)
+                {
+                    this.debugHalos.protectedCircle.position.copy( boidMesh.position)
+                    this.debugHalos.protectedCircle.lookAt(this.camera.position);
+                    // console.log(this.scene.children) 
+                    this.debugHalos.viewCircle.position.copy( boidMesh.position)
+                    this.debugHalos.viewCircle.lookAt(this.camera.position);
+
+                }
+
+        })
+    }
 
     /** Destroy()
      * 
@@ -80,12 +120,38 @@ export default class BoidController
      * adds gui controls
      * 
      */
+    addControls()
+    {
+       
+        this.gui.add(startValues,"cohesionFactor").min(0).max(0.05).step(0.00001).onChange((num)=>{
+            this.boidLogic.cohesionFactor=num
+        })
+        this.gui.add(startValues,"matchingFactor").min(0).max(0.1).step(0.00001).onChange((num)=>{
+            this.boidLogic.matchingFactor=num
+        })
+        this.gui.add(startValues,"seperationFactor").min(0).max(0.5).step(0.00001).onChange((num)=>{
+            this.boidLogic.seperationFactor=num
+        })
+        this.gui.add(startValues,"turnFactor").min(0).max(1).step(0.0001).onChange((num)=>{
+            this.boidLogic.turnFactor=num/100
+        })
+        this.gui.add(startValues,"minSpeed").min(0).max(10).step(0.001).onChange((num)=>{
+            this.boidLogic.minSpeed=num/100
+        })
+        this.gui.add(startValues,"maxSpeed").min(0).max(10).step(0.001).onChange((num)=>{
+            this.boidLogic.maxSpeed=num/100
+        })
+        this.gui.add(startValues,"wallTransparent").onChange((bool)=>{
+            this.boidLogic.wallTransparent=bool
+}) 
+    }
 
     /**DEBUG
      */
     debug()
     {
         this.debugSolidBorderBox()
+        this.debugHalos()
     }
 
     //debug border box
@@ -108,6 +174,54 @@ export default class BoidController
 
     }
 
+    debugHalos()
+    {
+        
+        const viewMaterial = new THREE.LineBasicMaterial( { color: "green" } );
+        const protectedMaterial = new THREE.LineBasicMaterial( { color: "red" } );
+
+        const viewCurve = new THREE.EllipseCurve(
+            0,  0,            // ax, aY
+            this.boidLogic.visualRange, this.boidLogic.visualRange,           // xRadius, yRadius
+            0,  2 * Math.PI,  // aStartAngle, aEndAngle
+            false,            // aClockwise
+            0                 // aRotation
+        );
+        
+       
+        let points = viewCurve.getPoints( 50 );
+        let viewGeometry = new THREE.BufferGeometry().setFromPoints( points );
+        
+        // Create the final object to add to the scene
+        const viewCircle = new THREE.Line( viewGeometry, viewMaterial );
+
+
+        const protectedCurve = new THREE.EllipseCurve(
+            0,  0,            // ax, aY
+            this.boidLogic.protectedRange, this.boidLogic.protectedRange,           // xRadius, yRadius
+            0,  2 * Math.PI,  // aStartAngle, aEndAngle
+            false,            // aClockwise
+            0                 // aRotation
+        );
+        
+       
+        points = protectedCurve.getPoints( 50 );
+        let protectedGeometry = new THREE.BufferGeometry().setFromPoints( points );
+        
+        // Create the final object to add to the scene
+        const protectedCircle = new THREE.Line( protectedGeometry, protectedMaterial );
+        // protectedCircle.material.color= new THREE.Color("red")
+
+        this.scene.add(protectedCircle,viewCircle)
+
+        
+        this.debugHalos={
+            protectedCircle:protectedCircle,
+            viewCircle:viewCircle
+        }
+        // console.log(this.debugValues)
+    }
+
 
 }
 
@@ -117,17 +231,18 @@ export default class BoidController
 
 const startValues=
 {
-    transPadding : null,
-    solidPadding : null,
-    visualRange:null,
-    protectedRange:null,
-    cohesionFactor:null,
-    matchingFactor:null,
-    seperationFactor:null,
-    minSpeed:null,
-    maxSpeed:null   ,
-    wallTransparent:(null),
-    turnFactor:null,
+    // transPadding : null,
+    // solidPadding : null,
+    visualRange:0.6,
+    protectedRange:0.2,
+    cohesionFactor:0.00206,
+    matchingFactor:0.09385,
+    seperationFactor:0.30332,
+    minSpeed:2.379,
+    maxSpeed:5.575   ,
+    wallTransparent:false,
+    turnFactor:0.201,
     boidCount:null,
     sceneSize:null,
 }
+

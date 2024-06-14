@@ -12,6 +12,8 @@ export default class BoidLogic
     {
         //world variables
         this.sizes=displaySizes
+        this.sceneSize=startValues.sceneSize/2|| defaultValue(2,"sceneSize")
+
         
         this.transPadding = startValues.transPadding || defaultValue(10,"transPadding");
         this.solidPadding = startValues.solidPadding || defaultValue(1,"solidPadding");
@@ -23,23 +25,24 @@ export default class BoidLogic
             top: this.sceneSize,
             bottom:-this.sceneSize,
             left: -this.sceneSize,
-            right: this.sizes.width
+            right: this.sceneSize,
+            back: -this.sceneSize,
+            front: this.sceneSize,
         }
 
         //debuggable objects
-        this.visualRange=startValues.visualRange || defaultValue(75,"VisualRange")
-        this.protectedRange=startValues.protectedRange|| defaultValue(55,"protectedRange")
+        this.visualRange=startValues.visualRange || defaultValue(1,"VisualRange")
+        this.protectedRange=startValues.protectedRange|| defaultValue(0.5,"protectedRange")
         this.cohesionFactor=startValues.cohesionFactor|| defaultValue(0.0039,"cohesionFactor")
         this.matchingFactor=startValues.matchingFactor|| defaultValue(0.0287,"matchingFactor")
         this.seperationFactor=startValues.seperationFactor|| defaultValue(0.01395,"seperationFactor")
-        this.minSpeed=startValues.minSpeed|| defaultValue(2,"minSpeed")
-        this.maxSpeed=startValues.maxSpeed   || defaultValue(6,"maxSpeed")
+        this.minSpeed=startValues.minSpeed/100|| defaultValue(0.005,"minSpeed")
+        this.maxSpeed=startValues.maxSpeed/100  || defaultValue(0.01,"maxSpeed")
         this.wallTransparent=startValues.wallTransparent|| defaultValue(false,"wallTransparent")
-        this.turnFactor=startValues.turnFactor|| defaultValue(0.2,"turnFactor")
+        this.turnFactor=startValues.turnFactor/100|| defaultValue(0.2,"turnFactor")
 
         //boid objects
         this.boidCount=boidCount|| defaultValue(1,"boidCount")
-        this.sceneSize=startValues.sceneSize|| defaultValue(2,"sceneSize")
         this.boidArray=this.setUpBoidPositions(this.boidCount)
         
         
@@ -70,7 +73,8 @@ export default class BoidLogic
 
                 const vx= (Math.random()-0.5)*2*this.maxSpeed
                 const vy= (Math.random()-0.5)*2*this.maxSpeed
-                boidArray.push(new Boid(x,y,z,vy,vx))
+                const vz= (Math.random()-0.5)*2*this.maxSpeed
+                boidArray.push(new Boid(x,y,z,vy,vx,vz))
             }
         // console.log(boidArray)
         return boidArray
@@ -83,6 +87,7 @@ export default class BoidLogic
                 //set up the rotation target
                 boid.targetX=boid.x
                 boid.targetY=boid.y
+                boid.targetZ=boid.z
 
                 // console.log('entering loop')s
                 //zero accum variables
@@ -97,12 +102,14 @@ export default class BoidLogic
                         //compute differences in xy coords
                         const dx= boid.x - otherBoid.x
                         const dy= boid.y - otherBoid.y
+                        const dz= boid.z - otherBoid.z
+
 
                         //check if they are within visual range
-                        if(Math.abs(dx)<this.visualRange && Math.abs(dy)<this.visualRange)
+                        if(Math.abs(dx)<this.visualRange && Math.abs(dy)<this.visualRange&& Math.abs(dz)<this.visualRange)
                             {
                                 //get the distance between the two boids
-                                const distance= Math.sqrt(dx**2+dy**2)
+                                const distance= Math.sqrt(dx**2+dy**2+dz**2)
 
                                 //is the distance less than the protected range
                                 if(distance< this.protectedRange)
@@ -117,6 +124,7 @@ export default class BoidLogic
                                         //     }
                                         accum.close_dx+=dx*exp //!!!!!!!!! can just use dx
                                         accum.close_dy+=dy*exp //!!!!!!!!! can just use dy
+                                        accum.close_dz+=dz*exp //!!!!!!!!! can just use dy
 
                                     }
                                 
@@ -127,8 +135,10 @@ export default class BoidLogic
                                         //add other boids x/y coords and velocity variables to the accum
                                         accum.xpos_avg+=otherBoid.x
                                         accum.ypos_avg+=otherBoid.y
+                                        accum.zpos_avg+=otherBoid.z
                                         accum.xvel_avg+=otherBoid.vx*exp
                                         accum.yvel_avg+=otherBoid.vy*exp
+                                        accum.zvel_avg+=otherBoid.vz*exp
 
                                         //increment number of boids in visual range
                                         accum.neighboring_boids++
@@ -143,8 +153,10 @@ export default class BoidLogic
                         // console.log(`yvel_avg before averaging: ${accum.yvel_avg}\n`)
                         accum.xpos_avg/=accum.neighboring_boids
                         accum.ypos_avg/=accum.neighboring_boids
+                        accum.zpos_avg/=accum.neighboring_boids
                         accum.xvel_avg/=accum.neighboring_boids
                         accum.yvel_avg/=accum.neighboring_boids
+                        accum.zvel_avg/=accum.neighboring_boids
                         // console.log(`vy : ${boid.vy}`)
                         // console.log(`yvel_avg after averaging: ${accum.yvel_avg}\n`)
 
@@ -155,6 +167,9 @@ export default class BoidLogic
 
                         boid.vy+= (accum.ypos_avg-boid.y)*this.cohesionFactor
                         boid.vy+= (accum.yvel_avg-boid.vy)*this.matchingFactor
+
+                        boid.vz+= (accum.zpos_avg-boid.z)*this.cohesionFactor
+                        boid.vz+= (accum.zvel_avg-boid.vz)*this.matchingFactor
                     }
                 
                 //Add sepperation factor
@@ -162,6 +177,7 @@ export default class BoidLogic
 
                 boid.vx+= (accum.close_dx*this.seperationFactor) 
                 boid.vy+= (accum.close_dy*this.seperationFactor)
+                boid.vz+= (accum.close_dz*this.seperationFactor)
 
                 
                 //the bounding box
@@ -170,7 +186,7 @@ export default class BoidLogic
                  
                 
                 // calculate boids speed
-                const speed = Math.sqrt(boid.vx**2+boid.vy**2)
+                const speed = Math.sqrt(boid.vx**2+boid.vy**2+boid.vz**2)
 
                 //enforce speedlimits
 
@@ -178,16 +194,19 @@ export default class BoidLogic
                     {
                         boid.vx= (boid.vx/speed)*this.minSpeed
                         boid.vy= (boid.vy/speed)*this.minSpeed
+                        boid.vz= (boid.vz/speed)*this.minSpeed
                     }
                 if (speed> this.maxSpeed)
                     {
                         boid.vx= (boid.vx/speed)*this.maxSpeed
                         boid.vy= (boid.vy/speed)*this.maxSpeed
+                        boid.vz= (boid.vz/speed)*this.maxSpeed
                     }
                 
                 //update positions
                 boid.x+=boid.vx
                 boid.y+=boid.vy
+                boid.z+=boid.vz
 
                 // console.log(`${boid.x}\n${boid.y}`)
                 // console.log(`${boid.vx}\n${boid.vy}`)
@@ -198,12 +217,15 @@ export default class BoidLogic
         const accum=
         {
             xpos_avg:0,
-             ypos_avg:0,
-             xvel_avg:0,
-             yvel_avg:0,
-             neighboring_boids:0,
-             close_dx:0,
-             close_dy:0
+            ypos_avg:0,
+            zpos_avg:0,
+            xvel_avg:0,
+            yvel_avg:0,
+            zvel_avg:0,
+            neighboring_boids:0,
+            close_dx:0,
+            close_dy:0,
+            close_dz:0
         }
         return accum
     }
@@ -215,16 +237,26 @@ export default class BoidLogic
 
     solidWall(boid)
     {
+        // console.log(`boid y: ${boid.y} ---- boid x: ${boid.x}`)
+        // console.log(
+        //     `   bounding top ${this.boundingBoxSolid.top}\n
+        //         bounding bottom ${this.boundingBoxSolid.bottom}\n
+        //         bounding left ${this.boundingBoxSolid.left}\n
+        //         bounding right ${this.boundingBoxSolid.right}\n
+        //     `)
+
         // console.log(this.boundingBoxSolid)
-        if(this.boundingBoxSolid.top>boid.y)
+        if(this.boundingBoxSolid.top<boid.y)
             {
+                // console.log("top")
                 // console.log("bounding top")
-                boid.vy+=this.turnFactor
+                boid.vy-=this.turnFactor
             }
         
         if(this.boundingBoxSolid.right<boid.x)
             {
                 // console.log("bounding left")
+                // console.log("right")
 
                 boid.vx-=this.turnFactor
             }
@@ -232,15 +264,32 @@ export default class BoidLogic
         if(this.boundingBoxSolid.left>boid.x)
             {
                 // console.log("bounding right")
+                // console.log("left")
 
                 boid.vx+=this.turnFactor
             }
         
-        if(this.boundingBoxSolid.bottom<boid.y)
+        if(this.boundingBoxSolid.bottom>boid.y)
             {
                 // console.log("bounding bottom")
+                // console.log("bottom")
 
-                boid.vy-=this.turnFactor
+                boid.vy+=this.turnFactor
+            }
+
+        if(this.boundingBoxSolid.front<boid.z)
+            {
+                // console.log("bounding bottom")
+                // console.log("bottom")
+
+                boid.vz-=this.turnFactor
+            }
+        if(this.boundingBoxSolid.back>boid.z)
+            {
+                // console.log("bounding bottom")
+                // console.log("bottom")
+
+                boid.vz+=this.turnFactor
             }
         return boid
     }
@@ -258,15 +307,17 @@ export default class BoidLogic
 
 class Boid
 {
-    constructor(x,y,z,vx,vy)
+    constructor(x,y,z,vx,vy,vz)
     {
         this.x=x
         this.y=y
         this.z=z
         this.vx=vx
         this.vy=vy
+        this.vz=vz
         this.targetX=0
         this.targetY=0
+        this.targetZ=0
     }
 }
 
