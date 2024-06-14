@@ -15,11 +15,11 @@ This project extends the classic Boids algorithm into a 3D environment using Jav
 
 
 ### Boids Simulation
-![Boids in a Box](./img/Capture.png)
-![Boids in a Box 2](./static/img/Capture2.png)
+![alt text](./static/img/Capture.PNG)
+![Boids in a Box 2](./static/img/Capture2.PNG)
 <!-- ![Boids Simulation](./static/img/Capture.png) -->
-![Close up of flock](./static/img/Capture4.png)
-![No debug](./static/img/Capture5.png)
+![Close up of flock](./static/img/Capture4.PNG)
+![No debug](./static/img/Capture5.PNG)
 
 ## Instructions
 1. Clone or download the repository to your local machine.
