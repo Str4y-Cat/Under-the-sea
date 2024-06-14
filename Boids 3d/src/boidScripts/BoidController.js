@@ -11,9 +11,10 @@ export default class BoidController
      *  
      * 
      */
-    constructor(count, sizes, scene,debug,gui,camera)
+    constructor(count, sizes, scene,debug,gui,camera,texture)
     {
         this.camera=camera
+        this.texture= texture
 
         this.scene=scene
         this.sceneSize=debug.floorSize
@@ -24,7 +25,7 @@ export default class BoidController
         this.boidMeshes= this.setUp(this.boidLogic.boidArray)
 
         console.log(this.boidMeshes)
-        this.debug()
+        // this.debug()
         console.log('success')
 
         this.gui=gui
@@ -46,7 +47,9 @@ export default class BoidController
         const geometry = new THREE.IcosahedronGeometry( 0.05); 
 
         //create material
-        const material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+        const material = new THREE.MeshMatcapMaterial( {matcap:this.texture} );
+        console.log(`texture`)
+        console.log(this.texture)
 
         boidArray.forEach(boid => {
 
@@ -85,7 +88,7 @@ export default class BoidController
             // console.log(boid.z)
             // boidMesh.rotation.z= Math.PI/2-Math.atan2((boid.targetY)-boid.y,(boid.targetX)-boid.x)
 
-            if(i==0&&this.debugHalos)
+            if(i==0&&this.debugHalos.protectedCircle)
                 {
                     this.debugHalos.protectedCircle.position.copy( boidMesh.position)
                     this.debugHalos.protectedCircle.lookAt(this.camera.position);

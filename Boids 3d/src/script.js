@@ -7,9 +7,13 @@ import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import BoidController from './boidScripts/BoidController'
 
 
+
 //set up debug
 const gui = new GUI()
 const debug= {}
+
+const textureLoader= new THREE.TextureLoader()
+const matCapTexture= textureLoader.load('/textures/matCap3.png')
 
 //axis helper
 
@@ -84,7 +88,7 @@ scene.add(camera)
  * BOIDS
  */
 
-const boidController= new BoidController(200,sizes,scene,debug,gui,camera)
+const boidController= new BoidController(200,sizes,scene,debug,gui,camera, matCapTexture)
 
 
 
