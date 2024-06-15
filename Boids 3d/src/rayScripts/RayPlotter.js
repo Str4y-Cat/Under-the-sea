@@ -1,3 +1,6 @@
+import * as THREE from 'three'
+import { lerp } from 'three/src/math/MathUtils.js'
+
 // export default
 // class RayPlotter{
 
@@ -36,21 +39,58 @@ export function fibonacci_sphere(samples){
     
             let theta = phi * i  // golden angle increment
     
-            let x = Math.cos(theta) * radius
-            let z = Math.sin(theta) * radius
+            let x = Math.cos(theta) * radius 
+            let z = Math.sin(theta) * radius 
+            
+            
+            // const cutoff=0.7
+            // if(z<cutoff)
+            //     {
+                    const i3=i*3
+                let shrinkFactor= 3
 
-            // const index= i+0.5
-            // let r= Math.sqrt(index/samples)
-            // const theta= Math.PI * (1+5**0.5)*index
-            // const x= Math.cos(theta)*r
-            // const z= Math.sin(theta)*r
-            // const y=1
-            // points.push((x, y, z))
-            const i3=i*3
-            points[i3]=x
-            points[i3+1]=y
-            points[i3+2]=z
+                points[i3]=x /shrinkFactor
+                points[i3+1]=y/shrinkFactor
+                points[i3+2]=z/shrinkFactor
+            // }
         }
 
     return points
+}
+
+export function fibonacci_colours(samples, cutoff){
+    const points = new Float32Array(samples*3)
+    const phi = Math.PI * (Math.sqrt(5)-1)  //golden angle in radians
+    
+    
+    for(let i=0; i<samples; i++)
+        {
+
+            let y = 1 - (i / (samples - 1)) * 2  // y goes from 1 to -1
+            let radius = Math.sqrt(1 - y * y)  // radius at y
+    
+            let theta = phi * i  // golden angle increment
+    
+            let x = Math.cos(theta) * radius 
+            let z = Math.sin(theta) * radius 
+
+
+            const i3=i*3
+            let shrinkFactor= 3
+
+            const color1=new THREE.Color("red")
+            const color2=new THREE.Color("green")
+            let mixedColor= color1.clone()
+            
+            const lerpValue= (z<cutoff)?1:0
+            // console.log(lerpValue)
+            mixedColor.lerp(color2,(lerpValue)) 
+
+            points[i3]=mixedColor.r
+            points[i3+1]=mixedColor.g
+            points[i3+2]=mixedColor.b
+
+
+        }
+        return points
 }
