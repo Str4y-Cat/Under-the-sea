@@ -13,7 +13,7 @@ const gui = new GUI()
 const debug= {}
 
 const textureLoader= new THREE.TextureLoader()
-const matCapTexture= textureLoader.load('/textures/matCap3.png')
+const matCapTexture= textureLoader.load('/textures/matCap1.png')
 
 //axis helper
 
@@ -94,7 +94,7 @@ const boidController= new BoidController(300,sizes,scene,debug,gui,camera, matCa
 /**
  * lights
  */
-// debug.lightColor= "#ffffff"
+debug.lightColor= "#ffffff"
 // console.log(debug.lightColor)
 // const pointLight= new THREE.PointLight("#ffffff",10)
 // gui.addColor(debug,'lightColor').onChange((color)=>
@@ -102,26 +102,26 @@ const boidController= new BoidController(300,sizes,scene,debug,gui,camera, matCa
 //     pointLight.color= new THREE.Color(color)
 // })
 
-// const pointLight = new THREE.PointLight( debug.lightColor, 10, 100 );
-// pointLight.position.set( 0, 0, 0 );
-// scene.add( pointLight );
-// gui.addColor(debug,'lightColor').onChange((color)=>
-// {
-//     pointLight.color= new THREE.Color(color)
-// })
+const pointLight = new THREE.PointLight( debug.lightColor, 5, 100 );
+pointLight.position.set( 0, 0, 0 );
+scene.add( pointLight );
+gui.addColor(debug,'lightColor').onChange((color)=>
+{
+    pointLight.color= new THREE.Color(color)
+})
 
 // const sphereSize = 0.3;
 // const pointLightHelper = new THREE.PointLightHelper( pointLight, sphereSize );
 // scene.add( pointLightHelper );
-// debug.ambientLightColor= "#ffffff"
+debug.ambientLightColor= "#ffffff"
 
-// const ambientLight = new THREE.AmbientLight( debug.ambientLightColor,0.01, 100 );
-// // pointLight.position.set( 0, 0, 0 );
+const ambientLight = new THREE.AmbientLight( debug.ambientLightColor,0.005, 100 );
+// pointLight.position.set( 0, 0, 0 );
 // scene.add( ambientLight );
-// gui.addColor(debug,'ambientLightColor').onChange((color)=>
-// {
-//     pointLight.color= new THREE.Color(color)
-// })
+gui.addColor(debug,'ambientLightColor').onChange((color)=>
+{
+    pointLight.color= new THREE.Color(color)
+})
 
 /**
  * add controls
