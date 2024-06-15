@@ -13,6 +13,8 @@ This project extends the classic Boids algorithm into a 3D environment using Jav
 - Smooth and immersive rendering powered by Three.js and WebGL.
 
 ### Current Behavior
+The boids are currently tweaked to mimic fish and other schooling animals.
+
 ![Schooling behavior](./static/img/Capture6.PNG)
 ![Bigger school](./static/img/Capture7.PNG)
 
@@ -22,10 +24,9 @@ This project extends the classic Boids algorithm into a 3D environment using Jav
 1. Clone or download the repository to your local machine.
 2. Run `npm install` to install dependencies.
 3. In the command line, run `npm run dev` to start the development server.
-4. Access the simulation in your web browser via `http://localhost:port` (default port: 3000).
-5. Interact with the simulation using the provided controls:
+4. Interact with the simulation using the provided controls:
     - Adjust cohesion strength, alignment (matching) strength, separation distance, turn factor, min and max speed, visual range, and protected range to customize the behavior of the flock.
-    - Toggle between different camera views for a better understanding of the flock's dynamics.
+    
 
 ## Controls
 - **Cohesion Strength:** Adjust how strongly boids are attracted to the center of the flock.
