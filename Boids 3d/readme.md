@@ -12,14 +12,11 @@ This project extends the classic Boids algorithm into a 3D environment using Jav
 - Real-time simulation of flocking behavior in a 3D space.
 - Smooth and immersive rendering powered by Three.js and WebGL.
 
+### Current Behavior
+![Schooling behavior](./static/img/Capture6.PNG)
+![Bigger school](./static/img/Capture7.PNG)
 
 
-### Boids Simulation
-![alt text](./static/img/Capture.PNG)
-![Boids in a Box 2](./static/img/Capture2.PNG)
-<!-- ![Boids Simulation](./static/img/Capture.png) -->
-![Close up of flock](./static/img/Capture4.PNG)
-![No debug](./static/img/Capture5.PNG)
 
 ## Instructions
 1. Clone or download the repository to your local machine.
@@ -44,3 +41,16 @@ This project extends the classic Boids algorithm into a 3D environment using Jav
 ## Resources
 - [Cornell University Lab](https://people.ece.cornell.edu/land/courses/ece4760/labs/s2021/Boids/Boids.html)
 - [Original Paper by C.W.Reynolds](https://www.cs.toronto.edu/~dt/siggraph97-course/cwr87/)
+
+## Progression
+### First Stages of converting to 3D
+![alt text](./static/img/Capture.PNG)
+![Boids in a Box 2](./static/img/Capture2.PNG)
+<!-- ![Boids Simulation](./static/img/Capture.png) -->
+### Working model with textures
+![Close up of flock](./static/img/Capture4.PNG)
+![No debug](./static/img/Capture5.PNG)
+
+### Better fish simulation
+![Schooling behavior](./static/img/Capture6.PNG)
+![Bigger school](./static/img/Capture7.PNG)
