@@ -10,6 +10,9 @@ import { DragControls } from 'three/addons/controls/DragControls.js';
 import RAYS from './rayScripts/RayPlotter'
 import Stats from 'three/addons/libs/stats.module.js';
 
+import RayController from './rayScripts/RayController';
+// import RayController from './rayScripts/RayController';
+
 
 
 //set up debug
@@ -128,30 +131,30 @@ scene.add(boidMesh)
  */
 debug.rayPoints= 500
 debug.rayCutoff=0.5
-const rays=new RAYS(debug.rayPoints,debug.rayCutoff)
+// const rays=new RAYS(debug.rayPoints,debug.rayCutoff)
 
-let raySpherePointPositions=rays.rayPositions_floatArray
-let raySphereColors=rays.rayColours
+// let raySpherePointPositions=rays.rayPositions_floatArray
+// let raySphereColors=rays.rayColours
 
-// console.log(raySphereColors)
+// // console.log(raySphereColors)
 
-// console.log(raySpherePointPositions)
+// // console.log(raySpherePointPositions)
 
-//set up geometry
-const pointsGeometry= new THREE.BufferGeometry()
-pointsGeometry.setAttribute('position',new THREE.BufferAttribute(raySpherePointPositions,3))
-pointsGeometry.setAttribute('color',new THREE.BufferAttribute(raySphereColors,3))
+// //set up geometry
+// const pointsGeometry= new THREE.BufferGeometry()
+// pointsGeometry.setAttribute('position',new THREE.BufferAttribute(raySpherePointPositions,3))
+// pointsGeometry.setAttribute('color',new THREE.BufferAttribute(raySphereColors,3))
 
-const pointsMaterial= new THREE.PointsMaterial({
-    // color:'white',
-    size:0.01,
-    sizeAttenuation:true,
-    vertexColors:true
+// const pointsMaterial= new THREE.PointsMaterial({
+//     // color:'white',
+//     size:0.01,
+//     sizeAttenuation:true,
+//     vertexColors:true
 
-})
+// })
 
-const particleMesh= new THREE.Points(pointsGeometry,pointsMaterial)
-scene.add(particleMesh)
+// const particleMesh= new THREE.Points(pointsGeometry,pointsMaterial)
+// scene.add(particleMesh)
 
 
 //create lines
@@ -161,7 +164,7 @@ scene.add(particleMesh)
 
 
 
-let raysVec3Array=rays.rayPositions_vec3Array
+// let raysVec3Array=rays.rayPositions_vec3Array
 
 function addDebugLines(targetArr)
 {
@@ -216,43 +219,49 @@ function updateDebugLines(cutoff)
 
 
 
-gui.add(debug,'rayPoints').min(0).max(4000).step(10).onFinishChange((num)=>
-    {
-        rays.updateArrayCount(num)
-        rays.updateAngle(debug.rayCutoff)
+// gui.add(debug,'rayPoints').min(0).max(4000).step(10).onFinishChange((num)=>
+//     {
+//         rays.updateArrayCount(num)
+//         rays.updateAngle(debug.rayCutoff)
         
-        let temp= rays.rayPositions_floatArray
-        // console.log(temp)
-        pointsGeometry.setAttribute('position',new THREE.BufferAttribute(temp,3))
+//         let temp= rays.rayPositions_floatArray
+//         // console.log(temp)
+//         pointsGeometry.setAttribute('position',new THREE.BufferAttribute(temp,3))
 
-        pointsGeometry.setAttribute('color',new THREE.BufferAttribute(rays.rayColours,3))
+//         pointsGeometry.setAttribute('color',new THREE.BufferAttribute(rays.rayColours,3))
 
 
 
-        // let raySpherePointPositions=RAYS.fibonacci_sphere(num)
-        // pointsGeometry.setAttribute('position',new THREE.BufferAttribute(raySpherePointPositions,3))
-        // let raySphereColors=RAYS.fibonacci_colours(debug.rayPoints,debug.rayCutoff)
+//         // let raySpherePointPositions=RAYS.fibonacci_sphere(num)
+//         // pointsGeometry.setAttribute('position',new THREE.BufferAttribute(raySpherePointPositions,3))
+//         // let raySphereColors=RAYS.fibonacci_colours(debug.rayPoints,debug.rayCutoff)
         
-        // pointsGeometry.setAttribute('color',new THREE.BufferAttribute(raySphereColors,3))
+//         // pointsGeometry.setAttribute('color',new THREE.BufferAttribute(raySphereColors,3))
 
-    })
-gui.add(debug,'rayCutoff').min(-1).max(1).step(0.001).onChange((cutoff)=>
-    {
+//     })
+// gui.add(debug,'rayCutoff').min(-1).max(1).step(0.001).onChange((cutoff)=>
+//     {
         
-        // let raySphereColors=RAYS.fibonacci_colours(debug.rayPoints,cutoff)
-        rays.updateAngle(cutoff)
-        let raySphereColors=rays.rayColours
+//         // let raySphereColors=RAYS.fibonacci_colours(debug.rayPoints,cutoff)
+//         rays.updateAngle(cutoff)
+//         let raySphereColors=rays.rayColours
         
-        pointsGeometry.setAttribute('color',new THREE.BufferAttribute(raySphereColors,3))
+//         pointsGeometry.setAttribute('color',new THREE.BufferAttribute(raySphereColors,3))
         
-        // console.log(debug.lineArr)
-        // updateDebugLines(cutoff)
+//         // console.log(debug.lineArr)
+//         // updateDebugLines(cutoff)
 
 
 
-        // particleBufferAttribute.needsUpdate = true;
-    })
+//         // particleBufferAttribute.needsUpdate = true;
+//     })
 
+
+/**
+ * RAYCASTING
+ */
+
+const rayController=new RayController(10,-0.746,[dragMesh1,dragMesh2],scene,gui)
 
 
 
@@ -298,6 +307,8 @@ const tick =()=>
         stats.update()
         // controls.update()
         // controls.update(delta)
+
+        rayController.update()
 
         //renderer
       
