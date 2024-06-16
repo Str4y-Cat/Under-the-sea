@@ -1,16 +1,21 @@
 import * as THREE from 'three'
 import { lerp } from 'three/src/math/MathUtils.js'
 
+
 export default class RayPlotter
 {
-    constructor(count,rayAngleLimit)
+    constructor(count,rayAngleLimit,scene,gui)
     {
         this.rayCount=count
         this.rayAngleLimit=rayAngleLimit
+        this.scene=scene
+        this.gui=gui
 
         this.rayPositions_floatArray=this.fibonacci_sphere()
         this.rayPositions_vec3Array=this.fibonacci_sphere_vec3()
         this.rayColours= this.fibonacci_colours()
+        this.setUpDebug()
+        
 
     }
 
@@ -74,7 +79,9 @@ export default class RayPlotter
     
                     if(z<this.rayAngleLimit){
                         // console.log("pushing")
-                        points.push(new THREE.Vector3(x/3,y/3,z/3))
+                        const normalizedTarget=new THREE.Vector3(x,y,z)
+                        normalizedTarget.normalize()
+                        points.push(normalizedTarget)
                     }
                     else
                     {
@@ -127,7 +134,7 @@ export default class RayPlotter
 
     updateAngle(rayAngleLimit)
     {
-        this.rayAngleLimit=rayAngleLimit
+        // this.rayAngleLimit=rayAngleLimit
 
         this.rayColours= this.fibonacci_colours()
         this.rayPositions_vec3Array=this.fibonacci_sphere_vec3()
@@ -135,10 +142,51 @@ export default class RayPlotter
 
     updateArrayCount(count)
     {
-        this.rayCount=count
+        // this.rayCount=count
         // this.debugColours= this.fibonacci_colours()
         // this.rayPositions_vec3Array=this.fibonacci_sphere_vec3()
         this.rayPositions_floatArray=this.fibonacci_sphere()
+    }
+
+    setUpDebug()
+    {
+
+        //set up Points
+        const pointsGeometry= new THREE.BufferGeometry()
+        pointsGeometry.setAttribute('position',new THREE.BufferAttribute(this.rayPositions_floatArray,3))
+        pointsGeometry.setAttribute('color',new THREE.BufferAttribute(this.rayColours,3))
+
+        const pointsMaterial= new THREE.PointsMaterial({
+            // color:'white',
+            size:0.01,
+            sizeAttenuation:true,
+            vertexColors:true
+
+        })
+        const particleMesh= new THREE.Points(pointsGeometry,pointsMaterial)
+        this.scene.add(particleMesh)
+
+
+
+
+        this.gui.add(this,'rayCount').min(0).max(4000).step(10).onFinishChange((num)=>
+            {
+                this.updateArrayCount(num)
+                this.updateAngle(this.rayCutoff)
+                
+
+                pointsGeometry.setAttribute('position',new THREE.BufferAttribute(this.rayPositions_floatArray,3))
+                pointsGeometry.setAttribute('color',new THREE.BufferAttribute(this.rayColours,3))
+        
+        
+            })
+        this.gui.add(this,'rayAngleLimit').min(-1).max(1).step(0.001).onChange((angleLimit)=>
+            {
+
+                this.updateAngle(angleLimit)
+                pointsGeometry.setAttribute('color',new THREE.BufferAttribute(this.rayColours,3))
+
+            })
     }
 
 
