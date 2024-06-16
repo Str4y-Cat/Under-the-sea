@@ -15,6 +15,8 @@ export default class RayPlotter
         this.rayPositions_vec3Array=this.fibonacci_sphere_vec3()
         this.rayColours= this.fibonacci_colours()
         this.setUpDebug()
+
+        this.needsUpdate=false
         
 
     }
@@ -138,6 +140,7 @@ export default class RayPlotter
 
         this.rayColours= this.fibonacci_colours()
         this.rayPositions_vec3Array=this.fibonacci_sphere_vec3()
+        this.needsUpdate=true
     }
 
     updateArrayCount(count)
@@ -146,6 +149,8 @@ export default class RayPlotter
         // this.debugColours= this.fibonacci_colours()
         // this.rayPositions_vec3Array=this.fibonacci_sphere_vec3()
         this.rayPositions_floatArray=this.fibonacci_sphere()
+        this.needsUpdate=true
+
     }
 
     setUpDebug()

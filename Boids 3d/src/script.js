@@ -30,8 +30,8 @@ const canvas = document.querySelector('.webgl')
 //create scene
 const scene = new THREE.Scene()
 
-const axisHelper= new THREE.AxesHelper(0.3)
-scene.add(axisHelper)
+// const axisHelper= new THREE.AxesHelper(0.3)
+// scene.add(axisHelper)
 /**
  * Handle sizes and resize
  */
@@ -84,7 +84,8 @@ scene.add(floor)
 
 const dragMaterial= new THREE.MeshMatcapMaterial({matcap:matCapTexture})
 const dragGeometry1= new THREE.BoxGeometry(0.4,0.4,0.4)
-const dragGeometry2=  new THREE.CapsuleGeometry( 0.2, 0.2, 4, 8 ); 
+// const dragGeometry2=  new THREE.CapsuleGeometry( 0.2, 0.2, 4, 8 ); 
+const dragGeometry2=  new THREE.SphereGeometry( 0.1 ); 
 
 const dragMesh1=new THREE.Mesh(dragGeometry1,dragMaterial)
 dragMesh1.position.z=1
@@ -103,7 +104,7 @@ scene.add(dragMesh1,dragMesh2)
  */
 
 const camera= new THREE.PerspectiveCamera(75,sizes.width/sizes.height, 0.1 , 100)
-camera.position.x = 1.5
+camera.position.x = 1
 camera.position.y = 0.5
 camera.position.z = -0.2
 camera.lookAt(new THREE.Vector3(0,0,0))
@@ -311,9 +312,9 @@ const tick =()=>
         // controls.update(delta)
 
 
-        //for expensive computations
-        let slowTick= Math.round(elapsedTime*100)%10
-        if(slowTick!=past&&slowTick==0){
+        //for expensive computations, offset slowtick so that heavy computations are spread
+        let slowTick= Math.round(elapsedTime*10)
+        if(slowTick!=past){
             rayController.update()
             // console.log(slowTick)
         }

@@ -12,6 +12,7 @@ export default class
         this.gui=gui
         this.rays= new RAYS(count,rayAngleLimit,scene,gui)
 
+
         this.rayTargets= this.rays.rayPositions_vec3Array
 
         this.rayOrigin=new THREE.Vector3(0,0,0)
@@ -19,14 +20,31 @@ export default class
         this.rayCaster= new THREE.Raycaster()
         this.rayCaster.layers.set( 1 );
         this.rayCaster.far=this.far
+
+        this.debug={}
     }
 
     update()
-    {
-        let arr= this.castRays()
-        // if(arr.length){
-        //     console.log(arr)
-        // }
+    {   
+        //check if the rays object has been updated
+        if(this.rays.needsUpdate)
+            {
+                this.rayTargets= this.rays.rayPositions_vec3Array
+                this.rays.needsUpdate=false
+            }
+        
+        //get the average of rays sent
+        let obsticle= this.castRays()
+        if(obsticle){
+            
+            //
+            this.debug.ray=this.debugRay(obsticle)
+        }
+        else
+        {
+            this.removeRay()
+        }
+        
     
     }
 
@@ -90,9 +108,40 @@ export default class
         }
 
         const returnValue= (sum.distance)?sum:null
-        console.log(returnValue)
+        // console.log(returnValue)
         return returnValue
         
+    }
+    
+    debugRay(obsticle)
+{   
+    //clear the last ray path
+    this.removeRay()
+   
+
+    const lineMaterial= new THREE.LineBasicMaterial();
+    lineMaterial.color=new THREE.Color(Math.random(),Math.random, Math.random())
+    const baseTarget= new THREE.Vector3(0,0,0)
+    const target= new THREE.Vector3(obsticle.x,obsticle.y,obsticle.z)
+    const lineArr=[]
+
+    let lineGeometry = new THREE.BufferGeometry().setFromPoints( [baseTarget,target] );
+
+
+    let line = new THREE.Line(lineGeometry, lineMaterial);
+    this.scene.add(line);
+    lineArr.push(line)
+        
+ 
+    return lineArr
+
+    }
+    removeRay(){
+        if(this.debug.ray){
+            this.scene.remove(this.debug.ray[0])
+            this.debug.ray[0].material.dispose()
+            this.debug.ray[0].geometry.dispose()
+        }
     }
 
     averageObjectDistance(arr)
