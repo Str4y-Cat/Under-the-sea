@@ -15,14 +15,19 @@ export default class
         this.rayTargets= this.rays.rayPositions_vec3Array
 
         this.rayOrigin=new THREE.Vector3(0,0,0)
-        this.far=1//max distance value
+        this.far=0.3//max distance value
         this.rayCaster= new THREE.Raycaster()
         this.rayCaster.layers.set( 1 );
+        this.rayCaster.far=this.far
     }
 
     update()
     {
-        this.castRays()
+        let arr= this.castRays()
+        // if(arr.length){
+        //     console.log(arr)
+        // }
+    
     }
 
     /**
@@ -41,22 +46,59 @@ export default class
     {   
         
         const objectArr=[]
-        this.rayTargets.forEach((target)=>{
+        const distanceAccum=0
+        const xAccum=0
+        const yAccum=0
+        const zAccum=0
+
+        // console.log('casting rays')
+        const sum= {distance:0,x:0,y:0,z:0}
+        for(const target of this.rayTargets)
+        {
             this.rayCaster.set(this.rayOrigin,target)
+            
+            // console.log(this.rayCaster)
             const foundArr=this.rayCaster.intersectObjects ( this.environmentObjects)
             if(foundArr.length)
-                {
-                    objectArr.push(foundArr)
-                }
-        })
-        if(objectArr.length)
             {
-                console.log('found!')
+                
+                
+                // console.log("ray Intersected")
+                objectArr.push(foundArr[0])
+
+                
             }
-        return objectArr
+        }
+        if(objectArr.length)
+        {
+            // console.log('found!')
+            
+            for(const obj of objectArr){
+                sum.distance+=obj.distance
+                sum.x+=obj.point.x
+                sum.z+=obj.point.z
+                sum.y+=obj.point.y
+            }
+            
+            if(objectArr.length>1)
+                {
+                    sum.distance/=objectArr.length
+                    sum.x/=objectArr.length
+                    sum.y/=objectArr.length
+                    sum.z/=objectArr.length
+                }
+        }
+
+        const returnValue= (sum.distance)?sum:null
+        console.log(returnValue)
+        return returnValue
         
     }
 
+    averageObjectDistance(arr)
+    {
+
+    }
 
 
 

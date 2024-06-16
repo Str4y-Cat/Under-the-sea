@@ -169,7 +169,7 @@ export default class RayPlotter
 
 
 
-        this.gui.add(this,'rayCount').min(0).max(4000).step(10).onFinishChange((num)=>
+        this.gui.add(this,'rayCount').min(0).max(400).step(1).onFinishChange((num)=>
             {
                 this.updateArrayCount(num)
                 this.updateAngle(this.rayCutoff)

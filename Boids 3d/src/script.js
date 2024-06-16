@@ -30,8 +30,8 @@ const canvas = document.querySelector('.webgl')
 //create scene
 const scene = new THREE.Scene()
 
-// const axisHelper= new THREE.AxesHelper(4)
-// scene.add(axisHelper)
+const axisHelper= new THREE.AxesHelper(0.3)
+scene.add(axisHelper)
 /**
  * Handle sizes and resize
  */
@@ -91,6 +91,8 @@ dragMesh1.position.z=1
 const dragMesh2=new THREE.Mesh(dragGeometry2,dragMaterial)
 dragMesh2.position.z=-1
 
+dragMesh1.layers.enable( 1 );
+dragMesh2.layers.enable( 1 );
 scene.add(dragMesh1,dragMesh2)
 
 
@@ -261,7 +263,7 @@ function updateDebugLines(cutoff)
  * RAYCASTING
  */
 
-const rayController=new RayController(10,-0.746,[dragMesh1,dragMesh2],scene,gui)
+const rayController=new RayController(50,0.1,[dragMesh1,dragMesh2],scene,gui)
 
 
 
@@ -298,7 +300,7 @@ const dragControls = new DragControls( [dragMesh1,dragMesh2], camera, renderer.d
  */
 
 const clock= new THREE.Clock()
-// let past=0
+let past=0
 
 const tick =()=>
     {
@@ -308,7 +310,17 @@ const tick =()=>
         // controls.update()
         // controls.update(delta)
 
-        rayController.update()
+
+        //for expensive computations
+        let slowTick= Math.round(elapsedTime*100)%10
+        if(slowTick!=past&&slowTick==0){
+            rayController.update()
+            // console.log(slowTick)
+        }
+        past=slowTick
+
+
+
 
         //renderer
       
