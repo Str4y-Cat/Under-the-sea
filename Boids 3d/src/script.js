@@ -121,7 +121,7 @@ document.body.appendChild( stats.dom );
  * BOIDS
  */
 
-// const boidController= new BoidController(300,sizes,scene,debug,gui,camera, matCapTexture)
+const boidController= new BoidController(300,sizes,scene,debug,gui,camera, matCapTexture)
 const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
 geometry.rotateX(-Math.PI * 0.5);
 const material = new THREE.MeshBasicMaterial({wireframe:true});
@@ -321,7 +321,7 @@ const tick =()=>
         }
         past=slowTick
 
-
+        boidController.update()
 
 
         //renderer

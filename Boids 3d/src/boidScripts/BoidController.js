@@ -40,15 +40,13 @@ export default class BoidController
 
         //create geometry
         const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
-        // const geometry = new THREE.IcosahedronGeometry( 0.05); 
-        // const geometry = new THREE.IcosahedronGeometry( 0.05); 
-        // const geometry = new THREE.SphereGeometry( 0.05); 
 
         //create material
-        // const material = new THREE.MeshMatcapMaterial( {matcap:this.texture} );
+        const material = new THREE.MeshMatcapMaterial( {matcap:this.texture} );
         geometry.rotateX(-Math.PI * 0.5);
-        const material = new THREE.MeshToonMaterial();
+        // const material = new THREE.MeshToonMaterial();
         // const material = new THREE.MeshLambertMaterial();
+        
         material.shininess=0.5
         material.specular=0.7
         console.log(`texture`)
