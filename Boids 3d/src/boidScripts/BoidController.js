@@ -24,21 +24,9 @@ export default class BoidController
         this.boidLogic=new BoidLogic(count, sizes,startValues)
         this.boidMeshes= this.setUp(this.boidLogic.boidArray)
 
-        console.log(this.boidMeshes)
-        // this.debug()
-        console.log('success')
 
         this.gui=gui
         this.addControls()
-
-        // this.materialValues=
-        // {
-        //     shininess:0.5,
-        //     specular:0.5
-        // }
-       
-        // this.gui.add(this.materialValues,"shininess").min(0).max(1)
-        // this.gui.add(this.materialValues,"specular").min(0).max(1)
     }
 
     /** setUp(boidArray)

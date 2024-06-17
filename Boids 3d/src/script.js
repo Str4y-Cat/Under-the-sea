@@ -94,7 +94,8 @@ dragMesh2.position.z=-1
 
 dragMesh1.layers.enable( 1 );
 dragMesh2.layers.enable( 1 );
-scene.add(dragMesh1,dragMesh2)
+// scene.add(dragMesh1,dragMesh2)
+scene.add(dragMesh2)
 
 
 

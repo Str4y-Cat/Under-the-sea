@@ -24,6 +24,7 @@ export default class
         this.debug={}
     }
 
+    
     update()
     {   
         //check if the rays object has been updated
@@ -36,23 +37,19 @@ export default class
         //get the average of rays sent
         let obsticle= this.castRays()
         if(obsticle){
-            
-            //
+            //set up debug. shows the path to the obstical vector
             this.debug.ray=this.debugRay(obsticle)
+            // console.log(obsticle)
         }
         else
         {
+            //removes ray once you leave the circle. for debug view
             this.removeRay()
         }
         
+        return obsticle
     
     }
-
-    /**
-     * debugRay
-     * 
-     * shoot a line to the target if there is something found
-     */
 
     /**
      * testRays()
@@ -62,35 +59,27 @@ export default class
      */
     castRays()
     {   
-        
         const objectArr=[]
-        const distanceAccum=0
-        const xAccum=0
-        const yAccum=0
-        const zAccum=0
 
-        // console.log('casting rays')
         const sum= {distance:0,x:0,y:0,z:0}
         for(const target of this.rayTargets)
         {
+            //aim the ray caster
             this.rayCaster.set(this.rayOrigin,target)
-            
-            // console.log(this.rayCaster)
+
+            //find intersections of environment objects
             const foundArr=this.rayCaster.intersectObjects ( this.environmentObjects)
             if(foundArr.length)
             {
-                
-                
-                // console.log("ray Intersected")
                 objectArr.push(foundArr[0])
-
-                
             }
         }
+
+        //if there is something intersecting the ray
         if(objectArr.length)
         {
-            // console.log('found!')
-            
+           
+            //sum the values in the array
             for(const obj of objectArr){
                 sum.distance+=obj.distance
                 sum.x+=obj.point.x
@@ -98,6 +87,7 @@ export default class
                 sum.y+=obj.point.y
             }
             
+            //if theres more than one value average the values
             if(objectArr.length>1)
                 {
                     sum.distance/=objectArr.length
@@ -105,14 +95,24 @@ export default class
                     sum.y/=objectArr.length
                     sum.z/=objectArr.length
                 }
+
+            //normalize the distance
+            sum.distance/=this.far
         }
 
-        const returnValue= (sum.distance)?sum:null
-        // console.log(returnValue)
-        return returnValue
+
+        // const returnValue= (sum.distance)?sum:null
+
+        //return the distance, else return null
+        return (sum.distance)?sum:null
         
     }
     
+    /**
+     * debugRay
+     * 
+     * shoot a line to the target if there is something found
+     */
     debugRay(obsticle)
 {   
     //clear the last ray path
@@ -136,6 +136,7 @@ export default class
     return lineArr
 
     }
+
     removeRay(){
         if(this.debug.ray){
             this.scene.remove(this.debug.ray[0])
@@ -144,15 +145,9 @@ export default class
         }
     }
 
-    averageObjectDistance(arr)
-    {
+    // averageObjectDistance(arr)
+    // {
 
-    }
-
-
-
-
-
-
+    // }
 
 }

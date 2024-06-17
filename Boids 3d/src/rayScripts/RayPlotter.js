@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { lerp } from 'three/src/math/MathUtils.js'
 
 
 export default class RayPlotter
@@ -155,7 +154,7 @@ export default class RayPlotter
 
     setUpDebug()
     {
-
+        const folder= this.gui.addFolder('Rays')
         //set up Points
         const pointsGeometry= new THREE.BufferGeometry()
         pointsGeometry.setAttribute('position',new THREE.BufferAttribute(this.rayPositions_floatArray,3))
@@ -163,7 +162,7 @@ export default class RayPlotter
 
         const pointsMaterial= new THREE.PointsMaterial({
             // color:'white',
-            size:0.01,
+            size:0.007,
             sizeAttenuation:true,
             vertexColors:true
 
@@ -174,7 +173,7 @@ export default class RayPlotter
 
 
 
-        this.gui.add(this,'rayCount').min(0).max(400).step(1).onFinishChange((num)=>
+        folder.add(this,'rayCount').min(0).max(400).step(1).onFinishChange((num)=>
             {
                 this.updateArrayCount(num)
                 this.updateAngle(this.rayCutoff)
@@ -185,7 +184,7 @@ export default class RayPlotter
         
         
             })
-        this.gui.add(this,'rayAngleLimit').min(-1).max(1).step(0.001).onChange((angleLimit)=>
+        folder.add(this,'rayAngleLimit').min(-1).max(1).step(0.001).onChange((angleLimit)=>
             {
 
                 this.updateAngle(angleLimit)
