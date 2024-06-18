@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { temp } from 'three/examples/jsm/nodes/Nodes.js'
 
 
 export default class RaySphere
@@ -10,18 +11,21 @@ export default class RaySphere
         this.scene=scene
         this.gui=gui
 
-        this.rayPositions_floatArray=this.fibonacci_sphere()
         this.rayPositions_vec3Array=this.fibonacci_sphere_vec3()
+        this.rayPositions_floatArray=this.toFloatArr(this.rayPositions_vec3Array)
+
         this.rayColours= this.fibonacci_colours()
 
         this.debug={
             
         }
+        this.debug.origin=new THREE.Vector3(0,0,0)
         this.setUpDebug()
 
         this.needsUpdate=false
 
         this.pointSphere=this.setUpPointSphere()
+        this.rayTargets
 
         //raycaster
         this.rayCaster=this.setUpRayCaster(rayCastValues)
@@ -125,13 +129,16 @@ export default class RaySphere
 
         const pointsMaterial= new THREE.PointsMaterial({
             color:'green',
-            size:0.007,
+            size:0.04,
             sizeAttenuation:true,
             // vertexColors:true
 
         })
 
         const particleMesh= new THREE.Points(pointsGeometry,pointsMaterial)
+
+        // particleMesh.rotateY=Math.PI
+
         // this.scene.add(particleMesh)
 
         // for(let i=0; i<10; i++)
@@ -139,6 +146,8 @@ export default class RaySphere
         //         console.log(particleMesh.geometry.attributes.position.array[i])
         //         console.log(this.rayPositions_floatArray[i])
         //     }
+
+        
         
 
         return particleMesh
@@ -153,12 +162,15 @@ export default class RaySphere
     {
         // console.log(this.pointSphere.rotation)
         // console.log("rotating")
+        // const rotation= new THREE.Quaternion();
         this.pointSphere.rotation.copy(mesh.rotation)
 
-        // this.pointSphere.rotation.y=mesh.rotation.y
-        // this.pointSphere.rotation.z=mesh.rotation.z
-        // this.pointSphere.rotation.x=mesh.rotation.x
-        // console.log(this.pointSphere.geometry.attributes.position.array)
+       return this.toWorldVertices()
+
+        
+
+
+        // vector.applyQuaternion( quaternion );
 
 
         // mesh.rotation
@@ -185,26 +197,39 @@ export default class RaySphere
         return rayCaster
     }
 
-    castRays(origin)
+    castRays(rayTargets, origin)
     {
         //get points from sphere
             //call util function
-            // console.log('castingRays')
-            let rayTargets=this.float3ToVec3(this.pointSphere.geometry.attributes.position.array)
+            
+            // let rayTargets=this.rayPositions_vec3Array
+            // let rayTargets=this.rothis.rayPositions_vec3Array
+            // console.log('casting rays')
+
+            const minz=(rayTargets.reduce((sum,cur)=>{return sum=(sum.z<cur.z)?sum:cur},new THREE.Vector3(0,0,0)))
+            const maxz=(rayTargets.reduce((sum,cur)=>{return sum=(sum.z>cur.z)?sum:cur},new THREE.Vector3(0,0,0)))
+
+            const minx=(rayTargets.reduce((sum,cur)=>{return sum=(sum.x<cur.x)?sum:cur},new THREE.Vector3(0,0,0)))
+            const maxx=(rayTargets.reduce((sum,cur)=>{return sum=(sum.x>cur.x)?sum:cur},new THREE.Vector3(0,0,0)))
+
+            const miny=(rayTargets.reduce((sum,cur)=>{return sum=(sum.y<cur.y)?sum:cur},new THREE.Vector3(0,0,0)))
+            const maxy=(rayTargets.reduce((sum,cur)=>{return sum=(sum.y>cur.y)?sum:cur},new THREE.Vector3(0,0,0)))
+            // console.log(`Length ${rayTargets.length}\nmax z ${maxz.z} min z ${minz.z}\nmax x ${maxx.x} min x ${minx.x}\nmax y ${maxy.y} min y ${miny.y}`)
             this.debug.rayTargetCount=rayTargets.length
             
             //DELETE -------------------------------------------
-            if(this.debug.temp){
-                this.debug.temp.geometry.dispose()
-                this.debug.temp.material.dispose()
-                this.scene.remove(this.debug.temp)
-            }
-            const geometry= new THREE.BufferGeometry()
-            geometry.setAttribute('position',new THREE.BufferAttribute(this.pointSphere.geometry.attributes.position.array,3))
-            const material= new THREE.PointsMaterial({size:0.01, color:'red'})
-            const mesh= new THREE.Points(geometry,material)
-            this.scene.add(mesh)
-            this.debug.temp=mesh
+            // if(this.debug.temp){
+            //     this.debug.temp.geometry.dispose()
+            //     this.debug.temp.material.dispose()
+            //     this.scene.remove(this.debug.temp)
+            // }
+            // const geometry= new THREE.BufferGeometry()
+            // geometry.setAttribute('position',new THREE.BufferAttribute(this.pointSphere.geometry.attributes.position.array,3))
+            // const material= new THREE.PointsMaterial({size:0.01, color:'red'})
+            // const mesh= new THREE.Points(geometry,material)
+            // this.scene.add(mesh)
+            // this.debug.temp=mesh
+
             // console.log(mesh)
             //--------------------------------------------------------
             // this.debug.test=rayTargets
@@ -344,18 +369,33 @@ export default class RaySphere
        
         const vec3Arr=[]
         for (let i = 0; i < arr.length/3; i++) {
-            
+                const i3=i*3
                 const vec= new THREE.Vector3(
-                    arr[i],//x
-                    arr[i+1],//y
-                    arr[i+2]//z
+                    arr[i3],//x
+                    arr[i3+1],//y
+                    arr[i3+2]//z
                 )
-                vec.normalize()
+                // vec.normalize()
                 vec3Arr.push(vec)
             
         }
         return vec3Arr
     }
+
+    toVertices(geometry) {
+        const positions = geometry.attributes.position;
+        const vertices = [];
+        for (let index = 0; index < positions.count; index++) {
+          vertices.push(
+            new THREE.Vector3(
+              positions.getX(index),
+              positions.getY(index),
+              positions.getZ(index)
+            )
+          );
+        }
+        return vertices;
+      }
     
     updateAngle(rayAngleLimit)
     {
@@ -415,6 +455,7 @@ export default class RaySphere
         folder.add(this.debug,'getPointCount')
         folder.add(this.debug,'getTest')
         folder.add(this,'test')
+        folder.add(this,'debugTestTargets').name("Fire all Rays")
 
 
 
@@ -426,7 +467,7 @@ export default class RaySphere
         this.removeRay()
         
         
-        obsticle= obsticle.position;
+        if(!obsticle.isVector3){obsticle= obsticle.position;}
 
         const lineMaterial= new THREE.LineBasicMaterial();
         lineMaterial.color=new THREE.Color("green")
@@ -446,6 +487,31 @@ export default class RaySphere
 
     }
 
+    debugTestTargets()
+    {
+        // const arr= this.float3ToVec3(this.rayPositions_floatArray)
+        const vertices= this.toWorldVertices(this.pointSphere.geometry)
+
+        const origin= this.debug.origin
+        console.log(origin)
+        // this.rayPositions_vec3Array.forEach((target)=>
+        //     {
+        //         this.debugRay(target, origin)
+        //     })
+        console.log(vertices.length)
+
+        vertices.forEach((target)=>
+            {   
+                target.add(origin).normalize
+                this.debugRay(target, origin)
+            })
+
+
+        
+    }
+
+
+
     removeRay(){
         if(this.debug.ray){
             // console.log(this.debug.ray[0].material)
@@ -457,22 +523,40 @@ export default class RaySphere
     }
     //#endregion
 
-    // createDebugSphere(arr)
-    // {
-    //     const pointsGeometry= new THREE.BufferGeometry()
-    //     pointsGeometry.setAttribute('position',new THREE.BufferAttribute(arr,3))
-    //     pointsGeometry.setAttribute('color',new THREE.BufferAttribute(this.rayColours,3))
+    //#region utils
 
-    //     const pointsMaterial= new THREE.PointsMaterial({
-    //         // color:'white',
-    //         size:0.007,
-    //         sizeAttenuation:true,
-    //         vertexColors:true
+    toWorldVertices()
+    {
+        
+        const positionAttribute = this.pointSphere.geometry.getAttribute( 'position' );
+        // console.log(positionAttribute)
+        const rotatedVerticies=[]
+        for(let i=0; i<positionAttribute.count;i++)
+            {
+                const vertex = new THREE.Vector3();
+                vertex.fromBufferAttribute( positionAttribute, i );
+                this.pointSphere.localToWorld( vertex );
+                rotatedVerticies.push(vertex)
+                
+            }
 
-    //     })
-    //     const particleMesh= new THREE.Points(pointsGeometry,pointsMaterial)
-    //     this.scene.add(particleMesh)
-    // }
+        
+
+        return rotatedVerticies
+    }
+    toFloatArr(arr)
+    {
+        const floatArr= new Float32Array(arr.length*3)
+        arr.forEach((vec,i)=>
+        {
+            const i3=i*3
+            floatArr[i3]=vec.x
+            floatArr[i3+1]=vec.y
+            floatArr[i3+2]=vec.z
+        })
+        return floatArr
+    }
+    //#endregion
 
     //#region unused
     
@@ -501,11 +585,11 @@ export default class RaySphere
     
                     // const normalizedTarget=new THREE.Vector3(x,y,z)
 
-                    // if(z<this.rayAngleLimit){
+                    if(z<this.rayAngleLimit){
                         const normalizedTarget=new THREE.Vector3(x,y,z)
-                        // normalizedTarget.normalize()
+                        normalizedTarget.normalize()
                         points.push(normalizedTarget)
-                    // }
+                    }
                     // else
                     // {
                     //     // console.log("cutting")

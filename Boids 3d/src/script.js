@@ -30,8 +30,8 @@ const canvas = document.querySelector('.webgl')
 //create scene
 const scene = new THREE.Scene()
 
-// const axisHelper= new THREE.AxesHelper(0.3)
-// scene.add(axisHelper)
+const axisHelper= new THREE.AxesHelper(0.3)
+scene.add(axisHelper)
 /**
  * Handle sizes and resize
  */
@@ -130,15 +130,14 @@ const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 );
 geometry.rotateX(-Math.PI * 0.5);
 const material = new THREE.MeshBasicMaterial({wireframe:true});
 const boidMesh= new THREE.Mesh(geometry,material)
-scene.add(boidMesh)
 
 // const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
 
 // const material = new THREE.MeshBasicMaterial({wireframe:true});
-// const boidMesh2= new THREE.Mesh(geometry,material)
+const boidMesh2= new THREE.Mesh(geometry,material)
 // const boidMesh3= new THREE.Mesh(geometry,material)
 
-// boidMesh2.position.z=-0.5
+boidMesh2.position.z=-0.5
 // boidMesh3.position.z=0.3
 // boidMesh.position.z=0
 boidMesh.rotation.y=Math.PI
@@ -146,101 +145,25 @@ boidMesh.rotation.y=Math.PI
 gui.add(boidMesh.position,'z').min(-2).max(2).step(0.001)
 gui.add(boidMesh.rotation,'y').min(-Math.PI).max(Math.PI).step(0.001).name('y Rotation')
 
-const testBoids=[boidMesh]
-scene.add(boidMesh)
-
-
+const testBoids=[boidMesh,boidMesh2]
+scene.add(boidMesh,boidMesh2)
 
 /**
- * fib sphere
+ * mouse events
  */
-debug.rayPoints= 500
-debug.rayCutoff=0.5
-// const rays=new RAYS(debug.rayPoints,debug.rayCutoff)
+debug.keyDown
 
-// let raySpherePointPositions=rays.rayPositions_floatArray
-// let raySphereColors=rays.rayColours
-
-// // console.log(raySphereColors)
-
-// // console.log(raySpherePointPositions)
-
-// //set up geometry
-// const pointsGeometry= new THREE.BufferGeometry()
-// pointsGeometry.setAttribute('position',new THREE.BufferAttribute(raySpherePointPositions,3))
-// pointsGeometry.setAttribute('color',new THREE.BufferAttribute(raySphereColors,3))
-
-// const pointsMaterial= new THREE.PointsMaterial({
-//     // color:'white',
-//     size:0.01,
-//     sizeAttenuation:true,
-//     vertexColors:true
-
-// })
-
-// const particleMesh= new THREE.Points(pointsGeometry,pointsMaterial)
-// scene.add(particleMesh)
-
-
-//create lines
-//create material
-
-
-
-
-
-// let raysVec3Array=rays.rayPositions_vec3Array
-
-function addDebugLines(targetArr)
+window.addEventListener('keydown',(e)=>
 {
-    const lineMaterial= new THREE.LineBasicMaterial({
-        color: 0xff00f0,
-    });
-    const baseTarget= new THREE.Vector3(0,0,0)
-    const lineArr=[]
 
-    targetArr.forEach((target)=>
-    {
-        let lineGeometry = new THREE.BufferGeometry().setFromPoints( [baseTarget,target] );
-    
-    
-        let line = new THREE.Line(lineGeometry, lineMaterial);
-        scene.add(line);
-        lineArr.push(line)
-        
-    })
-    return lineArr
+    // console.log(e)
+    const currentKey=e.key
 
-}
-// debug.lineArr = addDebugLines(raysVec3Array)
+    debug.keyDown=currentKey
 
-function updateDebugLines(cutoff)
-{
-    const arr=debug.lineArr
-
-    for(const lineMesh of arr){
-        scene.remove(lineMesh)  
-        lineMesh.material.dispose()
-        lineMesh.geometry.dispose()
-        // console.log(line)
-    }
-                
-
-                
-            
-        
-
-    // let temp=RAYS.fibonacci_sphere_vec3(debug.rayPoints,cutoff)
-    rays.updateAngle(cutoff)
+})
 
 
-    // console.log(temp.length)
-    
-    // debug.lineArr=addDebugLines(rays.fibonacci_sphere_vec3)
-    // console.log(debug.lineArr)
-    
-
-}
 
 
 /**
@@ -295,13 +218,62 @@ const tick =()=>
             // rayController.update()
             // console.log(slowTick)
             // rayController.test()
-        rayController.checkEnviroment(testBoids)
+            console.log(rayController.checkEnviroment(testBoids))
 
         }
 
         past=slowTick
 
         // boidController.update()
+
+
+        //key controller
+        // console.log(debug.key)
+        switch(debug.keyDown)
+        {
+            case "a":
+                //left
+                // console.log('going left')
+                dragMesh2.position.z+=0.03
+                debug.keyDown=null
+
+                break
+
+            case "d":
+                //right
+                dragMesh2.position.z-=0.03
+                debug.keyDown=null
+
+                break
+
+            case "w":
+                //forward
+                dragMesh2.position.x-=0.03
+                debug.keyDown=null
+                break
+
+            case "s":
+                //back
+                dragMesh2.position.x+=0.03
+                debug.keyDown=null
+            break
+
+            case "Shift":
+                //down
+                dragMesh2.position.y-=0.03
+                debug.keyDown=null
+                break
+
+            case " ":
+                //up
+                dragMesh2.position.y+=0.03
+                debug.keyDown=null
+                break
+        }
+
+
+
+
 
 
         //renderer

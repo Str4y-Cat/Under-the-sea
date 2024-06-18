@@ -38,12 +38,17 @@ export default class
         //loop through boidPositions
         boidPositions.forEach((boid,index) => {
             
+            // console.log(boid)
             //rotate raySphere to match boid
-            this.raySphere.rotateTo(boid)
+            const targets= this.raySphere.rotateTo(boid)
+            // console.log(targets)
+            this.raySphere.debug.origin=boid.position
+            // console.log(boid.position)
 
             //cast rays on that sphere
-            const environmentIntersections= this.raySphere.castRays(boid.position)
-            this.debugPoints(boid,index)
+            const environmentIntersections= this.raySphere.castRays(targets,boid.position)
+            // this.debugPoints(boid,index)
+
             //if there are intersections
             if(environmentIntersections)
                 {
