@@ -23,6 +23,9 @@ export default class
 
         this.debug={}
         this.debug.pointMeshes={}
+
+        console.log("set up ray controller")
+        console.log(this)
         // this.test()
     }
 
@@ -34,7 +37,7 @@ export default class
     {
         //initialize return object
         const foundIntersections={}
-
+        // console.log('running')
         //loop through boidPositions
         boidPositions.forEach((boid,index) => {
             
@@ -53,14 +56,15 @@ export default class
             if(environmentIntersections)
                 {
                         // console.log(environmentIntersections)
-                        this.raySphere.debug.ray=this.raySphere.debugRay(environmentIntersections,boid.position)
+                        // this.raySphere.debug.ray=this.raySphere.debugRay(environmentIntersections,boid.position)
                         
                     // add returnObjec[currentIndex]= return value from raySphere.castRays 
                     foundIntersections[index]=environmentIntersections
+                    // console.log(environmentIntersections)
+
                 }
 
         });
-
         return foundIntersections
     }
 

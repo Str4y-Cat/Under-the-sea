@@ -33,6 +33,7 @@ export default class RaySphere
         this.rayCaster=this.setUpRayCaster(rayCastValues)
         this.environmentObjects=rayCastValues.environmentObjects
        
+        console.log(this)
 
         // console.log( this.environmentObjects)
         // console.log( this.rayCaster)
@@ -195,7 +196,7 @@ export default class RaySphere
         rayCaster.layers.set( 1 );
         rayCaster.far=this.rayFar
 
-        console.log(rayCaster)
+        // console.log(rayCaster)
 
         return rayCaster
     }
@@ -209,16 +210,16 @@ export default class RaySphere
             // let rayTargets=this.rothis.rayPositions_vec3Array
             // console.log('casting rays')
 
-            const minz=(rayTargets.reduce((sum,cur)=>{return sum=(sum.z<cur.z)?sum:cur},new THREE.Vector3(0,0,0)))
-            const maxz=(rayTargets.reduce((sum,cur)=>{return sum=(sum.z>cur.z)?sum:cur},new THREE.Vector3(0,0,0)))
+            // const minz=(rayTargets.reduce((sum,cur)=>{return sum=(sum.z<cur.z)?sum:cur},new THREE.Vector3(0,0,0)))
+            // const maxz=(rayTargets.reduce((sum,cur)=>{return sum=(sum.z>cur.z)?sum:cur},new THREE.Vector3(0,0,0)))
 
-            const minx=(rayTargets.reduce((sum,cur)=>{return sum=(sum.x<cur.x)?sum:cur},new THREE.Vector3(0,0,0)))
-            const maxx=(rayTargets.reduce((sum,cur)=>{return sum=(sum.x>cur.x)?sum:cur},new THREE.Vector3(0,0,0)))
+            // const minx=(rayTargets.reduce((sum,cur)=>{return sum=(sum.x<cur.x)?sum:cur},new THREE.Vector3(0,0,0)))
+            // const maxx=(rayTargets.reduce((sum,cur)=>{return sum=(sum.x>cur.x)?sum:cur},new THREE.Vector3(0,0,0)))
 
-            const miny=(rayTargets.reduce((sum,cur)=>{return sum=(sum.y<cur.y)?sum:cur},new THREE.Vector3(0,0,0)))
-            const maxy=(rayTargets.reduce((sum,cur)=>{return sum=(sum.y>cur.y)?sum:cur},new THREE.Vector3(0,0,0)))
-            // console.log(`Length ${rayTargets.length}\nmax z ${maxz.z} min z ${minz.z}\nmax x ${maxx.x} min x ${minx.x}\nmax y ${maxy.y} min y ${miny.y}`)
-            this.debug.rayTargetCount=rayTargets.length
+            // const miny=(rayTargets.reduce((sum,cur)=>{return sum=(sum.y<cur.y)?sum:cur},new THREE.Vector3(0,0,0)))
+            // const maxy=(rayTargets.reduce((sum,cur)=>{return sum=(sum.y>cur.y)?sum:cur},new THREE.Vector3(0,0,0)))
+            // // console.log(`Length ${rayTargets.length}\nmax z ${maxz.z} min z ${minz.z}\nmax x ${maxx.x} min x ${minx.x}\nmax y ${maxy.y} min y ${miny.y}`)
+            // this.debug.rayTargetCount=rayTargets.length
             
             //DELETE -------------------------------------------
             // if(this.debug.temp){
@@ -479,8 +480,8 @@ export default class RaySphere
     debugRay(obsticle,origin)
     {   
         //clear the last ray path
-        console.log(obsticle)
-        console.log('debugging ray')
+        // console.log(obsticle)
+        // console.log('debugging ray')
         this.removeRay()
         
         

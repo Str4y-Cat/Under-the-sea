@@ -18,9 +18,14 @@ import RayController from './rayScripts/RayController';
 //set up debug
 const gui = new GUI()
 const debug= {}
+const boidsObjects=
+{
+    worldObjects:null
+}
 
 const textureLoader= new THREE.TextureLoader()
 const matCapTexture= textureLoader.load('/textures/matCap1.png')
+const matCapTexture2= textureLoader.load('/textures/matCap2.png')
 
 //axis helper
 
@@ -29,6 +34,8 @@ const canvas = document.querySelector('.webgl')
 
 //create scene
 const scene = new THREE.Scene()
+scene.background = new THREE.Color().setHSL( 0.6, 0, 1 );
+scene.fog = new THREE.Fog( scene.background, 1, 5000 );
 
 const axisHelper= new THREE.AxesHelper(0.3)
 scene.add(axisHelper)
@@ -82,24 +89,70 @@ scene.add(floor)
  * 
  */
 
-const dragMaterial= new THREE.MeshMatcapMaterial({matcap:matCapTexture})
-const dragGeometry1= new THREE.BoxGeometry(0.1,0.1,0.1)
-// const dragGeometry2=  new THREE.CapsuleGeometry( 0.2, 0.2, 4, 8 ); 
-// const dragGeometry2=  new THREE.SphereGeometry( 0.1 ); 
+const dragMaterial= new THREE.MeshPhongMaterial({color:"#ff5733"})
+const dragGeometry1= new THREE.BoxGeometry(1,1,1,1,64,64)
+const environmentObjects=[]
+// for(let i=0; i<40; i++)
+//     {
+//         const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
+//         mesh.scale.x=Math.abs(Math.random()-0.5)
+//         mesh.scale.y=Math.abs(Math.random()-0.5)
+//         mesh.scale.z=Math.abs(Math.random()-0.5)
+//         // mesh.rotation.set(new THREE.Vector3((Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI)) 
+//         mesh.rotation.x=(Math.random()-0.5)*2*Math.PI
+//         mesh.rotation.y=(Math.random()-0.5)*2*Math.PI
+//         mesh.rotation.z=(Math.random()-0.5)*2*Math.PI
 
-// const dragMesh1=new THREE.Mesh(dragGeometry1,dragMaterial)
-// dragMesh1.position.z=1
-const dragMesh2=new THREE.Mesh(dragGeometry1,dragMaterial)
-dragMesh2.position.z=-0.4
+//         // console.log(mesh.rotation.x)
+        
+//         // mesh.position.set(new THREE.Vector3((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)) 
+//         mesh.position.x=(Math.random()-0.5)*5
+//         mesh.position.y=(Math.random()-0.5)*5
+//         mesh.position.z=(Math.random()-0.5)*5
+        
+//         mesh.layers.enable( 1 );
+       
+//         scene.add(mesh)
+    
+//     }
 
-// dragMesh1.layers.enable( 1 );
-dragMesh2.layers.enable( 1 );
-const testFolder=gui.addFolder('testObject')
-testFolder.add(dragMesh2.position,'x').min(-1).max(1).step(0.00001).name('test Object x')
-testFolder.add(dragMesh2.position,'y').min(-1).max(1).step(0.00001).name('test Object y')
-testFolder.add(dragMesh2.position,'z').min(-1).max(1).step(0.00001).name('test Object z')
-// scene.add(dragMesh1,dragMesh2)
-scene.add(dragMesh2)
+const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
+mesh.scale.x=Math.abs(Math.random()-0.5)
+mesh.scale.y=2.5
+mesh.position.y=-1.25
+mesh.scale.z=5
+mesh.layers.enable( 1 );
+scene.add(mesh)
+environmentObjects.push(mesh)
+// console.log(mesh.rotation.x)
+
+// mesh.position.set(new THREE.Vector3((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)) 
+// mesh.position.x=(Math.random()-0.5)*5
+// mesh.position.y=(Math.random()-0.5)*5
+// mesh.position.z=(Math.random()-0.5)*5
+
+
+
+
+
+
+
+// // const dragGeometry2=  new THREE.CapsuleGeometry( 0.2, 0.2, 4, 8 ); 
+// // const dragGeometry2=  new THREE.SphereGeometry( 0.1 ); 
+
+// // const dragMesh1=new THREE.Mesh(dragGeometry1,dragMaterial)
+// // dragMesh1.position.z=1
+// const dragMesh2=new THREE.Mesh(dragGeometry1,dragMaterial)
+// dragMesh2.position.z=-0.4
+
+// // dragMesh1.layers.enable( 1 );
+// dragMesh2.layers.enable( 1 );
+// const testFolder=gui.addFolder('testObject')
+// testFolder.add(dragMesh2.position,'x').min(-1).max(1).step(0.00001).name('test Object x')
+// testFolder.add(dragMesh2.position,'y').min(-1).max(1).step(0.00001).name('test Object y')
+// testFolder.add(dragMesh2.position,'z').min(-1).max(1).step(0.00001).name('test Object z')
+// // scene.add(dragMesh1,dragMesh2)
+// scene.add(dragMesh2)
 
 
 
@@ -109,9 +162,9 @@ scene.add(dragMesh2)
  */
 
 const camera= new THREE.PerspectiveCamera(75,sizes.width/sizes.height, 0.1 , 100)
-camera.position.x = 1
-camera.position.y = 0.5
-camera.position.z = 0
+camera.position.x = 2
+camera.position.y = 2.5
+camera.position.z = 5
 camera.lookAt(new THREE.Vector3(0,0,0))
 scene.add(camera)
 
@@ -125,11 +178,14 @@ document.body.appendChild( stats.dom );
  * BOIDS
  */
 
-// const boidController= new BoidController(300,sizes,scene,debug,gui,camera, matCapTexture)
-const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
-geometry.rotateX(-Math.PI * 0.5);
-const material = new THREE.MeshBasicMaterial({wireframe:true});
-const boidMesh= new THREE.Mesh(geometry,material)
+const boidController= new BoidController(1,sizes,scene,debug,gui,camera, matCapTexture)
+
+
+
+// const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
+// geometry.rotateX(-Math.PI * 0.5);
+// const material = new THREE.MeshBasicMaterial({wireframe:true});
+// const boidMesh= new THREE.Mesh(geometry,material)
 
 // const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
 
@@ -140,13 +196,13 @@ const boidMesh= new THREE.Mesh(geometry,material)
 // boidMesh2.position.z=-0.5
 // boidMesh3.position.z=0.3
 // boidMesh.position.z=0
-boidMesh.rotation.y=Math.PI
+// boidMesh.rotation.y=Math.PI
 
-gui.add(boidMesh.position,'z').min(-2).max(2).step(0.001)
-gui.add(boidMesh.rotation,'y').min(-Math.PI).max(Math.PI).step(0.001).name('y Rotation')
+// gui.add(boidMesh.position,'z').min(-2).max(2).step(0.001)
+// gui.add(boidMesh.rotation,'y').min(-Math.PI).max(Math.PI).step(0.001).name('y Rotation')
 
-const testBoids=[boidMesh]
-scene.add(boidMesh)
+// const testBoids=[boidMesh]
+// scene.add(boidMesh)
 
 /**
  * mouse events
@@ -170,9 +226,17 @@ window.addEventListener('keydown',(e)=>
  * RAYCASTING
  */
 
-const rayController=new RayController(200,-0.347,[dragMesh2],scene,gui)
+const rayController=new RayController(50,-0.347,environmentObjects,scene,gui)
 
+/**
+ * Lights
+ */
 
+const hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 2 );
+hemiLight.color.setHSL( 0.6, 1, 0.6 );
+hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+hemiLight.position.set( 0, 50, 0 );
+scene.add( hemiLight );
 
 
 
@@ -213,18 +277,22 @@ const tick =()=>
 
 
         //for expensive computations, offset slowtick so that heavy computations are spread
-        let slowTick= Math.round(elapsedTime)/10
+        let slowTick= Math.round(elapsedTime*10)
         if(slowTick!=past){
             // rayController.update()
             // console.log(slowTick)
             // rayController.test()
-            this.worldObjects= rayController.checkEnviroment(testBoids)
+            let environmentObjects= rayController.checkEnviroment(boidController.boidMeshes)
+            // console.log(environmentObjects)
+            boidsObjects.worldObjects= environmentObjects
+
+            // console.log(boidsObjects)
 
         }
 
         past=slowTick
 
-        // boidController.update()
+        boidController.update()
 
 
         //key controller
