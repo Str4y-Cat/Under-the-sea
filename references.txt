@@ -1,1 +1,5 @@
 https://www.youtube.com/watch?v=woTi--GCzwM
+
+https://eng.libretexts.org/Bookshelves/Computer_Science/Applied_Programming/Book%3A_Think_Complexity%3A_Exploring_Complexity_Science_with_Python_(Downey)/11%3A_Evolution
+
+https://discourse.threejs.org/t/solved-best-way-to-translate-rotate-or-scale-a-group-of-vector3-at-the-group-level/3207

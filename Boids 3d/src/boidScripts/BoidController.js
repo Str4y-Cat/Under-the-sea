@@ -49,8 +49,8 @@ export default class BoidController
         
         material.shininess=0.5
         material.specular=0.7
-        console.log(`texture`)
-        console.log(this.texture)
+        // console.log(`texture`)
+        // console.log(this.texture)
 
         boidArray.forEach((boid,i) => {
 

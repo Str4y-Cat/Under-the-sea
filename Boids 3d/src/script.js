@@ -7,7 +7,7 @@ import {  OrbitControls } from 'three/examples/jsm/Addons.js'
 import BoidController from './boidScripts/BoidController'
 
 import { DragControls } from 'three/addons/controls/DragControls.js';
-import RAYS from './rayScripts/RayPlotter'
+import RAYS from './rayScripts/RaySphere'
 import Stats from 'three/addons/libs/stats.module.js';
 
 import RayController from './rayScripts/RayController';
@@ -83,17 +83,21 @@ scene.add(floor)
  */
 
 const dragMaterial= new THREE.MeshMatcapMaterial({matcap:matCapTexture})
-const dragGeometry1= new THREE.BoxGeometry(0.4,0.4,0.4)
+const dragGeometry1= new THREE.BoxGeometry(0.1,0.1,0.1)
 // const dragGeometry2=  new THREE.CapsuleGeometry( 0.2, 0.2, 4, 8 ); 
-const dragGeometry2=  new THREE.SphereGeometry( 0.1 ); 
+// const dragGeometry2=  new THREE.SphereGeometry( 0.1 ); 
 
-const dragMesh1=new THREE.Mesh(dragGeometry1,dragMaterial)
-dragMesh1.position.z=1
-const dragMesh2=new THREE.Mesh(dragGeometry2,dragMaterial)
-dragMesh2.position.z=-1
+// const dragMesh1=new THREE.Mesh(dragGeometry1,dragMaterial)
+// dragMesh1.position.z=1
+const dragMesh2=new THREE.Mesh(dragGeometry1,dragMaterial)
+dragMesh2.position.z=-0.4
 
-dragMesh1.layers.enable( 1 );
+// dragMesh1.layers.enable( 1 );
 dragMesh2.layers.enable( 1 );
+const testFolder=gui.addFolder('testObject')
+testFolder.add(dragMesh2.position,'x').min(-1).max(1).step(0.00001).name('test Object x')
+testFolder.add(dragMesh2.position,'y').min(-1).max(1).step(0.00001).name('test Object y')
+testFolder.add(dragMesh2.position,'z').min(-1).max(1).step(0.00001).name('test Object z')
 // scene.add(dragMesh1,dragMesh2)
 scene.add(dragMesh2)
 
@@ -107,7 +111,7 @@ scene.add(dragMesh2)
 const camera= new THREE.PerspectiveCamera(75,sizes.width/sizes.height, 0.1 , 100)
 camera.position.x = 1
 camera.position.y = 0.5
-camera.position.z = -0.2
+camera.position.z = 0
 camera.lookAt(new THREE.Vector3(0,0,0))
 scene.add(camera)
 
@@ -121,11 +125,28 @@ document.body.appendChild( stats.dom );
  * BOIDS
  */
 
-const boidController= new BoidController(300,sizes,scene,debug,gui,camera, matCapTexture)
+// const boidController= new BoidController(300,sizes,scene,debug,gui,camera, matCapTexture)
 const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
 geometry.rotateX(-Math.PI * 0.5);
 const material = new THREE.MeshBasicMaterial({wireframe:true});
 const boidMesh= new THREE.Mesh(geometry,material)
+scene.add(boidMesh)
+
+// const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
+
+// const material = new THREE.MeshBasicMaterial({wireframe:true});
+// const boidMesh2= new THREE.Mesh(geometry,material)
+// const boidMesh3= new THREE.Mesh(geometry,material)
+
+// boidMesh2.position.z=-0.5
+// boidMesh3.position.z=0.3
+// boidMesh.position.z=0
+boidMesh.rotation.y=Math.PI
+
+gui.add(boidMesh.position,'z').min(-2).max(2).step(0.001)
+gui.add(boidMesh.rotation,'y').min(-Math.PI).max(Math.PI).step(0.001).name('y Rotation')
+
+const testBoids=[boidMesh]
 scene.add(boidMesh)
 
 
@@ -222,50 +243,11 @@ function updateDebugLines(cutoff)
 }
 
 
-
-// gui.add(debug,'rayPoints').min(0).max(4000).step(10).onFinishChange((num)=>
-//     {
-//         rays.updateArrayCount(num)
-//         rays.updateAngle(debug.rayCutoff)
-        
-//         let temp= rays.rayPositions_floatArray
-//         // console.log(temp)
-//         pointsGeometry.setAttribute('position',new THREE.BufferAttribute(temp,3))
-
-//         pointsGeometry.setAttribute('color',new THREE.BufferAttribute(rays.rayColours,3))
-
-
-
-//         // let raySpherePointPositions=RAYS.fibonacci_sphere(num)
-//         // pointsGeometry.setAttribute('position',new THREE.BufferAttribute(raySpherePointPositions,3))
-//         // let raySphereColors=RAYS.fibonacci_colours(debug.rayPoints,debug.rayCutoff)
-        
-//         // pointsGeometry.setAttribute('color',new THREE.BufferAttribute(raySphereColors,3))
-
-//     })
-// gui.add(debug,'rayCutoff').min(-1).max(1).step(0.001).onChange((cutoff)=>
-//     {
-        
-//         // let raySphereColors=RAYS.fibonacci_colours(debug.rayPoints,cutoff)
-//         rays.updateAngle(cutoff)
-//         let raySphereColors=rays.rayColours
-        
-//         pointsGeometry.setAttribute('color',new THREE.BufferAttribute(raySphereColors,3))
-        
-//         // console.log(debug.lineArr)
-//         // updateDebugLines(cutoff)
-
-
-
-//         // particleBufferAttribute.needsUpdate = true;
-//     })
-
-
 /**
  * RAYCASTING
  */
 
-const rayController=new RayController(50,0.1,[dragMesh1,dragMesh2],scene,gui)
+const rayController=new RayController(200,-0.347,[dragMesh2],scene,gui)
 
 
 
@@ -274,8 +256,8 @@ const rayController=new RayController(50,0.1,[dragMesh1,dragMesh2],scene,gui)
 /**
  * add controls
  */
-// const controls = new OrbitControls(camera, canvas)
-// controls.enableDamping=true
+const controls = new OrbitControls(camera, canvas)
+controls.enableDamping=true
 
 
 /**
@@ -288,15 +270,9 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(2,window.devicePixelRatio))
 
 
-const dragControls = new DragControls( [dragMesh1,dragMesh2], camera, renderer.domElement );
+// const dragControls = new DragControls( [dragMesh2], camera, renderer.domElement );
 
-// const controls = new FlyControls( camera, renderer.domElement );
 
-// controls.movementSpeed = 1000;
-// // controls.domElement = renderer.domElement;
-// controls.rollSpeed = Math.PI / 24;
-// controls.autoForward = false;
-// controls.dragToLook = false;
 /**
  * annimaiton loop
  */
@@ -309,19 +285,23 @@ const tick =()=>
 
         let elapsedTime= clock.getElapsedTime()
         stats.update()
-        // controls.update()
+        controls.update()
         // controls.update(delta)
 
 
         //for expensive computations, offset slowtick so that heavy computations are spread
-        let slowTick= Math.round(elapsedTime*10)
+        let slowTick= Math.round(elapsedTime)/10
         if(slowTick!=past){
-            rayController.update()
+            // rayController.update()
             // console.log(slowTick)
+            // rayController.test()
+        rayController.checkEnviroment(testBoids)
+
         }
+
         past=slowTick
 
-        boidController.update()
+        // boidController.update()
 
 
         //renderer
