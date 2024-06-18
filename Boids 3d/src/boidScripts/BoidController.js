@@ -80,9 +80,9 @@ export default class BoidController
      * Updates the movement of the boid objects
      * 
      */
-    update()
+    update(environmenObjects)
     {
-        this.boidLogic.update()
+        this.boidLogic.update(environmenObjects)
 
         this.boidMeshes.forEach((boidMesh,i)=>
         {

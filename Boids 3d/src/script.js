@@ -266,7 +266,7 @@ renderer.setPixelRatio(Math.min(2,window.devicePixelRatio))
 
 const clock= new THREE.Clock()
 let past=0
-
+let intersectingEvironmentObjects={}
 const tick =()=>
     {
 
@@ -282,9 +282,9 @@ const tick =()=>
             // rayController.update()
             // console.log(slowTick)
             // rayController.test()
-            let environmentObjects= rayController.checkEnviroment(boidController.boidMeshes)
+            intersectingEvironmentObjects=rayController.checkEnviroment(boidController.boidMeshes)
             // console.log(environmentObjects)
-            boidsObjects.worldObjects= environmentObjects
+            
 
             // console.log(boidsObjects)
 
@@ -292,8 +292,8 @@ const tick =()=>
 
         past=slowTick
 
-        boidController.update()
-
+        boidController.update(intersectingEvironmentObjects)
+        intersectingEvironmentObjects={}
 
         //key controller
         // console.log(debug.key)

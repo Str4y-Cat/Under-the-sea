@@ -13,6 +13,7 @@ export default class BoidLogic
         //world variables
         this.sizes=displaySizes
         this.sceneSize=startValues.sceneSize/2|| defaultValue(2,"sceneSize")
+        
 
         
         this.transPadding = startValues.transPadding || defaultValue(10,"transPadding");
@@ -31,15 +32,7 @@ export default class BoidLogic
         }
 
         //debuggable objects
-        this.visualRange=startValues.visualRange || defaultValue(1,"VisualRange")
-        this.protectedRange=startValues.protectedRange|| defaultValue(0.5,"protectedRange")
-        this.cohesionFactor=startValues.cohesionFactor|| defaultValue(0.0039,"cohesionFactor")
-        this.matchingFactor=startValues.matchingFactor|| defaultValue(0.0287,"matchingFactor")
-        this.seperationFactor=startValues.seperationFactor|| defaultValue(0.01395,"seperationFactor")
-        this.minSpeed=startValues.minSpeed/100|| defaultValue(0.005,"minSpeed")
-        this.maxSpeed=startValues.maxSpeed/100  || defaultValue(0.01,"maxSpeed")
-        this.wallTransparent=startValues.wallTransparent|| defaultValue(false,"wallTransparent")
-        this.turnFactor=startValues.turnFactor/100|| defaultValue(0.2,"turnFactor")
+        this.setUpTweakableValues(startValues)
 
         //boid objects
         this.boidCount=boidCount|| defaultValue(1,"boidCount")
@@ -49,6 +42,21 @@ export default class BoidLogic
         console.log('success!')
     }
 
+    setUpTweakableValues(startValues)
+    {
+        this.visualRange=startValues.visualRange || defaultValue(1,"VisualRange")
+        this.protectedRange=startValues.protectedRange|| defaultValue(0.5,"protectedRange")
+        this.cohesionFactor=startValues.cohesionFactor|| defaultValue(0.0039,"cohesionFactor")
+        this.matchingFactor=startValues.matchingFactor|| defaultValue(0.0287,"matchingFactor")
+        this.seperationFactor=startValues.seperationFactor|| defaultValue(0.01395,"seperationFactor")
+        this.minSpeed=startValues.minSpeed/100|| defaultValue(0.005,"minSpeed")
+        this.maxSpeed=startValues.maxSpeed/100  || defaultValue(0.01,"maxSpeed")
+        this.wallTransparent=startValues.wallTransparent|| defaultValue(false,"wallTransparent")
+        this.turnFactor=startValues.turnFactor/100|| defaultValue(0.2,"turnFactor")
+        this.objectAvoidFactor=startValues.objectAvoidFactor/100|| defaultValue(2,"object avoid")
+        
+    
+    }
 
     // updateBoids
     updateSolidBoundingBox(padding){
@@ -80,8 +88,9 @@ export default class BoidLogic
         return boidArray
     }
 
-    update()
+    update(environmenObjects)
     {
+        // if(environmenObjects[0]){console.log(environmenObjects)}
         this.boidArray.forEach((boid,i)=>
             {
                 //set up the rotation target
@@ -118,13 +127,10 @@ export default class BoidLogic
                                         // accum.close_dx+=boid.x-otherBoid.x //!!!!!!!!! can just use dx
                                         // accum.close_dy+=boid.y-otherBoid.y //!!!!!!!!! can just use dy
                                         const exp=(1-(distance/this.protectedRange))**2
-                                        // if(i==0)
-                                        //     {
-                                        //         console.log(exp)
-                                        //     }
-                                        accum.close_dx+=dx*exp //!!!!!!!!! can just use dx
-                                        accum.close_dy+=dy*exp //!!!!!!!!! can just use dy
-                                        accum.close_dz+=dz*exp //!!!!!!!!! can just use dy
+
+                                        accum.close_dx+=dx*exp 
+                                        accum.close_dy+=dy*exp 
+                                        accum.close_dz+=dz*exp 
 
                                     }
                                 
@@ -146,19 +152,22 @@ export default class BoidLogic
                             }
                     })
 
+                //TEST
+                if(!environmenObjects[i]){
+
+                
                 //check if there were any boids in the visual range
                 if(accum.neighboring_boids>0)
                     {
                         //average the positions and velocity by number of neighboring boids
-                        // console.log(`yvel_avg before averaging: ${accum.yvel_avg}\n`)
+                        
                         accum.xpos_avg/=accum.neighboring_boids
                         accum.ypos_avg/=accum.neighboring_boids
                         accum.zpos_avg/=accum.neighboring_boids
                         accum.xvel_avg/=accum.neighboring_boids
                         accum.yvel_avg/=accum.neighboring_boids
                         accum.zvel_avg/=accum.neighboring_boids
-                        // console.log(`vy : ${boid.vy}`)
-                        // console.log(`yvel_avg after averaging: ${accum.yvel_avg}\n`)
+                        
 
                         
                         //add cohesion and alignment factors
@@ -171,7 +180,25 @@ export default class BoidLogic
                         boid.vz+= (accum.zpos_avg-boid.z)*this.cohesionFactor
                         boid.vz+= (accum.zvel_avg-boid.vz)*this.matchingFactor
                     }
-                
+                }
+                else
+                {
+                    //avoiding object
+                    const avoidObjExp=(1-environmenObjects[i].distance)**2
+
+                    const dx= boid.x - environmenObjects[i].position.x
+                    const dy= boid.y - environmenObjects[i].position.y
+                    const dz= boid.z - environmenObjects[i].position.z
+
+                    accum.close_dx+=dx*avoidObjExp 
+                    accum.close_dy+=dy*avoidObjExp 
+                    accum.close_dz+=dz*avoidObjExp 
+
+                    accum.close_dx*= this.objectAvoidFactor
+                    accum.close_dy*= this.objectAvoidFactor
+                    accum.close_dz*= this.objectAvoidFactor
+                }
+
                 //Add sepperation factor
                 
 

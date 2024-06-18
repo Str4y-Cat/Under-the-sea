@@ -263,7 +263,7 @@ export default class RaySphere
 
             if(foundArr.length)
             {
-                console.log("found")
+                // console.log("found")
                 objectArr.push(foundArr[0])
             }
         }
