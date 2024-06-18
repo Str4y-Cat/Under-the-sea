@@ -134,10 +134,10 @@ const boidMesh= new THREE.Mesh(geometry,material)
 // const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
 
 // const material = new THREE.MeshBasicMaterial({wireframe:true});
-const boidMesh2= new THREE.Mesh(geometry,material)
+// const boidMesh2= new THREE.Mesh(geometry,material)
 // const boidMesh3= new THREE.Mesh(geometry,material)
 
-boidMesh2.position.z=-0.5
+// boidMesh2.position.z=-0.5
 // boidMesh3.position.z=0.3
 // boidMesh.position.z=0
 boidMesh.rotation.y=Math.PI
@@ -145,8 +145,8 @@ boidMesh.rotation.y=Math.PI
 gui.add(boidMesh.position,'z').min(-2).max(2).step(0.001)
 gui.add(boidMesh.rotation,'y').min(-Math.PI).max(Math.PI).step(0.001).name('y Rotation')
 
-const testBoids=[boidMesh,boidMesh2]
-scene.add(boidMesh,boidMesh2)
+const testBoids=[boidMesh]
+scene.add(boidMesh)
 
 /**
  * mouse events
@@ -218,7 +218,7 @@ const tick =()=>
             // rayController.update()
             // console.log(slowTick)
             // rayController.test()
-            console.log(rayController.checkEnviroment(testBoids))
+            this.worldObjects= rayController.checkEnviroment(testBoids)
 
         }
 

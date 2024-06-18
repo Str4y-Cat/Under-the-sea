@@ -28,8 +28,9 @@ export default class RaySphere
         this.rayTargets
 
         //raycaster
+        this.rayFar=rayCastValues.far||0.3
+
         this.rayCaster=this.setUpRayCaster(rayCastValues)
-        this.rayDistance=1
         this.environmentObjects=rayCastValues.environmentObjects
        
 
@@ -192,7 +193,9 @@ export default class RaySphere
         if(rayCastValues==undefined){rayCastValues={}}
         const rayCaster= new THREE.Raycaster()
         rayCaster.layers.set( 1 );
-        rayCaster.far=rayCastValues.far||0.3
+        rayCaster.far=this.rayFar
+
+        console.log(rayCaster)
 
         return rayCaster
     }
@@ -249,9 +252,14 @@ export default class RaySphere
 
             this.rayCaster.set(origin,target)
             // console.log(this.rayCaster)
+            // console.log(this.rayCaster)
 
             //find intersections of environment objects
+            // console.log("test")
+            // console.log(target)
+            // console.log(this.rayCaster.intersectObjects ( this.environmentObjects))
             const foundArr=this.rayCaster.intersectObjects ( this.environmentObjects)
+
             if(foundArr.length)
             {
                 console.log("found")
@@ -301,7 +309,7 @@ export default class RaySphere
         //return the distance, else return null
         
         
-
+        // console.log(objectArr)
         return (sum.distance)?sum:null
 
         // return {normailizedDist,postition}
@@ -401,8 +409,12 @@ export default class RaySphere
     {
         // this.rayAngleLimit=rayAngleLimit
 
-        this.rayColours= this.fibonacci_colours()
+        // this.rayColours= this.fibonacci_colours()
         this.rayPositions_vec3Array=this.fibonacci_sphere_vec3()
+        this.rayPositions_floatArray=this.toFloatArr(this.rayPositions_vec3Array)
+        this.pointSphere.geometry.setAttribute('position',
+            new THREE.BufferAttribute(this.rayPositions_floatArray,3)
+        )
         this.needsUpdate=true
     }
 
@@ -410,8 +422,11 @@ export default class RaySphere
     {
         // this.rayCount=count
         // this.debugColours= this.fibonacci_colours()
-        // this.rayPositions_vec3Array=this.fibonacci_sphere_vec3()
+        this.rayPositions_vec3Array=this.fibonacci_sphere_vec3()
         this.rayPositions_floatArray=this.fibonacci_sphere()
+        this.pointSphere.geometry.setAttribute('position',
+            new THREE.BufferAttribute(this.rayPositions_floatArray,3)
+        )
         this.needsUpdate=true
 
     }
@@ -464,6 +479,8 @@ export default class RaySphere
     debugRay(obsticle,origin)
     {   
         //clear the last ray path
+        console.log(obsticle)
+        console.log('debugging ray')
         this.removeRay()
         
         
@@ -473,6 +490,7 @@ export default class RaySphere
         lineMaterial.color=new THREE.Color("green")
         const baseTarget= origin
         const target= new THREE.Vector3(obsticle.x,obsticle.y,obsticle.z)
+        // target.clampLength(0,this.rayFar)
         const lineArr=[]
 
         let lineGeometry = new THREE.BufferGeometry().setFromPoints( [baseTarget,target] );
@@ -493,16 +511,19 @@ export default class RaySphere
         const vertices= this.toWorldVertices(this.pointSphere.geometry)
 
         const origin= this.debug.origin
-        console.log(origin)
+        // console.log(origin)
         // this.rayPositions_vec3Array.forEach((target)=>
         //     {
         //         this.debugRay(target, origin)
         //     })
-        console.log(vertices.length)
+        // console.log(vertices.length)
 
         vertices.forEach((target)=>
             {   
-                target.add(origin).normalize
+                // target.clamp(new THREE.Vector3(0,0,0),this.rayFar)
+                // target.add(origin).normalize()
+                target.clampLength(0,this.rayFar).add(origin)
+                // console.log(clamp)
                 this.debugRay(target, origin)
             })
 
