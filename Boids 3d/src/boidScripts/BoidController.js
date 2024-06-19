@@ -47,10 +47,10 @@ export default class BoidController
         // const material = new THREE.MeshToonMaterial();
         // const material = new THREE.MeshLambertMaterial();
         
-        material.shininess=0.5
-        material.specular=0.7
-        console.log(`texture`)
-        console.log(this.texture)
+        // material.shininess=0.5
+        // material.specular=0.7
+        // console.log(`texture`)
+        // console.log(this.texture)
 
         boidArray.forEach((boid,i) => {
 
@@ -80,9 +80,9 @@ export default class BoidController
      * Updates the movement of the boid objects
      * 
      */
-    update()
+    update(environmenObjects)
     {
-        this.boidLogic.update()
+        this.boidLogic.update(environmenObjects)
 
         this.boidMeshes.forEach((boidMesh,i)=>
         {

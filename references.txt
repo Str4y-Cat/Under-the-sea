@@ -1,1 +1,20 @@
 https://www.youtube.com/watch?v=woTi--GCzwM
+
+https://eng.libretexts.org/Bookshelves/Computer_Science/Applied_Programming/Book%3A_Think_Complexity%3A_Exploring_Complexity_Science_with_Python_(Downey)/11%3A_Evolution
+
+https://discourse.threejs.org/t/solved-best-way-to-translate-rotate-or-scale-a-group-of-vector3-at-the-group-level/3207
+
+database
+- https://en.wikipedia.org/wiki/Spatial_database
+- https://en.wikipedia.org/wiki/Octree
+
+bufferattribute:
+- https://discourse.threejs.org/t/solved-best-way-to-translate-rotate-or-scale-a-group-of-vector3-at-the-group-level/3207
+
+possible raycast improvements:
+- check if boid is in view, dont cast rays, or cast few rayz
+- look for unessecary loops
+
+
+strange things!
+- frame rate tanks as soon as envirnment object is added to world object arr

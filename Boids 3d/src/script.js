@@ -7,7 +7,7 @@ import {  OrbitControls } from 'three/examples/jsm/Addons.js'
 import BoidController from './boidScripts/BoidController'
 
 import { DragControls } from 'three/addons/controls/DragControls.js';
-import RAYS from './rayScripts/RayPlotter'
+import RAYS from './rayScripts/RaySphere'
 import Stats from 'three/addons/libs/stats.module.js';
 
 import RayController from './rayScripts/RayController';
@@ -18,9 +18,14 @@ import RayController from './rayScripts/RayController';
 //set up debug
 const gui = new GUI()
 const debug= {}
+const boidsObjects=
+{
+    worldObjects:null
+}
 
 const textureLoader= new THREE.TextureLoader()
 const matCapTexture= textureLoader.load('/textures/matCap1.png')
+const matCapTexture2= textureLoader.load('/textures/matCap2.png')
 
 //axis helper
 
@@ -29,9 +34,11 @@ const canvas = document.querySelector('.webgl')
 
 //create scene
 const scene = new THREE.Scene()
+scene.background = new THREE.Color().setHSL( 0.6, 0, 1 );
+scene.fog = new THREE.Fog( scene.background, 1, 5000 );
 
-// const axisHelper= new THREE.AxesHelper(0.3)
-// scene.add(axisHelper)
+const axisHelper= new THREE.AxesHelper(0.3)
+scene.add(axisHelper)
 /**
  * Handle sizes and resize
  */
@@ -82,20 +89,72 @@ scene.add(floor)
  * 
  */
 
-const dragMaterial= new THREE.MeshMatcapMaterial({matcap:matCapTexture})
-const dragGeometry1= new THREE.BoxGeometry(0.4,0.4,0.4)
-// const dragGeometry2=  new THREE.CapsuleGeometry( 0.2, 0.2, 4, 8 ); 
-const dragGeometry2=  new THREE.SphereGeometry( 0.1 ); 
+const dragMaterial= new THREE.MeshPhongMaterial({color:"#ff5733"})
+const dragGeometry1= new THREE.BoxGeometry(1,1,1,1,64,64)
+// const dragGeometry1= new THREE.TorusGeometry(1)
+const environmentObjects=[]
 
-const dragMesh1=new THREE.Mesh(dragGeometry1,dragMaterial)
-dragMesh1.position.z=1
-const dragMesh2=new THREE.Mesh(dragGeometry2,dragMaterial)
-dragMesh2.position.z=-1
+// for(let i=0; i<10; i++)
+//     {
+//         const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
+//         mesh.scale.x=Math.max(Math.random(),0.4)
+//         mesh.scale.y=Math.max(Math.random(),0.4)
+//         mesh.scale.z=Math.max(Math.random(),0.4)
+//         // mesh.rotation.set(new THREE.Vector3((Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI)) 
+//         mesh.rotation.x=(Math.random()-0.5)*2*Math.PI
+//         mesh.rotation.y=(Math.random()-0.5)*2*Math.PI
+//         mesh.rotation.z=(Math.random()-0.5)*2*Math.PI
 
-dragMesh1.layers.enable( 1 );
-dragMesh2.layers.enable( 1 );
-// scene.add(dragMesh1,dragMesh2)
-scene.add(dragMesh2)
+//         // console.log(mesh.rotation.x)
+        
+//         // mesh.position.set(new THREE.Vector3((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)) 
+//         mesh.position.x=(Math.random()-0.5)*5
+//         mesh.position.y=(Math.random()-0.5)*5
+//         mesh.position.z=(Math.random()-0.5)*5
+        
+//         mesh.layers.enable( 1 );
+       
+//         scene.add(mesh)
+//         environmentObjects.push(mesh)
+//     }
+
+const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
+mesh.scale.x=Math.abs(Math.random()-0.5)
+mesh.scale.y=2.5
+mesh.position.y=-1.25
+mesh.scale.z=5
+mesh.layers.enable( 1 );
+scene.add(mesh)
+environmentObjects.push(mesh)
+// console.log(mesh.rotation.x)
+
+// mesh.position.set(new THREE.Vector3((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)) 
+// mesh.position.x=(Math.random()-0.5)*5
+// mesh.position.y=(Math.random()-0.5)*5
+// mesh.position.z=(Math.random()-0.5)*5
+
+
+
+
+
+
+
+// // const dragGeometry2=  new THREE.CapsuleGeometry( 0.2, 0.2, 4, 8 ); 
+// // const dragGeometry2=  new THREE.SphereGeometry( 0.1 ); 
+
+// // const dragMesh1=new THREE.Mesh(dragGeometry1,dragMaterial)
+// // dragMesh1.position.z=1
+// const dragMesh2=new THREE.Mesh(dragGeometry1,dragMaterial)
+// dragMesh2.position.z=-0.4
+
+// // dragMesh1.layers.enable( 1 );
+// dragMesh2.layers.enable( 1 );
+// const testFolder=gui.addFolder('testObject')
+// testFolder.add(dragMesh2.position,'x').min(-1).max(1).step(0.00001).name('test Object x')
+// testFolder.add(dragMesh2.position,'y').min(-1).max(1).step(0.00001).name('test Object y')
+// testFolder.add(dragMesh2.position,'z').min(-1).max(1).step(0.00001).name('test Object z')
+// // scene.add(dragMesh1,dragMesh2)
+// scene.add(dragMesh2)
 
 
 
@@ -105,9 +164,9 @@ scene.add(dragMesh2)
  */
 
 const camera= new THREE.PerspectiveCamera(75,sizes.width/sizes.height, 0.1 , 100)
-camera.position.x = 1
-camera.position.y = 0.5
-camera.position.z = -0.2
+camera.position.x = 2
+camera.position.y = 2.5
+camera.position.z = 5
 camera.lookAt(new THREE.Vector3(0,0,0))
 scene.add(camera)
 
@@ -121,161 +180,73 @@ document.body.appendChild( stats.dom );
  * BOIDS
  */
 
-const boidController= new BoidController(300,sizes,scene,debug,gui,camera, matCapTexture)
-const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
-geometry.rotateX(-Math.PI * 0.5);
-const material = new THREE.MeshBasicMaterial({wireframe:true});
-const boidMesh= new THREE.Mesh(geometry,material)
-scene.add(boidMesh)
+const boidController= new BoidController(2,sizes,scene,debug,gui,camera, matCapTexture)
 
 
+
+// const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
+// geometry.rotateX(-Math.PI * 0.5);
+// const material = new THREE.MeshBasicMaterial({wireframe:true});
+// const boidMesh= new THREE.Mesh(geometry,material)
+
+// const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
+
+// const material = new THREE.MeshBasicMaterial({wireframe:true});
+// const boidMesh2= new THREE.Mesh(geometry,material)
+// const boidMesh3= new THREE.Mesh(geometry,material)
+
+// boidMesh2.position.z=-0.5
+// boidMesh3.position.z=0.3
+// boidMesh.position.z=0
+// boidMesh.rotation.y=Math.PI
+
+// gui.add(boidMesh.position,'z').min(-2).max(2).step(0.001)
+// gui.add(boidMesh.rotation,'y').min(-Math.PI).max(Math.PI).step(0.001).name('y Rotation')
+
+// const testBoids=[boidMesh]
+// scene.add(boidMesh)
 
 /**
- * fib sphere
+ * mouse events
  */
-debug.rayPoints= 500
-debug.rayCutoff=0.5
-// const rays=new RAYS(debug.rayPoints,debug.rayCutoff)
+debug.keyDown
 
-// let raySpherePointPositions=rays.rayPositions_floatArray
-// let raySphereColors=rays.rayColours
-
-// // console.log(raySphereColors)
-
-// // console.log(raySpherePointPositions)
-
-// //set up geometry
-// const pointsGeometry= new THREE.BufferGeometry()
-// pointsGeometry.setAttribute('position',new THREE.BufferAttribute(raySpherePointPositions,3))
-// pointsGeometry.setAttribute('color',new THREE.BufferAttribute(raySphereColors,3))
-
-// const pointsMaterial= new THREE.PointsMaterial({
-//     // color:'white',
-//     size:0.01,
-//     sizeAttenuation:true,
-//     vertexColors:true
-
-// })
-
-// const particleMesh= new THREE.Points(pointsGeometry,pointsMaterial)
-// scene.add(particleMesh)
-
-
-//create lines
-//create material
-
-
-
-
-
-// let raysVec3Array=rays.rayPositions_vec3Array
-
-function addDebugLines(targetArr)
+window.addEventListener('keydown',(e)=>
 {
-    const lineMaterial= new THREE.LineBasicMaterial({
-        color: 0xff00f0,
-    });
-    const baseTarget= new THREE.Vector3(0,0,0)
-    const lineArr=[]
 
-    targetArr.forEach((target)=>
-    {
-        let lineGeometry = new THREE.BufferGeometry().setFromPoints( [baseTarget,target] );
-    
-    
-        let line = new THREE.Line(lineGeometry, lineMaterial);
-        scene.add(line);
-        lineArr.push(line)
-        
-    })
-    return lineArr
+    // console.log(e)
+    const currentKey=e.key
 
-}
-// debug.lineArr = addDebugLines(raysVec3Array)
+    debug.keyDown=currentKey
 
-function updateDebugLines(cutoff)
-{
-    const arr=debug.lineArr
-
-    for(const lineMesh of arr){
-        scene.remove(lineMesh)  
-        lineMesh.material.dispose()
-        lineMesh.geometry.dispose()
-        // console.log(line)
-    }
-                
-
-                
-            
-        
-
-    // let temp=RAYS.fibonacci_sphere_vec3(debug.rayPoints,cutoff)
-    rays.updateAngle(cutoff)
+})
 
 
-    // console.log(temp.length)
-    
-    // debug.lineArr=addDebugLines(rays.fibonacci_sphere_vec3)
-    // console.log(debug.lineArr)
-    
-
-}
-
-
-
-// gui.add(debug,'rayPoints').min(0).max(4000).step(10).onFinishChange((num)=>
-//     {
-//         rays.updateArrayCount(num)
-//         rays.updateAngle(debug.rayCutoff)
-        
-//         let temp= rays.rayPositions_floatArray
-//         // console.log(temp)
-//         pointsGeometry.setAttribute('position',new THREE.BufferAttribute(temp,3))
-
-//         pointsGeometry.setAttribute('color',new THREE.BufferAttribute(rays.rayColours,3))
-
-
-
-//         // let raySpherePointPositions=RAYS.fibonacci_sphere(num)
-//         // pointsGeometry.setAttribute('position',new THREE.BufferAttribute(raySpherePointPositions,3))
-//         // let raySphereColors=RAYS.fibonacci_colours(debug.rayPoints,debug.rayCutoff)
-        
-//         // pointsGeometry.setAttribute('color',new THREE.BufferAttribute(raySphereColors,3))
-
-//     })
-// gui.add(debug,'rayCutoff').min(-1).max(1).step(0.001).onChange((cutoff)=>
-//     {
-        
-//         // let raySphereColors=RAYS.fibonacci_colours(debug.rayPoints,cutoff)
-//         rays.updateAngle(cutoff)
-//         let raySphereColors=rays.rayColours
-        
-//         pointsGeometry.setAttribute('color',new THREE.BufferAttribute(raySphereColors,3))
-        
-//         // console.log(debug.lineArr)
-//         // updateDebugLines(cutoff)
-
-
-
-//         // particleBufferAttribute.needsUpdate = true;
-//     })
 
 
 /**
  * RAYCASTING
  */
 
-const rayController=new RayController(50,0.1,[dragMesh1,dragMesh2],scene,gui)
+const rayController=new RayController(50,-0.347,environmentObjects,scene,gui)
 
+/**
+ * Lights
+ */
 
+const hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 2 );
+hemiLight.color.setHSL( 0.6, 1, 0.6 );
+hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+hemiLight.position.set( 0, 50, 0 );
+scene.add( hemiLight );
 
 
 
 /**
  * add controls
  */
-// const controls = new OrbitControls(camera, canvas)
-// controls.enableDamping=true
+const controls = new OrbitControls(camera, canvas)
+controls.enableDamping=true
 
 
 /**
@@ -288,40 +259,93 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(2,window.devicePixelRatio))
 
 
-const dragControls = new DragControls( [dragMesh1,dragMesh2], camera, renderer.domElement );
+// const dragControls = new DragControls( [dragMesh2], camera, renderer.domElement );
 
-// const controls = new FlyControls( camera, renderer.domElement );
 
-// controls.movementSpeed = 1000;
-// // controls.domElement = renderer.domElement;
-// controls.rollSpeed = Math.PI / 24;
-// controls.autoForward = false;
-// controls.dragToLook = false;
 /**
  * annimaiton loop
  */
 
 const clock= new THREE.Clock()
 let past=0
-
+let intersectingEvironmentObjects={}
 const tick =()=>
     {
 
         let elapsedTime= clock.getElapsedTime()
-        stats.update()
-        // controls.update()
+        // stats.update()
+        controls.update()
         // controls.update(delta)
 
 
         //for expensive computations, offset slowtick so that heavy computations are spread
+        stats.begin();
         let slowTick= Math.round(elapsedTime*10)
         if(slowTick!=past){
-            rayController.update()
+            // rayController.update()
             // console.log(slowTick)
+            // rayController.test()
+            intersectingEvironmentObjects=rayController.checkEnviroment(boidController.boidMeshes)
+            // console.log(environmentObjects)
+            
+            // console.log(intersectingEvironmentObjects)
+            // console.log(boidsObjects)
+
         }
+        stats.end();
+
         past=slowTick
 
-        boidController.update()
+        boidController.update(intersectingEvironmentObjects)
+        intersectingEvironmentObjects={}
+
+        //key controller
+        // console.log(debug.key)
+        switch(debug.keyDown)
+        {
+            case "a":
+                //left
+                // console.log('going left')
+                dragMesh2.position.z+=0.03
+                debug.keyDown=null
+
+                break
+
+            case "d":
+                //right
+                dragMesh2.position.z-=0.03
+                debug.keyDown=null
+
+                break
+
+            case "w":
+                //forward
+                dragMesh2.position.x-=0.03
+                debug.keyDown=null
+                break
+
+            case "s":
+                //back
+                dragMesh2.position.x+=0.03
+                debug.keyDown=null
+            break
+
+            case "Shift":
+                //down
+                dragMesh2.position.y-=0.03
+                debug.keyDown=null
+                break
+
+            case " ":
+                //up
+                dragMesh2.position.y+=0.03
+                debug.keyDown=null
+                break
+        }
+
+
+
+
 
 
         //renderer
