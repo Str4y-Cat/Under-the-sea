@@ -8,6 +8,8 @@ export default class
     constructor(count,rayAngleLimit,environmentObjects,scene,gui)
     {
         this.environmentObjects= environmentObjects
+        console.log('environment objects')
+        console.log(this.environmentObjects)
         this.scene=scene
         this.gui=gui
         this.raySphere= new RaySphere(count,rayAngleLimit,scene,gui,{environmentObjects:environmentObjects})
@@ -30,38 +32,40 @@ export default class
     }
 
 
+    //  NOTE: it may be better to use the standard boid position array,instead of the vec3 arr
+
     /**
      * checks the environment to see if ANY boid sees an object
+     * 
+     * @param {[THREE.Vector3]} boidPositions 
+     * @returns {foundIntersections{boidindex,{distance,position}}} found intersections
      */
     checkEnviroment(boidPositions)
     {
+
         //initialize return object
         const foundIntersections={}
-        // console.log('running')
+        
+        //NOTE: possible optimization is to change loop here. but might be insignificant
         //loop through boidPositions
         boidPositions.forEach((boid,index) => {
             
-            // console.log(boid)
+            //TODO: check how many times this runs
             //rotate raySphere to match boid
             const targets= this.raySphere.rotateTo(boid)
-            // console.log(targets)
+            
+            //sets debug for testing rays
             this.raySphere.debug.origin=boid.position
-            // console.log(boid.position)
 
             //cast rays on that sphere
             const environmentIntersections= this.raySphere.castRays(targets,boid.position)
-            // this.debugPoints(boid,index)
 
             //if there are intersections
             if(environmentIntersections)
                 {
-                        // console.log(environmentIntersections)
-                        // this.raySphere.debug.ray=this.raySphere.debugRay(environmentIntersections,boid.position)
-                        
-                    // add returnObjec[currentIndex]= return value from raySphere.castRays 
+                    //sets a new object in the found intersections obj
+                    // {currentIndex: {distance:k, position: { x,y,z}}}
                     foundIntersections[index]=environmentIntersections
-                    // console.log(environmentIntersections)
-
                 }
 
         });
@@ -70,9 +74,6 @@ export default class
 
     test()
     {
-
-        // const vec3Arrary=this.raySphere.float3ToVec3(this.raySphere.rayPositions_floatArray)
-        // console.log(vec3Arrary)
 
         const rays= this.raySphere.castRays(new THREE.Vector3(0,0,0))
         if(rays){console.log('found')}

@@ -91,13 +91,15 @@ scene.add(floor)
 
 const dragMaterial= new THREE.MeshPhongMaterial({color:"#ff5733"})
 const dragGeometry1= new THREE.BoxGeometry(1,1,1,1,64,64)
+// const dragGeometry1= new THREE.TorusGeometry(1)
 const environmentObjects=[]
-// for(let i=0; i<40; i++)
+
+// for(let i=0; i<10; i++)
 //     {
 //         const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
-//         mesh.scale.x=Math.abs(Math.random()-0.5)
-//         mesh.scale.y=Math.abs(Math.random()-0.5)
-//         mesh.scale.z=Math.abs(Math.random()-0.5)
+//         mesh.scale.x=Math.max(Math.random(),0.4)
+//         mesh.scale.y=Math.max(Math.random(),0.4)
+//         mesh.scale.z=Math.max(Math.random(),0.4)
 //         // mesh.rotation.set(new THREE.Vector3((Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI)) 
 //         mesh.rotation.x=(Math.random()-0.5)*2*Math.PI
 //         mesh.rotation.y=(Math.random()-0.5)*2*Math.PI
@@ -113,7 +115,7 @@ const environmentObjects=[]
 //         mesh.layers.enable( 1 );
        
 //         scene.add(mesh)
-    
+//         environmentObjects.push(mesh)
 //     }
 
 const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
@@ -178,7 +180,7 @@ document.body.appendChild( stats.dom );
  * BOIDS
  */
 
-const boidController= new BoidController(1,sizes,scene,debug,gui,camera, matCapTexture)
+const boidController= new BoidController(2,sizes,scene,debug,gui,camera, matCapTexture)
 
 
 
@@ -271,12 +273,13 @@ const tick =()=>
     {
 
         let elapsedTime= clock.getElapsedTime()
-        stats.update()
+        // stats.update()
         controls.update()
         // controls.update(delta)
 
 
         //for expensive computations, offset slowtick so that heavy computations are spread
+        stats.begin();
         let slowTick= Math.round(elapsedTime*10)
         if(slowTick!=past){
             // rayController.update()
@@ -285,10 +288,11 @@ const tick =()=>
             intersectingEvironmentObjects=rayController.checkEnviroment(boidController.boidMeshes)
             // console.log(environmentObjects)
             
-
+            // console.log(intersectingEvironmentObjects)
             // console.log(boidsObjects)
 
         }
+        stats.end();
 
         past=slowTick
 
