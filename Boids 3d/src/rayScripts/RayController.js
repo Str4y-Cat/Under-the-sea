@@ -12,7 +12,8 @@ export default class
         console.log(this.environmentObjects)
         this.scene=scene
         this.gui=gui
-        this.raySphere= new RaySphere(count,rayAngleLimit,scene,gui,{environmentObjects:environmentObjects})
+        // this.raySphere= new RaySphere(count,rayAngleLimit,scene,gui,{environmentObjects:environmentObjects})
+        this.raySphere= new RaySphere(400,1,scene,gui,{environmentObjects:environmentObjects})
 
 
         // this.rayTargets= this.rays.rayPositions_vec3Array
@@ -48,17 +49,21 @@ export default class
         
         //NOTE: possible optimization is to change loop here. but might be insignificant
         //loop through boidPositions
+
+        
         boidPositions.forEach((boid,index) => {
             
             //TODO: check how many times this runs
             //rotate raySphere to match boid
             const targets= this.raySphere.rotateTo(boid)
-            
+            this.raySphere.timer('checkEnviroment')
             //sets debug for testing rays
             this.raySphere.debug.origin=boid.position
 
             //cast rays on that sphere
             const environmentIntersections= this.raySphere.castRays(targets,boid.position)
+            // this.raySphere.counter('return',true)
+            this.raySphere.timer('checkEnviroment')
 
             //if there are intersections
             if(environmentIntersections)
@@ -69,6 +74,8 @@ export default class
                 }
 
         });
+
+        // console.log('----------------------')
         return foundIntersections
     }
 
