@@ -16,7 +16,7 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
-scene.background = new THREE.Color().setHSL( 0.6, 0, 1 );
+// scene.background = new THREE.Color().setHSL( 0.6, 0, 1 );
 scene.fog = new THREE.Fog( scene.background, 1, 5000 );
 
 
@@ -67,7 +67,8 @@ scene.add( hemiLight );
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
+    canvas: canvas,
+    // logarithmicDepthBuffer: true
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -96,12 +97,18 @@ for(let i = 0; i<20; i++)
 
 //#region octree 
 
-const octree=new CreateOctree(worldObjects,5)
-if(octree.drawMeshes.length)
+const octree=new CreateOctree(worldObjects,0.1,scene)
+// console.log(octree.octree)
+const debug=
 {
-    
-    scene.add(...octree.drawMeshes)
+    depth:0
 }
+gui.add(debug,'depth').min(0).max(10).step(1).onChange(()=>{octree.update()})
+// if(octree.drawMeshes.length)
+// {
+//     console.log(octree.drawMeshes)
+    
+// }
 
 //#endregion
 
