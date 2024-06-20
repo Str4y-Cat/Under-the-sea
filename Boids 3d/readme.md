@@ -46,7 +46,12 @@ The boids are currently tweaked to mimic fish and other schooling animals.
 - [Measurement of areas on a sphere using Fibonacci and latitude–longitude lattices](https://arxiv.org/pdf/0912.4540)
 - 
 
-## Progression
+
+
+# Progression
+This will be a little blog type inclusion. Read further if you want to see the progress of this project
+
+
 ### First Stages of converting to 3D
 ![alt text](./static/img/Capture.PNG)
 ![Boids in a Box 2](./static/img/Capture2.PNG)
@@ -58,3 +63,56 @@ The boids are currently tweaked to mimic fish and other schooling animals.
 ### Better fish simulation
 ![Schooling behavior](./static/img/Capture6.PNG)
 ![Bigger school](./static/img/Capture7.PNG)
+
+## Performance 
+Performace is a big factor. There are two main things to update. 1. Our racasting 2. Our boids.
+Before any performance optimizations, things broke down with 1500 boids(no raycasting), and 10 boids(with raycasting). EISH!
+The boids would be easier to optimize, but the raycasting is our bottle neck. So lets tackle that first.
+
+### Raycast Optimizations
+Raycasting is expensive and we're firing 50+ per boid. 
+THREE.js's implementation of raycasting loops over every face of the supplied geometries. 
+ 
+To measure performace I created a simple function to time execution.
+constants:
+- 400 rays per boid. 
+- 360 deg angle 
+
+#### Base Case
+| Boid Count | Avg Execution Time Per Boid|
+|-----------------|-----------------|
+| 1 | 286ms |
+| 5 | 323.8ms |
+| 10 | 322ms |
+| 50 | 329ms |
+| 100 | 329ms |
+| 200 | 324ms |
+
+Linear time complexity. Average Excution per boid stays around 324ms
+
+#### Fix 1: 
+simply added .computeBoundingBox() to environment objects
+
+| Boid Count | Avg Execution Time Per Boid|
+|-----------------|-----------------|
+| 200 | 62.9ms |
+
+5x performace increase. 
+
+#### Fix 2: 
+Implemented a BVH from three-bvh
+
+| Boid Count | Avg Execution Time Per Boid|
+|-----------------|-----------------|
+| 200 | 0.56ms |
+
+112.32x performace increase. 
+
+#### Fix 3: 
+Implemented a Octree spacial lookup for the environment objects
+
+| Boid Count | Avg Execution Time Per Boid|
+|-----------------|-----------------|
+| 200 | 0.084ms |
+
+6.67x performace increase. 

@@ -1,4 +1,7 @@
 import * as THREE from 'three'
+import {acceleratedRaycast } from 'three-mesh-bvh';
+// THREE.Mesh.prototype.raycast = acceleratedRaycast;
+
 
 export default class RaySphere
 {
@@ -19,8 +22,13 @@ export default class RaySphere
         this.rayAngleLimit=rayAngleLimit
         this.scene=scene
         this.gui=gui
-        this.environmentObjects=rayCastValues.environmentObjects
-
+        this.environment=rayCastValues.environment
+        
+        //[x]: add a counter, to check how many loops are run each raycaster call
+        //performance checks
+        this.count={}
+        this.time={}
+        this.totalTime={}
 
         //setup sphere
         this.rayPositions_vec3Array=this.fibonacci_sphere_vec3()
@@ -35,7 +43,8 @@ export default class RaySphere
         this.debug.origin=new THREE.Vector3(0,0,0)
         this.setUpDebug()
         this.needsUpdate=false
-        //TODO: add a counter, to check how many loops are run each raycaster call
+        
+        
 
         
 
@@ -45,7 +54,9 @@ export default class RaySphere
         this.rayCaster=this.setUpRayCaster()
        
         console.log("raysphere set up")
-        //TODO: ADD counter('return',true)
+    
+        
+        // this.test()
     }
 
     //#region sphere methods
@@ -198,8 +209,12 @@ export default class RaySphere
      */
     rotateTo(mesh)
     {
-        //TODO: ADD counter(rotateto)
+        //[x]: ADD counter(rotateto)
+
+        // this.counter('rotateTo',false,this.pointSphere.geometry.attributes.position.array.length)
+        // this.timer('rotate')
         this.pointSphere.rotation.copy(mesh.rotation)
+        
        return this.toWorldVertices()
     }
 
@@ -219,7 +234,7 @@ export default class RaySphere
         const rayCaster= new THREE.Raycaster()
         rayCaster.layers.set( 1 );
         rayCaster.far=this.rayFar
-
+        rayCaster.firstHitOnly = true;
 
         return rayCaster
     }
@@ -241,37 +256,46 @@ export default class RaySphere
         //instanciate accumulator
         const sum= {distance:0,position:{x:0,y:0,z:0}}
 
-        //loop through targets, aim raycaster and check for intersection
-        //FIXME convert for(const of) -> for(i...)
-        for(const target of rayTargets)
-        {
-            //TODO: ADD counter(CastRays)
-            
-            
-            
-            //aims the raycaster
-            this.rayCaster.set(origin,target)
-
-
-            //find intersections of environment objects
-            const foundArr=this.rayCaster.intersectObjects(this.environmentObjects)
-
-            //if something was found add it to the array
-            if(foundArr.length)
+        //finds the close environment objects, if there are any, from the octree environment
+        const enviromentObjects=this.environment.getObjects(new THREE.Box3().setFromCenterAndSize(origin,new THREE.Vector3(this.rayFar,this.rayFar,this.rayFar)))
+        let foundArr=[]
+        //if there are environment objects cast the ray
+        if(enviromentObjects.length>0)
             {
-                objectArr.push(foundArr[0])
+                // this.timer('castRays')
+                //loop through targets, aim raycaster and check for intersection
+                //FIXME convert for(const of) -> for(i...)
+                for(const target of rayTargets)
+                    {
+                        // this.counter('castRays')
+                        
+                                //aims the raycaster
+                                this.rayCaster.set(origin,target)
+            
+                                //find intersections of environment objects
+                                 foundArr=this.rayCaster.intersectObjects(enviromentObjects)
+            
+                        //if something was found add it to the array
+                        if(foundArr.length)
+                        {
+                            objectArr.push(foundArr[0])
+                        }
+                    }
             }
-        }
+
+
+
 
         //if there is something intersecting the ray
-        if(objectArr.length)
+        if(objectArr.length>0)
         {
 
 
             //FIXME: unessecary loop, move this into the above if(foundArr)
             //sum the values in the array
             for(const obj of objectArr){
-                //TODO: ADD counter(CastRays)
+                //[x]: ADD counter(CastRays)
+                // this.counter('castRays')
 
                 sum.distance+=obj.distance
                 sum.position.x+=obj.point.x
@@ -283,6 +307,8 @@ export default class RaySphere
             if(objectArr.length>1)
                 {
 
+                    
+
                     sum.distance/=objectArr.length
                     sum.position.x/=objectArr.length
                     sum.position.y/=objectArr.length
@@ -292,13 +318,14 @@ export default class RaySphere
             //normalize the distance
             sum.distance/=this.rayCaster.far
         }
+        // this.timer('castRays')
 
         //return the distance, else return null
         return (sum.distance)?sum:null
 
     }
 
-    /** addEnvironmentObjects(){}
+    /** addenvironment(){}
      * 
      * adds a new object to look for the raycaster
      */
@@ -309,47 +336,7 @@ export default class RaySphere
     /**
      * sets up the debug gui 
      */
-    setUpDebug()
-    {
-        const folder= this.gui.addFolder('Rays')
-        //set up Points
-        
-        this.debug.rotation=0
-        this.debug.getPointCount=()=>{console.log(`Sphere points: ${this.debug.rayTargetCount}`)}
-        this.debug.getTest=()=>{console.log(`Test:`);console.log(this.debug.test)}
-        // console.log(this.debug)
-
-
-        folder.add(this,'rayCount').min(0).max(400).step(1).onFinishChange((num)=>
-            {
-                this.updateArrayCount(num)
-                this.updateAngle(this.rayCutoff)
-                
-
-                this.pointSphere.geometry.setAttribute('position',new THREE.BufferAttribute(this.rayPositions_floatArray,3))
-                this.pointSphere.geometry.setAttribute('color',new THREE.BufferAttribute(this.rayColours,3))
-        
-        
-            })
-        folder.add(this,'rayAngleLimit').min(-1).max(1).step(0.001).onChange((angleLimit)=>
-            {
-                this.updateArrayCount(this.rayCount)
-
-                this.updateAngle(angleLimit)
-                this.pointSphere.geometry.setAttribute('position',new THREE.BufferAttribute(this.rayPositions_floatArray,3))
-                this.pointSphere.geometry.setAttribute('color',new THREE.BufferAttribute(this.rayColours,3))
-        
-
-            })
-        
-        folder.add(this.debug,'getPointCount')
-        folder.add(this.debug,'getTest')
-        folder.add(this,'test')
-        folder.add(this,'debugTestTargets').name("Fire all Rays")
-
-
-
-    }
+    
 
     /**
      * draws a path from the origin parameter to the obsticle parameter
@@ -447,7 +434,7 @@ export default class RaySphere
         // this.rayCount=count
         // this.debugColours= this.fibonacci_colours()
         this.rayPositions_vec3Array=this.fibonacci_sphere_vec3()
-        this.rayPositions_floatArray=this.fibonacci_sphere()
+        this.rayPositions_floatArray=this.toFloatArr(this.rayPositions_vec3Array)
         this.pointSphere.geometry.setAttribute('position',
             new THREE.BufferAttribute(this.rayPositions_floatArray,3)
         )
@@ -457,42 +444,53 @@ export default class RaySphere
 
     test()
     {
-        // const modifiedvec3=this.toVec3Arr(this.rayPositions_floatArray)
-        // const floatArr=this.rayPositions_floatArray
-        // const vec3Arr=this.rayPositions_vec3Array
+       
+        for(let i=0; i<10;i++){
+            this.counter('test',false,1)
+            this.counter('test2',false,2)
 
-        // // const vec3Arr=this.rayPositions_vec3Array
+        }
+        this.counter('return',true)
 
-        // for (let i = 0; i < 20; i++) {
 
-        //     let x1= this.pointSphere.geometry.attributes.position.array[i]
-        //     let y1= this.pointSphere.geometry.attributes.position.array[i+1]
-        //     let z1= this.pointSphere.geometry.attributes.position.array[i+2]
-        //     console.log()
+    }
+    setUpDebug()
+    {
+        const folder= this.gui.addFolder('Rays')
+        //set up Points
+        
+        this.debug.rotation=0
+        this.debug.getPointCount=()=>{console.log(`Sphere points: ${this.debug.rayTargetCount}`)}
+        this.debug.getTest=()=>{console.log(`Test:`);console.log(this.debug.test)}
+        // console.log(this.debug)
 
-        //     let x2= floatArr[i+0]
-        //     let y2= floatArr[i+1]
-        //     let z2= floatArr[i+2]
 
-        //     let x3= vec3Arr[i+0].x
-        //     let y3= vec3Arr[i+1].y
-        //     let z3= vec3Arr[i+2].z
+        folder.add(this,'rayCount').min(0).max(400).step(1).onFinishChange((num)=>
+            {
+                this.updateArrayCount(num)
+                this.updateAngle(this.rayCutoff)
+                
 
-        //     console.log(`x1:${x1}\nx2:${x2}\nx3:${x3}`)
-        //     console.log(`y1:${y1}\n2:${y2}\ny3:${y3}`)
-        //     console.log(`z1:${z1}\nz2:${z2}\nz3:${z3}`)
+                this.pointSphere.geometry.setAttribute('position',new THREE.BufferAttribute(this.rayPositions_floatArray,3))
+                this.pointSphere.geometry.setAttribute('color',new THREE.BufferAttribute(this.rayColours,3))
+        
+        
+            })
+        folder.add(this,'rayAngleLimit').min(-1).max(1).step(0.001).onChange((angleLimit)=>
+            {
+                this.updateArrayCount(this.rayCount)
 
-        // }
-
-        // const vec1= new THREE.Vector3(0.2863161078062363,  -0.7002653686702316, 0.6539506861008958 )
-        // const vec2= new THREE.Vector3(3,3,3)
+                this.updateAngle(angleLimit)
+                this.pointSphere.geometry.setAttribute('position',new THREE.BufferAttribute(this.rayPositions_floatArray,3))
+                this.pointSphere.geometry.setAttribute('color',new THREE.BufferAttribute(this.rayColours,3))
         
 
-        // console.log("BEGINING TEST")
-        // console.log(vec1.normalize())
-        // console.log("END TEST")
-
-        // console.log(this.pointSphere.geometry.index)
+            })
+        
+        folder.add(this.debug,'getPointCount')
+        folder.add(this.debug,'getTest')
+        folder.add(this,'test')
+        folder.add(this,'debugTestTargets').name("Fire all Rays")
 
 
 
@@ -512,7 +510,8 @@ export default class RaySphere
         const rotatedVerticies=[]
         for(let i=0; i<positionAttribute.count;i++)
             {
-                //TODO: ADD counter(toWorldVertices)
+                //[x]: ADD counter(toWorldVertices)
+                // this.counter('toWorldVertices')
 
                 const vertex = new THREE.Vector3();
                 vertex.fromBufferAttribute( positionAttribute, i );
@@ -522,6 +521,7 @@ export default class RaySphere
             }
 
         
+        // this.timer('rotate')
 
         return rotatedVerticies
     }
@@ -536,7 +536,8 @@ export default class RaySphere
         const floatArr= new Float32Array(arr.length*3)
         arr.forEach((vec,i)=>
         {
-            //TODO: ADD counter(toFloatArr)
+            //[x]: ADD counter(toFloatArr)
+            // this.counter('toFloatArr')
 
             const i3=i*3
             floatArr[i3]=vec.x
@@ -556,7 +557,9 @@ export default class RaySphere
         
         const vec3Arr=[]
         for (let i = 0; i < arr.length/3; i++) {
-                //TODO: ADD counter(toVec3Arr)
+                //[x]: ADD counter(toVec3Arr)
+                // this.counter('toVec3Arr')
+
                 const i3=i*3
                 const vec= new THREE.Vector3(
                     arr[i3],//x
@@ -570,7 +573,7 @@ export default class RaySphere
         return vec3Arr
     }
 
-    //TODO: ADD counter() method
+    //[x]: ADD counter() method
     /**
      *  counter(name,return flag||false, incrementValue||1)
      *  if(returnFlag){console.log(this.count)}
@@ -578,6 +581,73 @@ export default class RaySphere
      *  this.count[name]+=incrementVaule
      * 
      */
+
+    counter(name,returnFlag,incrementValue)
+    {
+        // console.log("testing")
+        // returnFlag=(returnFlag)?returnFlag:false
+
+        if(returnFlag)
+            {
+                console.log(this.count)
+                this.count={}
+
+            }
+        else
+            {
+                incrementValue=(incrementValue)?incrementValue:1
+        
+                if(this.count[name])
+                    {
+                        this.count[name]+=incrementValue
+                    }
+                else
+                {
+                    this.count[name]=incrementValue
+                }
+            }
+        
+
+
+    }
+    timer(name)
+    {
+        // console.log("testing")
+        // returnFlag=(returnFlag)?returnFlag:false
+        if(this.time[name])
+            {
+                const delta=performance.now() - this.time[name].start
+                
+                // if(!this.time[name].total)
+                //     {
+                //     this.time[name].total=0
+                //     this.time[name].count=0
+                //     }
+                
+                // this.time[name].total+=Date.now() - this.time[name].start
+                // this.time[name].count+=1
+                if(this.totalTime[name]){
+                    this.totalTime[name].time+= delta
+                    this.totalTime[name].total+=1
+                    this.totalTime[name].avg=this.totalTime[name].time/this.totalTime[name].total
+                }
+                else{
+                    this.totalTime[name]={}
+                    this.totalTime[name].time=delta
+                    this.totalTime[name].total=1
+                }
+                console.log(`${name}: ${delta} ms\n average: ${this.totalTime[name].avg}`)
+
+                this.time[name]=null
+            }
+        else
+        {
+            this.time[name]={}
+            this.time[name].start=performance.now();
+        }
+
+    }
+    
 
     //#endregion
 

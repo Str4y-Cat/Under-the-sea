@@ -11,6 +11,15 @@ import RAYS from './rayScripts/RaySphere'
 import Stats from 'three/addons/libs/stats.module.js';
 
 import RayController from './rayScripts/RayController';
+
+import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from 'three-mesh-bvh';
+import CreateOctree from './octree/createOctree'
+
+
+// Add the extension functions
+THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
+THREE.BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
+THREE.Mesh.prototype.raycast = acceleratedRaycast;
 // import RayController from './rayScripts/RayController';
 
 
@@ -18,10 +27,7 @@ import RayController from './rayScripts/RayController';
 //set up debug
 const gui = new GUI()
 const debug= {}
-const boidsObjects=
-{
-    worldObjects:null
-}
+
 
 const textureLoader= new THREE.TextureLoader()
 const matCapTexture= textureLoader.load('/textures/matCap1.png')
@@ -64,12 +70,14 @@ window.addEventListener('resize',()=>
 
     })
 
-
+//#region world objects
 /**
- * and a object
+ * floor
  */
 debug.floorSize=5
 const floorGeometry= new THREE.PlaneGeometry(debug.floorSize,debug.floorSize,8,8)
+floorGeometry.computeBoundingBox();
+floorGeometry.computeBoundsTree();
 const floorMaterial= new THREE.MeshBasicMaterial(
     {
         color:"red",
@@ -81,16 +89,23 @@ const floor= new THREE.Mesh(
 )
 floor.rotation.x=-Math.PI/2
 floor.position.y-=debug.floorSize/2
+floor.layers.enable( 1 );
+
 // floor.position.x=1
 scene.add(floor)
 
 
-/**add drag objects
- * 
+
+
+/**
+ * objects to avoid
  */
 
 const dragMaterial= new THREE.MeshPhongMaterial({color:"#ff5733"})
 const dragGeometry1= new THREE.BoxGeometry(1,1,1,1,64,64)
+dragGeometry1.computeBoundingBox();
+dragGeometry1.computeBoundsTree();
+
 // const dragGeometry1= new THREE.TorusGeometry(1)
 const environmentObjects=[]
 
@@ -125,40 +140,23 @@ mesh.position.y=-1.25
 mesh.scale.z=5
 mesh.layers.enable( 1 );
 scene.add(mesh)
-environmentObjects.push(mesh)
-// console.log(mesh.rotation.x)
 
-// mesh.position.set(new THREE.Vector3((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)) 
-// mesh.position.x=(Math.random()-0.5)*5
-// mesh.position.y=(Math.random()-0.5)*5
-// mesh.position.z=(Math.random()-0.5)*5
+environmentObjects.push(mesh,floor)
 
+//#endregion
 
+//#region octree
+/**
+ * octree
+ */
 
+const environment=new CreateOctree(environmentObjects,0.3,scene)
 
-
-
-
-// // const dragGeometry2=  new THREE.CapsuleGeometry( 0.2, 0.2, 4, 8 ); 
-// // const dragGeometry2=  new THREE.SphereGeometry( 0.1 ); 
-
-// // const dragMesh1=new THREE.Mesh(dragGeometry1,dragMaterial)
-// // dragMesh1.position.z=1
-// const dragMesh2=new THREE.Mesh(dragGeometry1,dragMaterial)
-// dragMesh2.position.z=-0.4
-
-// // dragMesh1.layers.enable( 1 );
-// dragMesh2.layers.enable( 1 );
-// const testFolder=gui.addFolder('testObject')
-// testFolder.add(dragMesh2.position,'x').min(-1).max(1).step(0.00001).name('test Object x')
-// testFolder.add(dragMesh2.position,'y').min(-1).max(1).step(0.00001).name('test Object y')
-// testFolder.add(dragMesh2.position,'z').min(-1).max(1).step(0.00001).name('test Object z')
-// // scene.add(dragMesh1,dragMesh2)
-// scene.add(dragMesh2)
+//#endregion
 
 
 
-
+//#region Camera
 /**
  * add a camera
  */
@@ -169,43 +167,14 @@ camera.position.y = 2.5
 camera.position.z = 5
 camera.lookAt(new THREE.Vector3(0,0,0))
 scene.add(camera)
+//#endregion
 
+//#region misc
 /**
  * stats
  */
 let stats = new Stats();
 document.body.appendChild( stats.dom );
-
-/**
- * BOIDS
- */
-
-const boidController= new BoidController(2,sizes,scene,debug,gui,camera, matCapTexture)
-
-
-
-// const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
-// geometry.rotateX(-Math.PI * 0.5);
-// const material = new THREE.MeshBasicMaterial({wireframe:true});
-// const boidMesh= new THREE.Mesh(geometry,material)
-
-// const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
-
-// const material = new THREE.MeshBasicMaterial({wireframe:true});
-// const boidMesh2= new THREE.Mesh(geometry,material)
-// const boidMesh3= new THREE.Mesh(geometry,material)
-
-// boidMesh2.position.z=-0.5
-// boidMesh3.position.z=0.3
-// boidMesh.position.z=0
-// boidMesh.rotation.y=Math.PI
-
-// gui.add(boidMesh.position,'z').min(-2).max(2).step(0.001)
-// gui.add(boidMesh.rotation,'y').min(-Math.PI).max(Math.PI).step(0.001).name('y Rotation')
-
-// const testBoids=[boidMesh]
-// scene.add(boidMesh)
-
 /**
  * mouse events
  */
@@ -222,18 +191,39 @@ window.addEventListener('keydown',(e)=>
 })
 
 
+//#endregion
 
 
+
+
+//#region boids
+/**
+ * BOIDS
+ */
+
+const boidController= new BoidController(200,sizes,scene,debug,gui,camera, matCapTexture)
+//#endregion
+
+
+
+
+
+
+//#region Raycasting
 /**
  * RAYCASTING
  */
 
-const rayController=new RayController(50,-0.347,environmentObjects,scene,gui)
+const rayController=new RayController(50,-0.347,environment.octree,scene,gui)
+
+//#endregion
 
 /**
  * Lights
  */
 
+
+//#region three.js essentials
 const hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 2 );
 hemiLight.color.setHSL( 0.6, 1, 0.6 );
 hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
@@ -257,9 +247,7 @@ const renderer= new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(2,window.devicePixelRatio))
-
-
-// const dragControls = new DragControls( [dragMesh2], camera, renderer.domElement );
+//#endregion
 
 
 /**
