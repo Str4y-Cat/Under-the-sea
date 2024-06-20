@@ -22,7 +22,7 @@ export default class RaySphere
         this.rayAngleLimit=rayAngleLimit
         this.scene=scene
         this.gui=gui
-        this.environmentObjects=rayCastValues.environmentObjects
+        this.environment=rayCastValues.environment
         
         //[x]: add a counter, to check how many loops are run each raycaster call
         //performance checks
@@ -255,37 +255,39 @@ export default class RaySphere
         const objectArr=[]
         //instanciate accumulator
         const sum= {distance:0,position:{x:0,y:0,z:0}}
-        // this.timer('castRays')
-        //loop through targets, aim raycaster and check for intersection
-        //FIXME convert for(const of) -> for(i...)
-        for(const target of rayTargets)
-        {
-            //[x]: ADD counter(CastRays)
-            // this.counter('castRays')
-            
-            
-            
-            //aims the raycaster
-            this.rayCaster.set(origin,target)
 
-
-            //find intersections of environment objects
-
-            const foundArr=this.rayCaster.intersectObjects(this.environmentObjects)
-
-            // const foundArr=this.rayCaster.intersectObject(this.environmentObjects[0])
-            // const foundArr=[]
-            // console.log('array form intersection ray caster')
-            // console.log(foundArr)
-            //if something was found add it to the array
-            if(foundArr.length)
+        //finds the close environment objects, if there are any, from the octree environment
+        const enviromentObjects=this.environment.getObjects(new THREE.Box3().setFromCenterAndSize(origin,new THREE.Vector3(this.rayFar,this.rayFar,this.rayFar)))
+        let foundArr=[]
+        //if there are environment objects cast the ray
+        if(enviromentObjects.length>0)
             {
-                objectArr.push(foundArr[0])
+                // this.timer('castRays')
+                //loop through targets, aim raycaster and check for intersection
+                //FIXME convert for(const of) -> for(i...)
+                for(const target of rayTargets)
+                    {
+                        // this.counter('castRays')
+                        
+                                //aims the raycaster
+                                this.rayCaster.set(origin,target)
+            
+                                //find intersections of environment objects
+                                 foundArr=this.rayCaster.intersectObjects(enviromentObjects)
+            
+                        //if something was found add it to the array
+                        if(foundArr.length)
+                        {
+                            objectArr.push(foundArr[0])
+                        }
+                    }
             }
-        }
+
+
+
 
         //if there is something intersecting the ray
-        if(objectArr.length)
+        if(objectArr.length>0)
         {
 
 
@@ -323,7 +325,7 @@ export default class RaySphere
 
     }
 
-    /** addEnvironmentObjects(){}
+    /** addenvironment(){}
      * 
      * adds a new object to look for the raycaster
      */

@@ -5,15 +5,15 @@ import RaySphere from './RaySphere'
 
 export default class 
 {
-    constructor(count,rayAngleLimit,environmentObjects,scene,gui)
+    constructor(count,rayAngleLimit,environment,scene,gui)
     {
-        this.environmentObjects= environmentObjects
+        this.environment= environment
         console.log('environment objects')
-        console.log(this.environmentObjects)
+        console.log(this.environment)
         this.scene=scene
         this.gui=gui
-        // this.raySphere= new RaySphere(count,rayAngleLimit,scene,gui,{environmentObjects:environmentObjects})
-        this.raySphere= new RaySphere(400,1,scene,gui,{environmentObjects:environmentObjects})
+        // this.raySphere= new RaySphere(count,rayAngleLimit,scene,gui,{environment:environment})
+        this.raySphere= new RaySphere(400,1,scene,gui,{environment:environment})
 
 
         // this.rayTargets= this.rays.rayPositions_vec3Array
@@ -56,14 +56,14 @@ export default class
             //TODO: check how many times this runs
             //rotate raySphere to match boid
             const targets= this.raySphere.rotateTo(boid)
-            this.raySphere.timer('checkEnviroment')
+            // this.raySphere.timer('checkEnviroment')
             //sets debug for testing rays
             this.raySphere.debug.origin=boid.position
 
             //cast rays on that sphere
             const environmentIntersections= this.raySphere.castRays(targets,boid.position)
             // this.raySphere.counter('return',true)
-            this.raySphere.timer('checkEnviroment')
+            // this.raySphere.timer('checkEnviroment')
 
             //if there are intersections
             if(environmentIntersections)

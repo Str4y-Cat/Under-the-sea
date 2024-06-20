@@ -13,6 +13,7 @@ import Stats from 'three/addons/libs/stats.module.js';
 import RayController from './rayScripts/RayController';
 
 import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from 'three-mesh-bvh';
+import CreateOctree from './octree/createOctree'
 
 
 // Add the extension functions
@@ -94,6 +95,8 @@ floor.layers.enable( 1 );
 scene.add(floor)
 
 
+
+
 /**
  * objects to avoid
  */
@@ -141,6 +144,16 @@ scene.add(mesh)
 environmentObjects.push(mesh,floor)
 
 //#endregion
+
+//#region octree
+/**
+ * octree
+ */
+
+const environment=new CreateOctree(environmentObjects,0.3,scene)
+
+//#endregion
+
 
 
 //#region Camera
@@ -201,7 +214,7 @@ const boidController= new BoidController(200,sizes,scene,debug,gui,camera, matCa
  * RAYCASTING
  */
 
-const rayController=new RayController(50,-0.347,environmentObjects,scene,gui)
+const rayController=new RayController(50,-0.347,environment.octree,scene,gui)
 
 //#endregion
 
