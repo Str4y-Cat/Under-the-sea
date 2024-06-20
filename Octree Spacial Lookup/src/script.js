@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
 import CreateOctree from './octree/createOctree'
+import { FlyControls } from 'three/addons/controls/FlyControls.js';
 
 
 /**
@@ -56,6 +57,8 @@ scene.add(camera)
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
 
+// const controls= new FlyControls(camera,canvas)
+
 const hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 2 );
 hemiLight.color.setHSL( 0.6, 1, 0.6 );
 hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
@@ -81,12 +84,12 @@ const geom= new THREE.BoxGeometry(1,1,1)
 geom.computeBoundingBox()
 const material= new THREE.MeshPhongMaterial()
 const worldObjects=[]
-for(let i = 0; i<20; i++)
+for(let i = 0; i<2; i++)
     {
         
         const mesh= new THREE.Mesh(geom,material)
         mesh.scale.set(Math.random()+0.3,Math.random()+0.3,Math.random()+0.3)
-        mesh.position.set((Math.random()-0.5)*2*5,(Math.random()-0.5)*2*5,(Math.random()-0.5)*2*5)
+        mesh.position.set((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)
         mesh.rotation.set((Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI)
         worldObjects.push(mesh)
         
@@ -97,13 +100,25 @@ for(let i = 0; i<20; i++)
 
 //#region octree 
 
-const octree=new CreateOctree(worldObjects,0.1,scene)
-// console.log(octree.octree)
-const debug=
-{
-    depth:0
-}
-gui.add(debug,'depth').min(0).max(10).step(1).onChange(()=>{octree.update()})
+const octreeClass=new CreateOctree(worldObjects,1,scene)
+console.log(octreeClass.octree)
+
+
+
+const geometry= new THREE.SphereGeometry(1)
+geometry.computeBoundingBox()
+const travelerMesh= new THREE.Mesh(geometry,material)
+travelerMesh.position.set((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)
+
+scene.add(travelerMesh)
+console.log(octreeClass.octree.findObj(travelerMesh,scene))
+// const debug=
+// {
+//     depth:0,
+//     draw:false
+// }
+// gui.add(debug,'depth').min(0).max(10).step(1).onChange(()=>{octree.update()})
+// gui.add(debug,'draw')
 // if(octree.drawMeshes.length)
 // {
 //     console.log(octree.drawMeshes)
@@ -119,16 +134,28 @@ gui.add(debug,'depth').min(0).max(10).step(1).onChange(()=>{octree.update()})
  * Animate
  */
 const clock = new THREE.Clock()
-
+let past=0
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+    const delta = clock.getDelta()
 
     //animate water
     
+    let slowTick= Math.round(elapsedTime)
+        if(slowTick!=past){
+            
+            // if(debug.draw==true)
+            //     {
+            //         // octree.update()
+            //     }
+        }
+        past=slowTick
+
 
     // Update controls
     controls.update()
+    // controls.update ( delta) 
 
     // Render
     renderer.render(scene, camera)

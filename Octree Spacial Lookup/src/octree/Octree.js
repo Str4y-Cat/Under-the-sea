@@ -3,10 +3,18 @@ import OctreeNode from "./OctreeNode";
 
 export default class Octree
 {
-    constructor(worldObjects,minNodeSize,scene)
+    constructor(worldObjects,minNodeSize)
     {
-        this.scene=scene
-        console.log(this.scene)
+
+        //create a new box
+        const bounds = this.setUpBounds(worldObjects)
+
+        this.rootNode= new OctreeNode(bounds,minNodeSize)
+        this.addObjects(worldObjects)
+    }
+
+    setUpBounds(worldObjects)
+    {
         //create a new box
         const bounds = new THREE.Box3() 
 
@@ -36,23 +44,9 @@ export default class Octree
         const boundsCenter=new THREE.Vector3()
         bounds.getCenter(boundsCenter)
 
-
-        // const minBoundsCenter=new THREE.Vector3()
-        // minBoundsCenter.copy(boundsCenter)
-
-        // console.log(sizeVector)
-        // console.log(boundsCenter)
-        // console.log(bounds)
-
-
         bounds.set(boundsCenter.clone().sub(sizeVector),boundsCenter.add(sizeVector))
-        // console.log(bounds.min)
-        // console.log(bounds.max)
 
-
-
-        this.rootNode= new OctreeNode(bounds,minNodeSize,this.scene)
-        this.addObjects(worldObjects)
+        return bounds
     }
 
     addObjects(worldObjects)
@@ -62,10 +56,52 @@ export default class Octree
         });
     }
 
-    debugDraw(box)
+    findObj(mesh,scene)
     {
-        const helper = new THREE.Box3Helper( box, 'red' )
-        this.scene.add(helper)
+        const box= new THREE.Box3().setFromObject(mesh)
+        return this.intersectsObject(this.rootNode,box,scene)
+
+        
+    }
+
+    intersectsObject(node,box,scene)
+    {
+        // console.log(node)
+
+        // if(node.isBox3)
+        //check if bounding box intersects
+        if(node.nodeBounds.intersectsBox(box))
+            {
+                if(node.children==null)
+                    {
+                        console.log(box)
+                        console.log(node)
+                        this.debugDraw(node.nodeBounds,"green",scene)
+                        this.debugDraw(box,"green",scene)
+                        return true
+                    }
+                
+                for(let i =0; i<8; i++)
+                    {
+                        if(node.childBounds[i].intersectsBox(box))
+                            {
+                                return this.intersectsObject(node.children[i],box,scene)
+                                // break
+                            }
+                    }
+            }
+        return false
+            
+    }
+
+
+
+
+
+    debugDraw(box,color,scene)
+    {
+        const helper = new THREE.Box3Helper( box, color )
+        scene.add(helper)
     }
 
 }

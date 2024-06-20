@@ -3,16 +3,23 @@ import * as THREE from 'three'
 
 export default  class OctreeNode
 {
-    //three.box node bounds
-    //int min start
-    constructor(box, minNodeSize,scene,depth)
+    /**
+     * 
+     * @param {*} box 
+     * @param {*} minNodeSize minimum possible size per node
+     * @param {*} depth depth of current node
+     */
+    constructor(box, minNodeSize,depth)
     {
-        this.scene=scene
+        // this.scene=scene
         this.depth=depth||1
         // console.log(this.scene)
 
         this.nodeBounds= box
         this.minSize = minNodeSize
+        //NOTE:add a list of objects within the children
+        this.worldObjects=[]
+        this.containsObject=false
 
         this.nodeSize =  new THREE.Vector3()
         this.nodeBounds.getSize(this.nodeSize)
@@ -23,10 +30,15 @@ export default  class OctreeNode
 
         this.children=null//node array
         
+        
         // new THREE.Vector3()
 
     }
 
+    /**
+     * sets the child bounding boxes up.
+     * finds the center of the space in each division, uses that and the size to create a new box
+     */
     setUpChildNodes()
     {
         
@@ -45,15 +57,6 @@ export default  class OctreeNode
             .add( new THREE.Vector3(-quarter,quarter,-quarter))
             ,childSize
         )
-        // console.log('--------------------------------------------')
-
-        // console.log("new bounds")
-        // console.log(this.childBounds[0].min)
-        // console.log(this.childBounds[0].max)
-        // console.log("new bounds setup")
-        // console.log(center.clone().add( new THREE.Vector3(-quarter,quarter,-quarter)))
-        // console.log(childSize)
-        // console.log('...')
 
         this.childBounds[1]=new THREE.Box3().setFromCenterAndSize(
             center
@@ -61,18 +64,6 @@ export default  class OctreeNode
             .add( new THREE.Vector3(quarter,quarter,-quarter))
             ,childSize
         )
-        
-
-        // console.log("new bounds")
-        // console.log(this.childBounds[0].min)
-        // console.log(this.childBounds[0].max)
-        // console.log("new bounds setup")
-        // console.log(center.clone().add( new THREE.Vector3(-quarter,quarter,-quarter)))
-        // console.log(childSize)
-        // console.log('...')
-       
-
-        // console.log(quarter)
 
         this.childBounds[2]=new THREE.Box3().setFromCenterAndSize(
             center
@@ -80,16 +71,6 @@ export default  class OctreeNode
             .add( new THREE.Vector3(-quarter,quarter,quarter))
             ,childSize
         )
-       
-
-        // console.log("new bounds")
-        // console.log(this.childBounds[0].min)
-        // console.log(this.childBounds[0].max)
-        // console.log("new bounds setup")
-        // console.log(center.clone().add( new THREE.Vector3(-quarter,quarter,-quarter)))
-        // console.log(childSize)
-        // console.log('--------------------------------------------')
-        // console.log(quarter)
 
         this.childBounds[3]=new THREE.Box3().setFromCenterAndSize(
             center
@@ -97,7 +78,6 @@ export default  class OctreeNode
             .add( new THREE.Vector3(quarter,quarter,quarter))
             ,childSize
         )
-        // console.log(quarter)
 
         this.childBounds[4]=new THREE.Box3().setFromCenterAndSize(
             center
@@ -105,7 +85,6 @@ export default  class OctreeNode
             .add( new THREE.Vector3(-quarter,-quarter,-quarter))
             ,childSize
         )
-        // console.log(quarter)
 
         this.childBounds[5]=new THREE.Box3().setFromCenterAndSize(
             center
@@ -113,7 +92,6 @@ export default  class OctreeNode
             .add( new THREE.Vector3(quarter,-quarter,-quarter))
             ,childSize
         )
-        // console.log(quarter)
 
         this.childBounds[6]=new THREE.Box3().setFromCenterAndSize(
             center
@@ -121,133 +99,87 @@ export default  class OctreeNode
             .add( new THREE.Vector3(-quarter,-quarter,quarter))
             ,childSize
         )
-        // console.log(quarter)
 
         this.childBounds[7]=new THREE.Box3().setFromCenterAndSize(
             center
             .clone()
             .add( new THREE.Vector3(quarter,-quarter,quarter))
             ,childSize
-        )
-        // console.log(quarter)
-        // console.log("-------------------------------")
-
-            
+        ) 
     }
 
-    // createChild(quaterVector3,childSize)
-    // {
-    //     const quarter = this.nodeSize.y/4
-    //     console.log(this.nodeSize.y)
-    //     const childLength= this.nodeSize.y/ 2
-    //     const childSize=new THREE.Vector3(childLength,childLength,childLength)
-
-    //     const center= new THREE.Vector3()
-    //     this.nodeBounds.getCenter(center)
-
-
-    //     this.childBounds[4]=new THREE.Box3(
-    //         center
-    //         .clone()
-    //         .add( new THREE.Vector3(-quarter,-quarter,-quarter))
-    //         ,childSize
-    //     )
-    // }
-
+    /**
+     * entry point to recursive tree build
+     * 
+     * @param {*} worldObj 
+     */
     addObject(worldObj)
     {
         this.divideAndAdd(worldObj)
+
     }
 
+    /**
+     * Recursively builds the tree object
+     * 
+     * @param {*} worldObj 
+     * @returns 
+     */
     divideAndAdd(worldObj)
     {
+        //NOTE: return if current count of worldObjects has reached 0
+        //return if the node size has reached the limit
+        
         if(this.nodeSize.y<=this.minSize)
             {
-                // console.log('returning')
+                // this.containsObject=true
+                this.worldObjects.push(worldObj)
+                this.containsObject=true
+                // console.log(this.worldObjects)
+                // console.log(this)
                 return;
             }
-        //     console.log('sizes-----------------------------')
-        // console.log(this.nodeSize.y)
-        // console.log(this.minSize)
-        // console.log('sizes-----------------------------')
 
+        //if there are no children, set them up
         if(this.children==null)
             {
                 this.children=[]
-                // this.children=new OctreeNode[8]
             }
+
+        //instanciate dividing flag
         let dividing=false
+
+        //recursively create children
         for(let i=0;i<8;i++)
             {
+                //if children at index is null, instanciate a new octree
                 if(this.children[i] == null)
                     {
                         
-                        this.children[i]= new OctreeNode(this.childBounds[i],this.minSize,this.scene,this.depth+1)
-                        // console.log('creating new child')
-                        // console.log(this.children[i])
+                        this.children[i]= new OctreeNode(this.childBounds[i],this.minSize,this.depth+1)
+
                     }
-                // console.log(this.children[i])
-                // console.log(new THREE.Box3().setFromObject(worldObj))
-                //NOTE: changed this section form the tutorial
+                //if there is an object within this box, recursive divide box
+                //set dividing flag to true
                 if(this.children[i].nodeBounds.intersectsBox(new THREE.Box3().setFromObject(worldObj)))
                     {
-                        // console.log(this.children[i].nodeBounds.min)
-                        // console.log(this.children[i].nodeBounds.max)
-                        // console.log((new THREE.Box3().setFromObject(worldObj)).min)
-                        // console.log((new THREE.Box3().setFromObject(worldObj)).max)
+
                         dividing=true
-                        // console.log('dividing')/
 
                         this.children[i].divideAndAdd(worldObj)
-
+                        if(this.children[i].containsObject){this.containsObject=true}
                     }
             }
+
+        // if there wasnt any world objects found within the box, dividing stays false, children are null
         if(dividing==false)
         {
-            console.log('children were false')
+            this.containsObject=false
             this.children=null
-            console.log(this)
             
         }
     }
 
-    draw(scene)
-    {
-        // const vec3= new THREE.Vector3()
-        // this.nodeBounds.getSize(vec3)
-        // const geometry = new THREE.BoxGeometry()
-        // const material = new THREE.MeshBasicMaterial({wireframe:true,color:"red"})
-        // const mesh= new THREE.Mesh(geometry,material)
-        // this.nodeBounds.getCenter(vec3)
-        // mesh.position.copy(vec3)
-        // return mesh
-        // console.log('drawing')
-        const temp=[]
-        if(this.children!=null)
-            {
-                for(let i=0;i<8;i++)
-                    {
-                        if(this.children[i] !=null)
-                            {
-                                // console.log('draw the node')
-                                // console.log(this.children[i])
 
-                                const helper = new THREE.Box3Helper( this.nodeBounds, 'red' )
-                                scene.add(helper)
-                                // temp.push(helper)
-                            }
-                    }
-            }
-        
-        
-        
-        return temp
 
-        
-    }
-    debugDraw(box)
-    {
-        const helper = new THREE.Box3Helper( box, 'red' )
-        this.scene.add(helper)
-    }
 }
