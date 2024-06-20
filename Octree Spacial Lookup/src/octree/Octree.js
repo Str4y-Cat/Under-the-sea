@@ -9,10 +9,20 @@ export default class Octree
         //create a new box
         const bounds = this.setUpBounds(worldObjects)
 
+        //create rootNode
         this.rootNode= new OctreeNode(bounds,minNodeSize)
+
+        //add objects to the tree
         this.addObjects(worldObjects)
+        
+
     }
 
+    /**Grows a bounding box to cover all the objects in the array
+     * 
+     * @param {*} worldObjects 
+     * @returns Box3
+     */
     setUpBounds(worldObjects)
     {
         //create a new box
@@ -49,6 +59,10 @@ export default class Octree
         return bounds
     }
 
+    /**
+     * 
+     * @param {*} worldObjects 
+     */
     addObjects(worldObjects)
     {
         worldObjects.forEach(obj => {
@@ -65,22 +79,12 @@ export default class Octree
      */
     getObjects(mesh,scene)
     {
-        const arr=[]
         const box= new THREE.Box3().setFromObject(mesh)
-        // const testObj=this.intersectsObject(this.rootNode,box,scene,arr)
-        // const testLayers=this.intersectsLayers(this.rootNode,box,scene,arr)
-        const testBool=this.isIntersecting(this.rootNode,box,scene,arr)
-        // console.log(test)
-        // const unique = [...new Map(test.map(item => [item.uuid, item])).values()]
+        const intersections=this.intersectsObject(this.rootNode,box,scene)
+        const uniqueIntersections = [...new Map(intersections.map(item => [item.uuid, item])).values()]
 
-        // console.log(testObj)
-        
+        return uniqueIntersections
 
-        console.log(testBool)
-
-        return ''
-
-        
     }
 
     /**
@@ -91,15 +95,12 @@ export default class Octree
      */
     getLayers(mesh,scene)
     {
-        const arr=[]
         const box= new THREE.Box3().setFromObject(mesh)
-        const testLayers=this.intersectsLayers(this.rootNode,box,scene,arr)
+        const testLayers=this.intersectsLayers(this.rootNode,box,scene)
         const unique = [...new Map(testLayers.map(item => [item.mask, item])).values()]
 
+        return unique
 
-        return [...unique]
-
-        
     }
 
     /**
@@ -111,12 +112,10 @@ export default class Octree
      */
     intersects(mesh,scene)
     {
-        const arr=[]
+
         const box= new THREE.Box3().setFromObject(mesh)
 
-        return this.isIntersecting(this.rootNode,box,scene,arr)
-
-        
+        return this.isIntersecting(this.rootNode,box,scene)
     }
 
     /**
@@ -288,5 +287,7 @@ export default class Octree
         const helper = new THREE.Box3Helper( box, color )
         scene.add(helper)
     }
+
+    
 
 }
