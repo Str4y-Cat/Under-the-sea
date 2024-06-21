@@ -14,8 +14,6 @@ export default class BoidLogic
         this.sizes=displaySizes
         this.sceneSize=startValues.sceneSize/2|| defaultValue(2,"sceneSize")
         
-
-        
         this.transPadding = startValues.transPadding || defaultValue(10,"transPadding");
         this.solidPadding = startValues.solidPadding || defaultValue(1,"solidPadding");
         this.boundingBoxTransparent={
@@ -58,7 +56,7 @@ export default class BoidLogic
     
     }
 
-    // updateBoids
+    //Update bounding box
     updateSolidBoundingBox(padding){
         this.solidPadding=padding
         
@@ -69,6 +67,7 @@ export default class BoidLogic
         
     }
 
+    //initial boid positions
     setUpBoidPositions(count){
         const boidArray=[]
         // console.log(`count:${count}`)
@@ -88,6 +87,7 @@ export default class BoidLogic
         return boidArray
     }
 
+    // updates the boids based on other boids and environment objects
     update(environmenObjects)
     {
         // if(environmenObjects[0]){console.log(environmenObjects)}
@@ -101,9 +101,7 @@ export default class BoidLogic
                 // console.log('entering loop')s
                 //zero accum variables
                 let accum= this.accumulatorObject()
-                // console.log(`${boid.vx}\n${boid.vy}`)
-                // console.log(boid)
-                // console.log(this.boidArray)
+                
 
                 //loop through every other boid
                 this.boidArray.forEach((otherBoid,n)=>
@@ -114,10 +112,12 @@ export default class BoidLogic
                         const dz= boid.z - otherBoid.z
 
 
+                        
                         //check if they are within visual range
                         if(Math.abs(dx)<this.visualRange && Math.abs(dy)<this.visualRange&& Math.abs(dz)<this.visualRange)
                             {
                                 //get the distance between the two boids
+                                //FIXME: remove the sqrt check
                                 const distance= Math.sqrt(dx**2+dy**2+dz**2)
 
                                 //is the distance less than the protected range
@@ -152,35 +152,36 @@ export default class BoidLogic
                             }
                     })
 
-                //TEST
+                //checks environmet objects to see if this boid is near an object
                 if(!environmenObjects[i]){
 
-                
-                //check if there were any boids in the visual range
-                if(accum.neighboring_boids>0)
-                    {
-                        //average the positions and velocity by number of neighboring boids
-                        
-                        accum.xpos_avg/=accum.neighboring_boids
-                        accum.ypos_avg/=accum.neighboring_boids
-                        accum.zpos_avg/=accum.neighboring_boids
-                        accum.xvel_avg/=accum.neighboring_boids
-                        accum.yvel_avg/=accum.neighboring_boids
-                        accum.zvel_avg/=accum.neighboring_boids
-                        
+                    //check if there were any boids in the visual range
+                    if(accum.neighboring_boids>0)
+                        {
+                            //average the positions and velocity by number of neighboring boids
+                            
+                            accum.xpos_avg/=accum.neighboring_boids
+                            accum.ypos_avg/=accum.neighboring_boids
+                            accum.zpos_avg/=accum.neighboring_boids
+                            accum.xvel_avg/=accum.neighboring_boids
+                            accum.yvel_avg/=accum.neighboring_boids
+                            accum.zvel_avg/=accum.neighboring_boids
+                            
 
-                        
-                        //add cohesion and alignment factors
-                        boid.vx+= (accum.xpos_avg-boid.x)*this.cohesionFactor
-                        boid.vx+= (accum.xvel_avg-boid.vx)*this.matchingFactor
+                            
+                            //add cohesion and alignment factors
+                            boid.vx+= (accum.xpos_avg-boid.x)*this.cohesionFactor
+                            boid.vx+= (accum.xvel_avg-boid.vx)*this.matchingFactor
 
-                        boid.vy+= (accum.ypos_avg-boid.y)*this.cohesionFactor
-                        boid.vy+= (accum.yvel_avg-boid.vy)*this.matchingFactor
+                            boid.vy+= (accum.ypos_avg-boid.y)*this.cohesionFactor
+                            boid.vy+= (accum.yvel_avg-boid.vy)*this.matchingFactor
 
-                        boid.vz+= (accum.zpos_avg-boid.z)*this.cohesionFactor
-                        boid.vz+= (accum.zvel_avg-boid.vz)*this.matchingFactor
-                    }
+                            boid.vz+= (accum.zpos_avg-boid.z)*this.cohesionFactor
+                            boid.vz+= (accum.zvel_avg-boid.vz)*this.matchingFactor
+                        }
                 }
+
+                //there are other boids! get out of the way
                 else
                 {
                     //avoiding object
@@ -200,8 +201,6 @@ export default class BoidLogic
                 }
 
                 //Add sepperation factor
-                
-
                 boid.vx+= (accum.close_dx*this.seperationFactor) 
                 boid.vy+= (accum.close_dy*this.seperationFactor)
                 boid.vz+= (accum.close_dz*this.seperationFactor)
@@ -213,6 +212,8 @@ export default class BoidLogic
                  
                 
                 // calculate boids speed
+                //NOTE can get rid of the sqrt, move this check to before each variable(environment -> seperation -> alignment -> cohesion) is added to 
+                //create heirachy with the fish
                 const speed = Math.sqrt(boid.vx**2+boid.vy**2+boid.vz**2)
 
                 //enforce speedlimits
@@ -235,11 +236,10 @@ export default class BoidLogic
                 boid.y+=boid.vy
                 boid.z+=boid.vz
 
-                // console.log(`${boid.x}\n${boid.y}`)
-                // console.log(`${boid.vx}\n${boid.vy}`)
         })
     }
 
+    // sets up the accumulator object
     accumulatorObject(){
         const accum=
         {
@@ -257,20 +257,16 @@ export default class BoidLogic
         return accum
     }
 
+    //returns the main boid
     getMain()
     {
         return this.boidArray[0]
     }
 
+    // NOTE: could use a box3 to represent the bounding box
     solidWall(boid)
     {
-        // console.log(`boid y: ${boid.y} ---- boid x: ${boid.x}`)
-        // console.log(
-        //     `   bounding top ${this.boundingBoxSolid.top}\n
-        //         bounding bottom ${this.boundingBoxSolid.bottom}\n
-        //         bounding left ${this.boundingBoxSolid.left}\n
-        //         bounding right ${this.boundingBoxSolid.right}\n
-        //     `)
+       
 
         // console.log(this.boundingBoxSolid)
         if(this.boundingBoxSolid.top<boid.y)
@@ -330,6 +326,12 @@ export default class BoidLogic
 
         return boid
     }
+
+
+    // #region utils
+
+   
+    //#endregion
 }
 
 class Boid

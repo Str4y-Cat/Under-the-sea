@@ -8,8 +8,8 @@ export default class
     constructor(count,rayAngleLimit,environment,scene,gui)
     {
         this.environment= environment
-        console.log('environment objects')
-        console.log(this.environment)
+        // console.log('environment objects')
+        // console.log(this.environment)
         this.scene=scene
         this.gui=gui
         // this.raySphere= new RaySphere(count,rayAngleLimit,scene,gui,{environment:environment})
@@ -32,7 +32,7 @@ export default class
         this.debug.pointMeshes={}
 
         console.log("set up ray controller")
-        console.log(this)
+        // console.log(this)
         // this.test()
     }
 
