@@ -15,6 +15,8 @@ export default class BoidController
     {
         this.camera=camera
         this.texture= texture
+        this.global={}
+
 
         this.scene=scene
         this.sceneSize=debug.floorSize
@@ -22,57 +24,89 @@ export default class BoidController
 
 
         this.boidLogic=new BoidLogic(count, sizes,startValues)
-        this.boidMeshes= this.setUp(this.boidLogic.boidArray)
+        this.boidMeshes= []
+        this.addMeshes(this.boidLogic.boidArray)
 
 
         this.gui=gui
+        
         this.addControls()
+
     }
 
-    /** setUp(boidArray)
-     * 
-     * sets up the boids on the map
-     * 
-     */
-    setUp(boidArray)
+    addMeshes(arr)
     {
-        const boidMeshes=[]
-
         //create geometry
         const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
 
         //create material
         const material = new THREE.MeshMatcapMaterial( {matcap:this.texture} );
         geometry.rotateX(-Math.PI * 0.5);
-        // const material = new THREE.MeshToonMaterial();
-        // const material = new THREE.MeshLambertMaterial();
-        
-        // material.shininess=0.5
-        // material.specular=0.7
-        // console.log(`texture`)
-        // console.log(this.texture)
 
-        boidArray.forEach((boid,i) => {
-
-            const boidMesh= new THREE.Mesh(geometry,material)
-            // if(i==0){
-            //     boidMesh.geometry.rotateX
-
-            // }
-
-            boidMesh.position.y= boid.y
-            boidMesh.position.x= boid.x
-            boidMesh.position.z= boid.z
-
-
-            // console.log()
-            this.scene.add(boidMesh)
-            boidMeshes.push(boidMesh)
-            
-
+        arr.forEach((boid) => {
+            this.boidMeshes.push(this.createMesh(boid,geometry,material))
         });
-        // console.log(boidMeshes)
-        return boidMeshes
+
+        this.global.boidCount=this.boidMeshes.length
+ 
+    }
+
+    createMesh({x,y,z}, geometry,material)
+    {
+        const boidMesh= new THREE.Mesh(geometry,material)
+
+        boidMesh.position.set(x,y,z)
+
+        // console.log()
+        this.scene.add(boidMesh)
+        return boidMesh
+    }
+
+    removeMesh()
+    {
+                const mesh= this.boidMeshes.pop()
+
+                this.scene.remove(mesh)
+                mesh.geometry.dispose()
+                mesh.material.dispose()
+
+            
+    }
+
+    addBoids(count)
+    {
+        // console.log(`count is ${count}\nBefore pos: ${this.boidLogic.boidArray.length}\nBefore mesh: ${this.boidMeshes.length}`)
+        this.boidLogic.addBoids(count)
+        const iStart=this.boidLogic.boidArray.length-count
+        const iEnd= this.boidLogic.boidArray.length
+        // console.log(iStart)
+        // console.log(iEnd)
+        for(let i= iStart; i<iEnd;i++){
+            // console.log([this.boidLogic.boidArray[i]])
+            this.addMeshes([this.boidLogic.boidArray[i]])
+        }
+        // console.log(`After pos: ${this.boidLogic.boidArray.length}\nAfter mesh: ${this.boidMeshes.length}`)
+
+
+    }
+
+    removeBoids(count)
+    {
+        // console.log(`Removing-----------------`)
+        // console.log(`count is ${count}\nBefore pos: ${this.boidLogic.boidArray.length}\nBefore mesh: ${this.boidMeshes.length}`)
+
+        this.boidLogic.removeBoids(count)
+
+        const iStart=this.boidLogic.boidArray.length
+        const iEnd= this.boidLogic.boidArray.length+count
+        for(let i=iStart; i<iEnd;i++){
+            this.removeMesh()
+        }
+        // console.log(`After pos: ${this.boidLogic.boidArray.length}\nAfter mesh: ${this.boidMeshes.length}`)
+
+
+        // this.boidLogic.needsUpdate=true
+
     }
 
     /** Update()
@@ -82,12 +116,18 @@ export default class BoidController
      */
     update(environmenObjects)
     {
+        
+
         this.boidLogic.update(environmenObjects)
 
         this.boidMeshes.forEach((boidMesh,i)=>
         {
+            // console.log(i)
+            // console.log(this.boidLogic.boidArray[i])
+            // console.log(this.boidLogic.boidArray)
             const boid= this.boidLogic.boidArray[i]
 
+            // console.log(boidMesh)
             boidMesh.position.x=boid.x
             boidMesh.position.y=boid.y
             boidMesh.position.z=boid.z
@@ -108,22 +148,6 @@ export default class BoidController
         })
     }
 
-    /** Destroy()
-     * 
-     * removes a specific boid
-     * removes from logic
-     * removes geometry
-     * clears scene
-     * 
-     */
-
-    /** addBoid()
-     * 
-     *  creates a new boid
-     *  adds to logic arr
-     *  adds to scene
-     * 
-     */
 
     /** addControls
      * 
@@ -132,26 +156,44 @@ export default class BoidController
      */
     addControls()
     {
-       
-        this.gui.add(startValues,"cohesionFactor").min(0).max(0.05).step(0.00001).onChange((num)=>{
+        // values.
+       const boidsFolder= this.gui.addFolder('Boids')
+        boidsFolder.add(this.global,'boidCount').step(1). min(0).max(3000).onChange((count)=>
+        {
+            if(count>this.boidMeshes.length)
+                {
+                    this.addBoids(count-this.boidMeshes.length)
+                }
+            if(count<this.boidMeshes.length)
+                {
+                    this.removeBoids(this.boidMeshes.length-count)
+                }
+        })
+
+
+
+
+
+       const controlsFolder= boidsFolder.addFolder('Controls')
+        controlsFolder.add(startValues,"cohesionFactor").min(0).max(0.05).step(0.00001).onChange((num)=>{
             this.boidLogic.cohesionFactor=num
         })
-        this.gui.add(startValues,"matchingFactor").min(0).max(0.1).step(0.00001).onChange((num)=>{
+        controlsFolder.add(startValues,"matchingFactor").min(0).max(0.1).step(0.00001).onChange((num)=>{
             this.boidLogic.matchingFactor=num
         })
-        this.gui.add(startValues,"seperationFactor").min(0).max(0.5).step(0.00001).onChange((num)=>{
+        controlsFolder.add(startValues,"seperationFactor").min(0).max(0.5).step(0.00001).onChange((num)=>{
             this.boidLogic.seperationFactor=num
         })
-        this.gui.add(startValues,"turnFactor").min(0).max(1).step(0.0001).onChange((num)=>{
+        controlsFolder.add(startValues,"turnFactor").min(0).max(1).step(0.0001).onChange((num)=>{
             this.boidLogic.turnFactor=num/100
         })
-        this.gui.add(startValues,"minSpeed").min(0).max(10).step(0.001).onChange((num)=>{
+        controlsFolder.add(startValues,"minSpeed").min(0).max(10).step(0.001).onChange((num)=>{
             this.boidLogic.minSpeed=num/100
         })
-        this.gui.add(startValues,"maxSpeed").min(0).max(10).step(0.001).onChange((num)=>{
+        controlsFolder.add(startValues,"maxSpeed").min(0).max(10).step(0.001).onChange((num)=>{
             this.boidLogic.maxSpeed=num/100
         })
-        this.gui.add(startValues,"wallTransparent").onChange((bool)=>{
+        controlsFolder.add(startValues,"wallTransparent").onChange((bool)=>{
             this.boidLogic.wallTransparent=bool
 }) 
     }

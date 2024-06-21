@@ -34,8 +34,9 @@ export default class BoidLogic
 
         //boid objects
         this.boidCount=boidCount|| defaultValue(1,"boidCount")
-        this.boidArray=this.setUpBoidPositions(this.boidCount)
-        
+        this.boidArray=[]
+        this.addBoids(this.boidCount)
+        this.needsUpdate=false
         
         console.log('success!')
     }
@@ -68,23 +69,31 @@ export default class BoidLogic
     }
 
     //initial boid positions
-    setUpBoidPositions(count){
-        const boidArray=[]
+    addBoids(count){
+        // const boidArray=[]
         // console.log(`count:${count}`)
         for(let i = 0; i< count; i++)
             {   
                 const x= (Math.random()-0.5)*this.sceneSize
-
                 const y= (Math.random()-0.5)*this.sceneSize
                 const z= (Math.random()-0.5)*this.sceneSize
 
                 const vx= (Math.random()-0.5)*2*this.maxSpeed
                 const vy= (Math.random()-0.5)*2*this.maxSpeed
                 const vz= (Math.random()-0.5)*2*this.maxSpeed
-                boidArray.push(new Boid(x,y,z,vy,vx,vz))
+                this.boidArray.push(new Boid(x,y,z,vy,vx,vz))
             }
         // console.log(boidArray)
-        return boidArray
+        // return boidArray
+    }
+
+    removeBoids(count)
+    {
+        while(count)
+        {
+            this.boidArray.pop()
+            count--
+        }
     }
 
     // updates the boids based on other boids and environment objects

@@ -328,7 +328,7 @@ const tick =()=>
         if(slowTick!=past){
             // perform.timer('check environment')
             
-            intersectingEvironmentObjects=rayController.update(boidController.boidMeshes,4)
+            // intersectingEvironmentObjects=rayController.update(boidController.boidMeshes,4)
 
             // perform.timer('check environment')
         }
