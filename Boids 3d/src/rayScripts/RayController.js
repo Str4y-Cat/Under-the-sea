@@ -46,23 +46,31 @@ export default class
 
         //initialize return object
         const foundIntersections={}
-        
-        //NOTE: possible optimization is to change loop here. but might be insignificant
+
         //loop through boidPositions
+        for(let i = 0; i<boidPositions; i++){
 
         
-        boidPositions.forEach((boid,index) => {
-            
-            //TODO: check how many times this runs
-            //rotate raySphere to match boid
-            const targets= this.raySphere.rotateTo(boid)
             // this.raySphere.timer('checkEnviroment')
-            //sets debug for testing rays
-            this.raySphere.debug.origin=boid.position
+            
+            //finds environments objects that the boid intersects with
+            const enviromentObjects=this.environment.getObjects(boidPositions[i])
+            let environmentIntersections
+            
+            //if there are intersections, cast the rays
+            if(enviromentObjects.length>0)
+            {
+                //rotate raySphere to match boid
+                const targets= this.raySphere.rotateTo(boid)
+                
+                //sets debug for testing rays
+                this.raySphere.debug.origin=boidPositions[i].position
 
-            //cast rays on that sphere
-            const environmentIntersections= this.raySphere.castRays(targets,boid.position)
-            // this.raySphere.counter('return',true)
+                //cast rays on that sphere
+                environmentIntersections = this.raySphere.castRays(targets,boidPositions[i].position, enviromentObjects)
+                // this.raySphere.counter('return',true)
+                
+            }
             // this.raySphere.timer('checkEnviroment')
 
             //if there are intersections
@@ -72,10 +80,8 @@ export default class
                     // {currentIndex: {distance:k, position: { x,y,z}}}
                     foundIntersections[index]=environmentIntersections
                 }
+        }
 
-        });
-
-        // console.log('----------------------')
         return foundIntersections
     }
 
@@ -86,9 +92,6 @@ export default class
         if(rays){console.log('found')}
     }
    
-
-   
-    
     //#region DEBUG
     /**
      * debugRay
