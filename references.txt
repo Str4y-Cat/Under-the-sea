@@ -4,9 +4,13 @@ https://eng.libretexts.org/Bookshelves/Computer_Science/Applied_Programming/Book
 
 https://discourse.threejs.org/t/solved-best-way-to-translate-rotate-or-scale-a-group-of-vector3-at-the-group-level/3207
 
+https://github.com/gkjohnson/three-mesh-bvh?tab=readme-ov-file
+
 database
 - https://en.wikipedia.org/wiki/Spatial_database
 - https://en.wikipedia.org/wiki/Octree
+- octree: https://www.youtube.com/watch?v=wrZsTt6Pg2E
+- octree 2 : https://gamedev.net/articles/programming/general-and-gameplay-programming/introduction-to-octrees-r3529/
 
 bufferattribute:
 - https://discourse.threejs.org/t/solved-best-way-to-translate-rotate-or-scale-a-group-of-vector3-at-the-group-level/3207
@@ -18,3 +22,5 @@ possible raycast improvements:
 
 strange things!
 - frame rate tanks as soon as envirnment object is added to world object arr
+
+o

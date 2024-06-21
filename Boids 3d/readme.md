@@ -90,6 +90,16 @@ constants:
 
 Linear time complexity. Average Excution per boid stays around 324ms
 
+#### Fixes
+
+| Fixes | Boid Count| Avg Execution Time Per Boid|
+|-----------------|-----------------|-----------------|
+| 1 | 200 |62.9ms |
+| 2 | 200 |0.56ms |
+| 3 | 200 |0.084ms |
+| 4 | 200 |0.058ms |
+
+
 #### Fix 1: 
 simply added .computeBoundingBox() to environment objects
 
@@ -116,3 +126,27 @@ Implemented a Octree spacial lookup for the environment objects
 | 200 | 0.084ms |
 
 6.67x performace increase. 
+
+#### Fix 4: 
+Moved the octree check before raycaster is setup. this way, if the octree check returns null, 
+positioning of targets and raycasting will be completely skipped
+
+| Boid Count | Avg Execution Time Per Boid|
+|-----------------|-----------------|
+| 200 | 0.058ms |
+
+1.448x performace increase. 
+
+<!-- #### Fix 5: 
+Now we have optimized the actual raycasting execution as far as we can, lets look at the whole class.
+Implementing a staggered update, i.e only tests specific boids on each tick, not the entire list
+
+Worst Case conditions. Each boid has to test its surroundings
+
+
+
+| sta| Avg Execution Time Per Boid| Avg Execution Time Per Boid|
+|-----------------|-----------------|-----------------|
+| 200 | 0.058ms | 0.058ms | -->
+
+1.448x performace increase. 
