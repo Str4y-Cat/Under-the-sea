@@ -81,7 +81,7 @@ export default class Octree
     {
         let box =obj;
         if(!obj.isBox3||obj.isBox3==null){
-             box= new THREE.Box3().setFromObject(mesh)
+             box= new THREE.Box3().setFromObject(obj)
         }
         
         const intersections=this.intersectsObject(this.rootNode,box,scene)
