@@ -12,7 +12,8 @@ export default class CreateOctree
         this.drawMeshes=[]
         if(scene){
             this.scene=scene
-            this.draw(this.octree.rootNode,scene)
+            // this.draw(this.octree.rootNode,scene)
+            this.showOctree()
         }
 
         
@@ -86,4 +87,102 @@ export default class CreateOctree
         // .lerpColors ( color1 : Color, color2 : Color, alpha : Float ) : 
         
     }
+
+    drawBox(node,scene,count)
+    {
+        count=(count!=null)?count:1
+        
+        if(node.children==null)
+            {
+                const center= new THREE.Vector3()
+                const scale= new THREE.Vector3()
+
+                node.nodeBounds.getCenter(center)
+                node.nodeBounds.getSize(scale)
+                scale.multiplyScalar(0.999)
+                const box=new THREE.Box3().setFromCenterAndSize(center,scale)
+
+                let color="white"
+                console.log(`count:${count}`)
+                switch(count)
+                {
+                    case 1:
+                        color="#ffffff"
+                        break;
+                    case 2:
+                        color="#c8c2ff"
+                        break;
+                    case 3:
+                        color="#7363ff"
+                        break;
+                    case 4:
+                        color="#1a00ff"
+                        break;
+                    case 5:
+                        color="#ff00ec"
+                        break;
+                    case 6:
+                        color="#ff004b"
+                        break;
+                    case 7:
+                        color="#ff0000"
+                        break;
+                    case 8:
+                        color="#ffd000"
+                        break;
+                    case 9:
+                        color="#a4ff00"
+                        break;
+                    default:
+                        color='#00ff87'
+
+                }
+
+                const helper = new THREE.Box3Helper( box, color)
+                node.boxHelper=helper
+                scene.add(helper)
+                return 
+            }
+        
+        
+        node.children.forEach(child=>
+            {
+                this.drawBox(child,scene,count+1)
+            }
+        )
+        
+            
+    }
+    removeBox(node,scene)
+    {
+        
+        if(node.children==null)
+            {
+
+                scene.remove(node.boxHelper)
+                node.boxHelper.dispose()
+                node.boxHelper=null
+                return 
+            }
+        
+
+        node.children.forEach(child=>
+            {
+                this.removeBox(child,scene)
+            }
+        )
+        
+            
+    }
+
+
+    showOctree()
+    {
+        this.drawBox(this.octree.rootNode,this.scene)
+    }
+    hideOctree()
+    {
+        this.removeBox(this.octree.rootNode,this.scene)
+    }
+
 }
