@@ -97,7 +97,7 @@ export default class
     update(boidPoistions, stagger)
     {
         this.stagger.count++
-        if(this.stagger.count==10000){this.stagger=0}   
+        if(this.stagger.count==10000){this.stagger.count=0}   
         const increase= boidPoistions.length/stagger
         const shift= this.stagger.count%stagger
         // console.log(`shift:${shift} start:${increase*shift} end:${increase*(shift+1)}`)
