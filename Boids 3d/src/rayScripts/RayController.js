@@ -43,16 +43,12 @@ export default class
      */
     checkEnviroment(boidPositions)
     {
-
+        // this.raySphere.timer('checkEnviroment')
         //initialize return object
         const foundIntersections={}
-
         //loop through boidPositions
-        for(let i = 0; i<boidPositions; i++){
+        for(let i = 0; i<boidPositions.length; i++){
 
-        
-            // this.raySphere.timer('checkEnviroment')
-            
             //finds environments objects that the boid intersects with
             const enviromentObjects=this.environment.getObjects(boidPositions[i])
             let environmentIntersections
@@ -61,7 +57,7 @@ export default class
             if(enviromentObjects.length>0)
             {
                 //rotate raySphere to match boid
-                const targets= this.raySphere.rotateTo(boid)
+                const targets= this.raySphere.rotateTo(boidPositions[i])
                 
                 //sets debug for testing rays
                 this.raySphere.debug.origin=boidPositions[i].position
@@ -69,20 +65,26 @@ export default class
                 //cast rays on that sphere
                 environmentIntersections = this.raySphere.castRays(targets,boidPositions[i].position, enviromentObjects)
                 // this.raySphere.counter('return',true)
+            
                 
             }
-            // this.raySphere.timer('checkEnviroment')
-
+            
             //if there are intersections
             if(environmentIntersections)
                 {
                     //sets a new object in the found intersections obj
                     // {currentIndex: {distance:k, position: { x,y,z}}}
-                    foundIntersections[index]=environmentIntersections
+                    foundIntersections[i]=environmentIntersections
                 }
+            // this.raySphere.timer('checkEnviroment')
         }
 
         return foundIntersections
+    }
+
+    update(boidPoistions, stagger)
+    {
+        //
     }
 
     test()
