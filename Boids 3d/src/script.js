@@ -9,6 +9,7 @@ import BoidController from './boidScripts/BoidController'
 import { DragControls } from 'three/addons/controls/DragControls.js';
 import RAYS from './rayScripts/RaySphere'
 import Stats from 'three/addons/libs/stats.module.js';
+import Performance from './performance/Performance';
 
 import RayController from './rayScripts/RayController';
 
@@ -27,6 +28,7 @@ THREE.Mesh.prototype.raycast = acceleratedRaycast;
 //set up debug
 const gui = new GUI()
 const debug= {}
+const perform= new Performance()
 
 
 const textureLoader= new THREE.TextureLoader()
@@ -109,7 +111,7 @@ dragGeometry1.computeBoundsTree();
 // const dragGeometry1= new THREE.TorusGeometry(1)
 const environmentObjects=[]
 
-// for(let i=0; i<10; i++)
+// for(let i=0; i<5; i++)
 //     {
 //         const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
 //         mesh.scale.x=Math.max(Math.random(),0.4)
@@ -133,15 +135,45 @@ const environmentObjects=[]
 //         environmentObjects.push(mesh)
 //     }
 
-const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
-mesh.scale.x=Math.abs(Math.random()-0.5)
-mesh.scale.y=2.5
-mesh.position.y=-1.25
-mesh.scale.z=5
-mesh.layers.enable( 1 );
-scene.add(mesh)
+for(let y=-2; y<=2; y++)
+    {
+        for(let x = -2 ; x<=2;x++)
+            {
+                for (let z = -2 ; z<=2;z++ )
+                    {
+                        const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
+                        mesh.scale.x=0.3
+                        mesh.scale.y=0.3
+                        mesh.scale.z=0.3
+                        // // mesh.rotation.set(new THREE.Vector3((Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI)) 
+                        // mesh.rotation.x=(Math.random()-0.5)*2*Math.PI
+                        // mesh.rotation.y=(Math.random()-0.5)*2*Math.PI
+                        // mesh.rotation.z=(Math.random()-0.5)*2*Math.PI
+                
+                        // console.log(mesh.rotation.x)
+                        
+                        // mesh.position.set(new THREE.Vector3((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)) 
+                        mesh.position.x=x
+                        mesh.position.y=y
+                        mesh.position.z=z
+                        
+                        mesh.layers.enable( 1 );
+                       
+                        scene.add(mesh)
+                        environmentObjects.push(mesh)
+                    }
+            }
+    }
 
-environmentObjects.push(mesh,floor)
+// const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
+// mesh.scale.x=Math.abs(Math.random()-0.5)
+// mesh.scale.y=2.5
+// mesh.position.y=-1.25
+// mesh.scale.z=5
+// mesh.layers.enable( 1 );
+// scene.add(mesh)
+
+// environmentObjects.push(mesh,floor)
 
 //#endregion
 
@@ -151,7 +183,21 @@ environmentObjects.push(mesh,floor)
  */
 
 const environment=new CreateOctree(environmentObjects,0.3,scene)
+debug.showOctree=true
+const octreeFolder=gui.addFolder('Octree')
+octreeFolder.add(debug,'showOctree').onChange(bool=>{
+    if(bool)
+        {
+            environment.showOctree()
 
+        }
+    else
+    {
+        environment.hideOctree()
+
+    }
+
+})
 //#endregion
 
 
@@ -268,23 +314,22 @@ const tick =()=>
 
         //for expensive computations, offset slowtick so that heavy computations are spread
         stats.begin();
-        let slowTick= Math.round(elapsedTime*10)
+        let slowTick= Math.round(elapsedTime*100)
         if(slowTick!=past){
-            // rayController.update()
-            // console.log(slowTick)
-            // rayController.test()
-            intersectingEvironmentObjects=rayController.checkEnviroment(boidController.boidMeshes)
-            // console.log(environmentObjects)
+            // perform.timer('check environment')
             
-            // console.log(intersectingEvironmentObjects)
-            // console.log(boidsObjects)
+            intersectingEvironmentObjects=rayController.update(boidController.boidMeshes,4)
 
+            // perform.timer('check environment')
         }
         stats.end();
 
         past=slowTick
 
+        // perform.timer('boid Update')
         boidController.update(intersectingEvironmentObjects)
+        // perform.timer('boid Update')
+
         intersectingEvironmentObjects={}
 
         //key controller

@@ -84,12 +84,12 @@ const geom= new THREE.BoxGeometry(1,1,1)
 geom.computeBoundingBox()
 const material= new THREE.MeshPhongMaterial()
 const worldObjects=[]
-for(let i = 0; i<2; i++)
+for(let i = 0; i<10; i++)
     {
         
         const mesh= new THREE.Mesh(geom,material)
         mesh.scale.set(Math.random()+0.3,Math.random()+0.3,Math.random()+0.3)
-        mesh.position.set((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)
+        mesh.position.set((Math.random()-0.5)*2*2,(Math.random()-0.5)*2*2,(Math.random()-0.5)*2*2)
         mesh.rotation.set((Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI)
         worldObjects.push(mesh)
         
@@ -108,10 +108,12 @@ console.log(octreeClass.octree)
 const geometry= new THREE.SphereGeometry(1)
 geometry.computeBoundingBox()
 const travelerMesh= new THREE.Mesh(geometry,material)
-travelerMesh.position.set((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)
+travelerMesh.position.set((Math.random()-0.5)*2*2,(Math.random()-0.5)*2*2,(Math.random()-0.5)*2*2)
 
 scene.add(travelerMesh)
-console.log(octreeClass.octree.findObj(travelerMesh,scene))
+// console.log(octreeClass.octree.getObjects(travelerMesh,scene))
+// console.log(octreeClass.octree.getLayers(travelerMesh))
+console.log(octreeClass.octree.intersects(travelerMesh,scene))
 // const debug=
 // {
 //     depth:0,
