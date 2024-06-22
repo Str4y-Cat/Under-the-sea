@@ -276,7 +276,6 @@ export default class BoidLogic
     solidWall(boid)
     {
        
-
         // console.log(this.boundingBoxSolid)
         if(this.boundingBoxSolid.top<boid.y)
             {

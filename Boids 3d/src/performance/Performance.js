@@ -7,6 +7,14 @@ export default class Performance
         this.count={}
         this.time={}
         this.totalTime={}
+        this.avg
+    }
+
+    reset()
+    {
+        this.count={}
+        this.time={}
+        this.totalTime={}
     }
 
     counter(name,returnFlag,incrementValue)

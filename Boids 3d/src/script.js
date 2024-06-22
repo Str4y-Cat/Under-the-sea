@@ -29,7 +29,8 @@ THREE.Mesh.prototype.raycast = acceleratedRaycast;
 const gui = new GUI()
 const debug= {}
 const perform= new Performance()
-
+gui.add(perform,'reset').name('reset average')
+// gui.add(perform,'avg').name('avg')
 
 const textureLoader= new THREE.TextureLoader()
 const matCapTexture= textureLoader.load('/textures/matCap1.png')
@@ -336,9 +337,9 @@ const tick =()=>
 
         past=slowTick
 
-        // perform.timer('boid Update')
+        perform.timer('boid Update',true)
         boidController.update(intersectingEvironmentObjects)
-        // perform.timer('boid Update')
+        perform.timer('boid Update',true)
 
         intersectingEvironmentObjects={}
 
