@@ -136,15 +136,22 @@ const boids= new BoidsController(three)
  */
 
 const clock= new THREE.Clock()
-
+// clock.start()
+let last=0
 const tick =()=>
     {
 
         let elapsedTime= clock.getElapsedTime()
+        let current=elapsedTime
+        let deltaTime= current-last;
+        last=current;
+
+        // let deltaTime= clock.getDelta()
+        // console.log(delta)
         // stats.update()
         controls.update()
     
-        boids.update()
+        boids.update(deltaTime)
         //renderer
       
         // ra

@@ -24,12 +24,19 @@ export default class Boids
         this.boundingBox.box.getSize(this.boundingBox.size)
         // console.log(this.boundingBox.size)
         //renderer
-        this.weights={}
+        this.weights={
+            visualRange: boidVariables.visualRange||1,
+            protectedRange:boidVariables.protectedRange||0.3,
+            seperation: boidVariables.seperation||1,
+            cohesion:  boidVariables.cohesion||1,
+            alignment: boidVariables.alignment||1,
+            turnFactor: boidVariables.turnFactor||0.2,
+        }
         this.weights.speed={}
         this.weights.speed.min=0
         this.weights.speed.max=4
 
-
+        this.test=true
 
         this.setUpGPGPU()
 
@@ -54,14 +61,17 @@ export default class Boids
         // create variables
         this.createVariables()
 
-        //debug
         // add uniforms
-        // this.addUniforms()
+        this.updateUniforms()
 
         // init
-        console.log(this.gpgpu)
         this.gpgpu.computation.init()
+
+        //debug
         this.debugPlane()
+
+        //create a material to get the positions from
+        this.createPositionMaterial()
 
     }
 
@@ -111,6 +121,7 @@ export default class Boids
             
         }
         this.positionsTexture= texture
+        this.currentPositions=texture
         console.log('position texture')
         console.log(texture)
     }
@@ -158,8 +169,6 @@ export default class Boids
      * convert from object to vec4 array 
      */
 
-
-
     //[x] create Variables
     /**
      * 
@@ -196,9 +205,27 @@ export default class Boids
      * cohesion |int
      * alignment |int
      * turn factor |int
-     * boundsMin |int taken from box3.min
-     * boundsMax |int taken from box3.max
+     * boundsMin |vec3 taken from box3.min
+     * boundsMax |vec3 taken from box3.max
      */
+    updateUniforms()
+    {
+        this.gpgpu.velocityVariable.material.uniforms.uVisualRange= new THREE.Uniform(this.weights.visualRange)
+        this.gpgpu.velocityVariable.material.uniforms.uProtectedRange= new THREE.Uniform(this.weights.protectedRange)
+        this.gpgpu.velocityVariable.material.uniforms.uSeperation= new THREE.Uniform(this.weights.seperation)
+        this.gpgpu.velocityVariable.material.uniforms.uCohesion= new THREE.Uniform(this.weights.cohesion)
+        this.gpgpu.velocityVariable.material.uniforms.uAlignment= new THREE.Uniform(this.weights.alignment)
+        this.gpgpu.velocityVariable.material.uniforms.uTurnFactor= new THREE.Uniform(this.weights.turnFactor)
+        this.gpgpu.velocityVariable.material.uniforms.uBoundsMin= new THREE.Uniform(this.boundingBox.box.min)
+        this.gpgpu.velocityVariable.material.uniforms.uBoundsMax= new THREE.Uniform(this.boundingBox.box.max)
+        this.gpgpu.velocityVariable.material.uniforms.uDeltaTime= new THREE.Uniform(0)
+        this.gpgpu.velocityVariable.material.uniforms.uTime= new THREE.Uniform(0)
+    
+        this.gpgpu.positionsVariable.material.uniforms.uDeltaTime= new THREE.Uniform(0)
+    
+    
+    }
+
 
     
     //[x] debug plane
@@ -212,6 +239,8 @@ export default class Boids
             new THREE.MeshBasicMaterial({map: this.gpgpu.computation.getCurrentRenderTarget(this.gpgpu.positionsVariable).texture
             })
         )
+
+        
 
         this.gpgpu.debugVelocity=new THREE.Mesh(
             new THREE.PlaneGeometry(3,3),
@@ -232,6 +261,25 @@ export default class Boids
         // this.three.scene.add(this.gpgpu.debugPosition)
     }
 
+    createPositionMaterial()
+    {
+        // Material
+        this.position={}
+        this.position.positionMaterial = this.gpgpu.computation.createShaderMaterial( BoidPositionShader, {theTexture: { value: null } } );
+        this.position.positionMaterial.uniforms.theTexture.value = this.positionsTexture;
+        this.position.positionBuffer = new Uint8Array( this.gpgpu.size* this.gpgpu.size * 4 );
+
+        this.position.positionRenderTarget = new THREE.WebGLRenderTarget( this.gpgpu.size, this.gpgpu.size, {
+            wrapS: THREE.ClampToEdgeWrapping,
+            wrapT: THREE.ClampToEdgeWrapping,
+            minFilter: THREE.NearestFilter,
+            magFilter: THREE.NearestFilter,
+            format: THREE.RGBAFormat,
+            type: THREE.UnsignedByteType,
+            depthBuffer: false
+        } );
+    
+    }
 
     //[ ] Update function. handles everything in the tick function
     /**
@@ -244,11 +292,63 @@ export default class Boids
         particles.material.uniforms.uParticlesTexture.value= gpgpu.computation.getCurrentRenderTarget(gpgpu.particlesVariable).texture
      * 
      */
-    update()
+    update(deltaTime)
     {
+        
+        // gpgpu.particlesVariable.material.uniforms.uTime.value= elapsedTime
+        // console.log(deltaTime)
+        this.gpgpu.velocityVariable.material.uniforms.uDeltaTime.value= deltaTime
+        this.gpgpu.velocityVariable.material.uniforms.uTime.value+= deltaTime
+        // console.log(this.gpgpu.velocityVariable.material.uniforms.uTime.value)
+        this.gpgpu.positionsVariable.material.uniforms.uDeltaTime.value= deltaTime
+
         this.gpgpu.computation.compute();
-        // particles.material.uniforms.uParticlesTexture.value= gpgpu.computation.getCurrentRenderTarget(gpgpu.particlesVariable).texture
+        this.gpgpu.computation.doRenderTarget( BoidPositionShader, this.position.positionRenderTarget );
+
+        // console.log(this.gpgpu.computation)
+        // this.three.renderer.readRenderTargetPixels(
+        //     this.position.positionRenderTarget,
+        //     0,
+        //     0,
+        //     this.gpgpu.size,
+        //     this.gpgpu.size,
+        //     this.position.positionBuffer
+        // );
+        // console.log(this.position.positionBuffer)
+
+        // renderer.readRenderTargetPixels( readWaterLevelRenderTarget, 3, 3, 4, 1, readWaterLevelImage );
+		// const pixels = new Float32Array( readWaterLevelImage.buffer );
+        // w/h: width/height of the region to read
+        // x/y: bottom-left corner of that region
+       
+        // const buffer = new Uint8Array(this.gpgpu.size * this.gpgpu.size * 4);
+        // // console.log(this.gpgpu.computation.getCurrentRenderTarget(this.gpgpu.positionsVariable))
+        // this.three.renderer.readRenderTargetPixels(this.gpgpu.computation.getCurrentRenderTarget(this.gpgpu.positionsVariable), -this.gpgpu.size/2, -this.gpgpu.size/2, this.gpgpu.size, this.gpgpu.size, buffer);
+        // // const pixels = new Float32Array( buffer.buffer );
+        if(this.test)
+            {
+                console.log(this.gpgpu.computation.getCurrentRenderTarget(this.gpgpu.positionsVariable))
+
+                const pixels = new Uint8Array(this.gpgpu.size * this.gpgpu.size * 4);
+                // console.log(this.gpgpu.computation)
+                this.three.renderer.readRenderTargetPixels(
+                    this.gpgpu.computation.getCurrentRenderTarget(this.gpgpu.positionsVariable),
+                    0,
+                    0,
+                    this.gpgpu.size,
+                    this.gpgpu.size,
+                    pixels
+                );
+
+                this.test=false
+            }
+
+        
+        // console.log(pixels)
+        // this.positionMaterial.uniforms.uPositionTexture.value= this.gpgpu.computation.getCurrentRenderTarget(this.gpgpu.positionsVariable).texture
         // myMaterial.uniforms.myTexture.value = gpuCompute.getCurrentRenderTarget( posVar ).texture;
+        // console.log(this.positionMaterial.uniforms.uPositionTexture.value)
+        // this.currentPositions = this.gpgpu.computation.getCurrentRenderTarget( this.gpgpu.positionsVariable).texture;
     }
 
 
