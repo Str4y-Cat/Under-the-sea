@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import GUI from 'lil-gui'
 import {  OrbitControls } from 'three/examples/jsm/Addons.js'
 import BoidController from './boidScripts/BoidController'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 import { DragControls } from 'three/addons/controls/DragControls.js';
 import RAYS from './rayScripts/RaySphere'
@@ -32,8 +33,24 @@ const perform= new Performance()
 
 
 const textureLoader= new THREE.TextureLoader()
+const gltfLoader= new GLTFLoader()
+
+
 const matCapTexture= textureLoader.load('/textures/matCap1.png')
 const matCapTexture2= textureLoader.load('/textures/matCap2.png')
+
+
+const sandAo= textureLoader.load('/textures/sand/sandAo.jpg')
+const sandColor= textureLoader.load('/textures/sand/sandColor.jpg')
+const sandDis= textureLoader.load('/textures/sand/sandDis.png')
+const sandNormal= textureLoader.load('/textures/sand/sandNormal.jpg')
+
+// console.log(sandAo)
+// console.log(sandColor)
+// console.log(sandDis)
+// console.log(sandNormal)
+
+
 
 //axis helper
 
@@ -42,8 +59,8 @@ const canvas = document.querySelector('.webgl')
 
 //create scene
 const scene = new THREE.Scene()
-scene.background = new THREE.Color().setHSL( 0.6, 0, 1 );
-scene.fog = new THREE.Fog( scene.background, 1, 5000 );
+scene.background = new THREE.Color("#5fcff3")
+scene.fog = new THREE.Fog( new THREE.Color('#093f50'), 1, 10 );
 
 const axisHelper= new THREE.AxesHelper(0.3)
 scene.add(axisHelper)
@@ -77,13 +94,16 @@ window.addEventListener('resize',()=>
  * floor
  */
 debug.floorSize=5
-const floorGeometry= new THREE.PlaneGeometry(debug.floorSize,debug.floorSize,8,8)
+const floorGeometry= new THREE.PlaneGeometry(debug.floorSize*100,debug.floorSize*100,128,128)
 floorGeometry.computeBoundingBox();
 floorGeometry.computeBoundsTree();
-const floorMaterial= new THREE.MeshBasicMaterial(
+const floorMaterial= new THREE.MeshStandardMaterial(
     {
-        color:"red",
-        wireframe:true
+        map:sandColor,
+        displacementMap:sandDis,
+        normalMap:sandNormal,
+        aoMap:sandAo,
+        displacementScale:0.2
     })
 const floor= new THREE.Mesh(
     floorGeometry,
@@ -135,35 +155,35 @@ const environmentObjects=[]
 //         environmentObjects.push(mesh)
 //     }
 
-for(let y=-2; y<=2; y++)
-    {
-        for(let x = -2 ; x<=2;x++)
-            {
-                for (let z = -2 ; z<=2;z++ )
-                    {
-                        const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
-                        mesh.scale.x=0.3
-                        mesh.scale.y=0.3
-                        mesh.scale.z=0.3
-                        // // mesh.rotation.set(new THREE.Vector3((Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI)) 
-                        // mesh.rotation.x=(Math.random()-0.5)*2*Math.PI
-                        // mesh.rotation.y=(Math.random()-0.5)*2*Math.PI
-                        // mesh.rotation.z=(Math.random()-0.5)*2*Math.PI
+// for(let y=-2; y<=2; y++)
+//     {
+//         for(let x = -2 ; x<=2;x++)
+//             {
+//                 for (let z = -2 ; z<=2;z++ )
+//                     {
+//                         const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
+//                         mesh.scale.x=0.3
+//                         mesh.scale.y=0.3
+//                         mesh.scale.z=0.3
+//                         // // mesh.rotation.set(new THREE.Vector3((Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI)) 
+//                         // mesh.rotation.x=(Math.random()-0.5)*2*Math.PI
+//                         // mesh.rotation.y=(Math.random()-0.5)*2*Math.PI
+//                         // mesh.rotation.z=(Math.random()-0.5)*2*Math.PI
                 
-                        // console.log(mesh.rotation.x)
+//                         // console.log(mesh.rotation.x)
                         
-                        // mesh.position.set(new THREE.Vector3((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)) 
-                        mesh.position.x=x
-                        mesh.position.y=y
-                        mesh.position.z=z
+//                         // mesh.position.set(new THREE.Vector3((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)) 
+//                         mesh.position.x=x
+//                         mesh.position.y=y
+//                         mesh.position.z=z
                         
-                        mesh.layers.enable( 1 );
+//                         mesh.layers.enable( 1 );
                        
-                        scene.add(mesh)
-                        environmentObjects.push(mesh)
-                    }
-            }
-    }
+//                         scene.add(mesh)
+//                         environmentObjects.push(mesh)
+//                     }
+//             }
+//     }
 
 // const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
 // mesh.scale.x=Math.abs(Math.random()-0.5)
@@ -246,8 +266,16 @@ window.addEventListener('keydown',(e)=>
 /**
  * BOIDS
  */
+let fishModel
+let boidController
+gltfLoader.load("/models/Fish.glb",(gltf)=>
+{
+    fishModel=gltf
+    console.log(gltf)
 
-const boidController= new BoidController(200,sizes,scene,debug,gui,camera, matCapTexture)
+    boidController = new BoidController(200,sizes,scene,debug,gui,camera, fishModel)
+
+})
 //#endregion
 
 
@@ -303,10 +331,14 @@ renderer.setPixelRatio(Math.min(2,window.devicePixelRatio))
 const clock= new THREE.Clock()
 let past=0
 let intersectingEvironmentObjects={}
+let pastTime=0
 const tick =()=>
     {
 
         let elapsedTime= clock.getElapsedTime()
+        let currentTime=elapsedTime
+        let deltaTime=currentTime-pastTime
+        pastTime=currentTime
         // stats.update()
         controls.update()
         // controls.update(delta)
@@ -315,19 +347,33 @@ const tick =()=>
         //for expensive computations, offset slowtick so that heavy computations are spread
         stats.begin();
         let slowTick= Math.round(elapsedTime*100)
-        if(slowTick!=past){
-            // perform.timer('check environment')
-            
-            intersectingEvironmentObjects=rayController.update(boidController.boidMeshes,4)
+        if(boidController)
+            {
+            // if(slowTick!=past){
+            //     // perform.timer('check environment')
+                
+            //     intersectingEvironmentObjects=rayController.update(boidController.boidMeshes,4)
 
-            // perform.timer('check environment')
-        }
-        stats.end();
+            //     // perform.timer('check environment')
+            // }
+            // stats.end();
 
-        past=slowTick
+            // past=slowTick
 
         // perform.timer('boid Update')
-        boidController.update(intersectingEvironmentObjects)
+        
+                boidController.update(intersectingEvironmentObjects)
+                boidController.boidAnimations.forEach(mixer=>
+                    {
+                        // console.log('updateing')
+                        if(mixer)
+                            {
+                                mixer.update(deltaTime*3 )
+                            }
+                    }
+                )
+
+            }
         // perform.timer('boid Update')
 
         intersectingEvironmentObjects={}

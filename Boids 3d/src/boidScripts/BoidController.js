@@ -1,5 +1,7 @@
 import BoidLogic from "./BoidLogic";
 import * as THREE from 'three'
+import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils.js'
+
 
 export default class BoidController
 {
@@ -11,15 +13,16 @@ export default class BoidController
      *  
      * 
      */
-    constructor(count, sizes, scene,debug,gui,camera,texture)
+    constructor(count, sizes, scene,debug,gui,camera,model)
     {
         this.camera=camera
-        this.texture= texture
+        this.model= model
 
         this.scene=scene
         this.sceneSize=debug.floorSize
         startValues.sceneSize=this.sceneSize
 
+        this.boidAnimations= []
 
         this.boidLogic=new BoidLogic(count, sizes,startValues)
         this.boidMeshes= this.setUp(this.boidLogic.boidArray)
@@ -34,16 +37,57 @@ export default class BoidController
      * sets up the boids on the map
      * 
      */
+    // setUp(boidArray)
+    // {
+    //     const boidMeshes=[]
+
+    //     //create geometry
+    //     const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
+
+    //     //create material
+    //     const material = new THREE.MeshMatcapMaterial( {matcap:this.texture} );
+    //     geometry.rotateX(-Math.PI * 0.5);
+    //     // const material = new THREE.MeshToonMaterial();
+    //     // const material = new THREE.MeshLambertMaterial();
+        
+    //     // material.shininess=0.5
+    //     // material.specular=0.7
+    //     // console.log(`texture`)
+    //     // console.log(this.texture)
+
+    //     boidArray.forEach((boid,i) => {
+
+    //         const boidMesh= new THREE.Mesh(geometry,material)
+    //         // if(i==0){
+    //         //     boidMesh.geometry.rotateX
+
+    //         // }
+
+    //         boidMesh.position.y= boid.y
+    //         boidMesh.position.x= boid.x
+    //         boidMesh.position.z= boid.z
+
+
+    //         // console.log()
+    //         this.scene.add(boidMesh)
+    //         boidMeshes.push(boidMesh)
+            
+
+    //     });
+    //     // console.log(boidMeshes)
+    //     return boidMeshes
+    // }
+
     setUp(boidArray)
     {
         const boidMeshes=[]
 
         //create geometry
-        const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
+        // const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
 
         //create material
-        const material = new THREE.MeshMatcapMaterial( {matcap:this.texture} );
-        geometry.rotateX(-Math.PI * 0.5);
+        // const material = new THREE.MeshMatcapMaterial( {matcap:this.texture} );
+        // geometry.rotateX(-Math.PI * 0.5);
         // const material = new THREE.MeshToonMaterial();
         // const material = new THREE.MeshLambertMaterial();
         
@@ -54,27 +98,34 @@ export default class BoidController
 
         boidArray.forEach((boid,i) => {
 
-            const boidMesh= new THREE.Mesh(geometry,material)
+            const boidScene= SkeletonUtils.clone(this.model.scene)
+            
+            // console.log('doing')
             // if(i==0){
             //     boidMesh.geometry.rotateX
 
             // }
 
-            boidMesh.position.y= boid.y
-            boidMesh.position.x= boid.x
-            boidMesh.position.z= boid.z
+            boidScene.position.y= boid.y
+            boidScene.position.x= boid.x
+            boidScene.position.z= boid.z
+            const rand=(Math.random()-0.5)*2*0.02;
+            boidScene.scale.set(0.1+rand,0.1+rand,0.1+rand)
 
 
             // console.log()
-            this.scene.add(boidMesh)
-            boidMeshes.push(boidMesh)
+            this.scene.add(boidScene)
+            const mixer= new THREE.AnimationMixer(boidScene)
+            const actionSwim=mixer.clipAction(this.model.animations[1])
+            actionSwim.play()
+            boidMeshes.push(boidScene)
+            this.boidAnimations.push(mixer)
             
 
         });
-        // console.log(boidMeshes)
         return boidMeshes
+        // console.log(this.boidMeshes)
     }
-
     /** Update()
      * 
      * Updates the movement of the boid objects
