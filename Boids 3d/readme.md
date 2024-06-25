@@ -9,7 +9,7 @@ This project extends the classic Boids algorithm into a 3D environment using Jav
 - i would like to add predetor/prey interactions
 
 ### Features
-- Real-time simulation of flocking behavior in a 3D space.
+- Real-time simulation of flocking/schooling behavior in a 3D space.
 - Smooth and immersive rendering powered by Three.js and WebGL.
 
 ### Current Behavior
