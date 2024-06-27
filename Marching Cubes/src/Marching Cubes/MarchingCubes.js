@@ -5,6 +5,8 @@ import GUI from 'lil-gui'
 import MarchingCubes from './reference.js'
 import * as NOISE  from 'simplex-noise'
 import { tri } from 'three/examples/jsm/nodes/math/TriNoise3D.js'
+// import testVertexShader from '../shaders/test/vertex.glsl'
+// import testFragmentShader from '../shaders/test/fragment.glsl'
 
 export default class testCubes
 {
@@ -12,6 +14,8 @@ export default class testCubes
     constructor(size,rez,scene)
     {
         this.noise3D = NOISE.createNoise3D();
+        
+
         this.main(size,rez,scene)
 
         // this.drawCell(gridPoints,scene)
@@ -21,7 +25,7 @@ export default class testCubes
     {
         const gridPoints= this.createGrid(size,rez)
         // const gridPoints= this.createGrid(size,rez)
-        this.debugGrid(size,gridPoints.points,scene)
+        // this.debugGrid(size,gridPoints.points,scene)
         // this.debugGridCells(gridPoints.gridCells,scene)
 
         const marchingCubes= new MarchingCubes()
@@ -29,7 +33,7 @@ export default class testCubes
 
         gridPoints.gridCells.forEach(cell=>
             {
-                const triangles=marchingCubes.polygonise(cell,0.2)
+                const triangles=marchingCubes.polygonise(cell,0.5)
                 if(triangles)
                     {
                         testarr.push(...triangles)
@@ -62,7 +66,22 @@ export default class testCubes
 
         const geometry = new THREE.BufferGeometry();
         geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
-        const material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
+        geometry.computeVertexNormals () 
+        const material = new THREE.MeshStandardMaterial( { color: "#ff6be0" } );
+        
+        // const material = new THREE.RawShaderMaterial({
+        //     vertexShader: testVertexShader,
+        //     fragmentShader: testFragmentShader,
+        //     // wireframe:true,
+        //     uniforms:
+        //     {
+        //         uFrequency:{value: new THREE.Vector2(10,5)},
+        //         uTime:{value:0},
+        //         uColor:{value: new THREE.Color('orange')},
+        //         uTexture:{value:flagTexture}
+        //     }
+        // })
+
         const mesh = new THREE.Mesh( geometry, material );
         scene.add(mesh)
 
@@ -208,7 +227,17 @@ export default class testCubes
         for(let i=0; i<8; i++)
             {   
                 let density=p[i].y
-                density+= this.noise3D(p[i].x,p[i].y,p[i].z)
+                density+= this.noise3D(p[i].x*4.03,p[i].y*4.03,p[i].z*4.03)*0.15
+                // density+= this.noise3D(p[i].x*1.96,p[i].y*1.96,p[i].z*1.96)*0.5
+                // density+= this.noise3D(p[i].x*1.01,p[i].y*1.01,p[i].z*1.01)*1
+                density+= this.noise3D(p[i].x*0.2,p[i].y*0.2,p[i].z*0.2)*4
+                density+= this.noise3D(p[i].x*0.1,p[i].y*0.1,p[i].z*0.1)*5
+                if(p[i].y<=-2)
+                    {
+                        density=1
+                    }
+                // density+= this.noise.perlin3(p[i].x,p[i].y,p[i].z)
+
 
 
 

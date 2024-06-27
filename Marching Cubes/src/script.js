@@ -87,12 +87,34 @@ document.body.appendChild( stats.dom );
 
 //#region three.js essentials
 const hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 2 );
-hemiLight.color.setHSL( 0.6, 1, 0.6 );
-hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+hemiLight.groundColor.setHSL( 0.6, 1, 0.6 );
+hemiLight.color.setHSL( 0.095, 1, 0.75 );
 hemiLight.position.set( 0, 50, 0 );
 scene.add( hemiLight );
 
+/**
+ * floor
+ */
+debug.floorSize=20
+const floorGeometry= new THREE.PlaneGeometry(debug.floorSize,debug.floorSize,8,8)
 
+const floorMaterial= new THREE.MeshStandardMaterial(
+    {
+        // color:"#ffe46b",
+        color:"#ffffff",
+        
+        
+    })
+const floor= new THREE.Mesh(
+    floorGeometry,
+    floorMaterial
+)
+floor.rotation.x=-Math.PI/2
+floor.position.y-=1.8
+// floor.layers.enable( 1 );
+
+// floor.position.x=1
+scene.add(floor)
 
 /**
  * add controls
@@ -111,7 +133,7 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(2,window.devicePixelRatio))
 //#endregion
 
-const marchCubes= new testCubes(20,1,scene)
+const marchCubes= new testCubes(20,0.3,scene)
 
 
 /**
