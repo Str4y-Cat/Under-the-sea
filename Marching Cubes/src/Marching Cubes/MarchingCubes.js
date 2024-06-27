@@ -30,7 +30,7 @@ export default class testCubes
 
         const marchingCubes= new MarchingCubes()
         const testarr=[]
-
+        //FIXME: put this in a function and optimize
         gridPoints.gridCells.forEach(cell=>
             {
                 const triangles=marchingCubes.polygonise(cell,0.5)
@@ -93,6 +93,7 @@ export default class testCubes
         // console.log(testarr)
     }
 
+    //FIXME; allow this to tile
      createGrid(SIZE,rez)
     {
         SIZE/=2
@@ -229,7 +230,8 @@ export default class testCubes
         for(let i=0; i<8; i++)
             {   
                 let density=p[i].y
-                density+= this.noise3D(p[i].x*4.03,p[i].y*4.03,p[i].z*4.03)*0.15
+                //FIXME; create a dedicated function for this
+                density+= this.noise3D(p[i].x*4.03,p[i].y*4.03,p[i].z*4.03)*0.25
                 // density+= this.noise3D(p[i].x*1.96,p[i].y*1.96,p[i].z*1.96)*0.5
                 // density+= this.noise3D(p[i].x*1.01,p[i].y*1.01,p[i].z*1.01)*1
                 density+= this.noise3D(p[i].x*0.2,p[i].y*0.2,p[i].z*0.2)*4

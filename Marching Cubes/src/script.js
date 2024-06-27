@@ -25,8 +25,8 @@ const canvas = document.querySelector('.webgl')
 
 //create scene
 const scene = new THREE.Scene()
-scene.background = new THREE.Color().setHSL( 0.6, 0, 1 );
-scene.fog = new THREE.Fog( scene.background, 1, 5000 );
+scene.background = new THREE.Color("#68d7f0");
+scene.fog = new THREE.Fog( scene.background, 1, 30 );
 
 const axisHelper= new THREE.AxesHelper(0.3)
 scene.add(axisHelper)
@@ -95,7 +95,7 @@ scene.add( hemiLight );
 const color = 0xFFFFFF;
 const intensity = 1;
 const light = new THREE.DirectionalLight(color, intensity);
-light.position.set(0, 10, 5);
+light.position.set(0, 5, 5);
 light.target.position.set(-5, 0, 0);
 light.castShadow=true
 scene.add(light);
