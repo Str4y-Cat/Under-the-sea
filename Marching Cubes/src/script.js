@@ -7,6 +7,7 @@ import {  OrbitControls } from 'three/examples/jsm/Addons.js'
 
 import Stats from 'three/addons/libs/stats.module.js';
 import Performance from './performance/Performance';
+import testCubes from './Marching Cubes/MarchingCubes';
 
 
 
@@ -109,6 +110,8 @@ const renderer= new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(2,window.devicePixelRatio))
 //#endregion
+
+const marchCubes= new testCubes(20,1,scene)
 
 
 /**
