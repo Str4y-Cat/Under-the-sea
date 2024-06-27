@@ -92,6 +92,15 @@ hemiLight.color.setHSL( 0.095, 1, 0.75 );
 hemiLight.position.set( 0, 50, 0 );
 scene.add( hemiLight );
 
+const color = 0xFFFFFF;
+const intensity = 1;
+const light = new THREE.DirectionalLight(color, intensity);
+light.position.set(0, 10, 5);
+light.target.position.set(-5, 0, 0);
+light.castShadow=true
+scene.add(light);
+scene.add(light.target);
+
 /**
  * floor
  */
@@ -114,6 +123,7 @@ floor.position.y-=1.8
 // floor.layers.enable( 1 );
 
 // floor.position.x=1
+floor.receiveShadow=true
 scene.add(floor)
 
 /**
@@ -127,10 +137,12 @@ controls.enableDamping=true
  * add renderer
  */
 const renderer= new THREE.WebGLRenderer({
-    canvas:canvas
+    canvas:canvas,
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(2,window.devicePixelRatio))
+renderer.shadowMap.enabled = true
+
 //#endregion
 
 const marchCubes= new testCubes(20,0.3,scene)

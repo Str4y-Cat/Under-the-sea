@@ -83,6 +83,8 @@ export default class testCubes
         // })
 
         const mesh = new THREE.Mesh( geometry, material );
+        mesh.receiveShadow = true;
+        mesh.castShadow = true;
         scene.add(mesh)
 
 
