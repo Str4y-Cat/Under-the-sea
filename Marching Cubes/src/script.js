@@ -7,6 +7,7 @@ import {  OrbitControls } from 'three/examples/jsm/Addons.js'
 
 import Stats from 'three/addons/libs/stats.module.js';
 import Performance from './performance/Performance';
+import MarchingCubes from './Marching Cubes/MarchingCubes.js';
 
 
 
@@ -24,8 +25,8 @@ const canvas = document.querySelector('.webgl')
 
 //create scene
 const scene = new THREE.Scene()
-scene.background = new THREE.Color().setHSL( 0.6, 0, 1 );
-scene.fog = new THREE.Fog( scene.background, 1, 5000 );
+scene.background = new THREE.Color("#68d7f0");
+scene.fog = new THREE.Fog( scene.background, 1, 30 );
 
 const axisHelper= new THREE.AxesHelper(0.3)
 scene.add(axisHelper)
@@ -86,12 +87,44 @@ document.body.appendChild( stats.dom );
 
 //#region three.js essentials
 const hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 2 );
-hemiLight.color.setHSL( 0.6, 1, 0.6 );
-hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+hemiLight.groundColor.setHSL( 0.6, 1, 0.6 );
+hemiLight.color.setHSL( 0.095, 1, 0.75 );
 hemiLight.position.set( 0, 50, 0 );
 scene.add( hemiLight );
 
+const color = 0xFFFFFF;
+const intensity = 1;
+const light = new THREE.DirectionalLight(color, intensity);
+light.position.set(0, 5, 5);
+light.target.position.set(-5, 0, 0);
+light.castShadow=true
+scene.add(light);
+scene.add(light.target);
 
+/**
+ * floor
+ */
+// debug.floorSize=40
+// const floorGeometry= new THREE.PlaneGeometry(debug.floorSize,debug.floorSize,8,8)
+
+// const floorMaterial= new THREE.MeshStandardMaterial(
+//     {
+//         // color:"#ffe46b",
+//         color:"#ffffff",
+        
+        
+//     })
+// const floor= new THREE.Mesh(
+//     floorGeometry,
+//     floorMaterial
+// )
+// floor.rotation.x=-Math.PI/2
+// floor.position.y-=1.8
+// // floor.layers.enable( 1 );
+
+// // floor.position.x=1
+// floor.receiveShadow=true
+// scene.add(floor)
 
 /**
  * add controls
@@ -104,11 +137,16 @@ controls.enableDamping=true
  * add renderer
  */
 const renderer= new THREE.WebGLRenderer({
-    canvas:canvas
+    canvas:canvas,
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(2,window.devicePixelRatio))
+renderer.shadowMap.enabled = true
+
 //#endregion
+
+const marchingCubes= new MarchingCubes(40,0.5,10,scene)
+marchingCubes.debugMain(scene,gui)
 
 
 /**
