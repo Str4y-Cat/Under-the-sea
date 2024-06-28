@@ -28,3 +28,6 @@ o
 marching cubes
 - https://developer.nvidia.com/gpugems/gpugems3/part-i-geometry/chapter-1-generating-complex-procedural-terrains-using-gpu
 - https://paulbourke.net/geometry/polygonise/
+
+third person camera
+- https://www.youtube.com/watch?v=UuNPHOJ_V5o
