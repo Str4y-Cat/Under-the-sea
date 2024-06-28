@@ -7,7 +7,7 @@ import {  OrbitControls } from 'three/examples/jsm/Addons.js'
 
 import Stats from 'three/addons/libs/stats.module.js';
 import Performance from './performance/Performance';
-import testCubes from './Marching Cubes/MarchingCubes';
+import MarchingCubes from './Marching Cubes/MarchingCubes.js';
 
 
 
@@ -104,7 +104,7 @@ scene.add(light.target);
 /**
  * floor
  */
-debug.floorSize=20
+debug.floorSize=40
 const floorGeometry= new THREE.PlaneGeometry(debug.floorSize,debug.floorSize,8,8)
 
 const floorMaterial= new THREE.MeshStandardMaterial(
@@ -145,7 +145,8 @@ renderer.shadowMap.enabled = true
 
 //#endregion
 
-const marchCubes= new testCubes(20,0.3,scene)
+const marchingCubes= new MarchingCubes(40,1,10,scene)
+marchingCubes.debugMain(scene,gui)
 
 
 /**
