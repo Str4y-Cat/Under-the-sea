@@ -15,6 +15,6 @@ The marching cubes algorithm converts 3D scalar data into detailed surfaces, mak
 - **Easy Setup**: Run directly in a web browser with WebGL support.
 - **Tiled Geometry**: CPU optimised using chunks/tiles instead of loading everything at once
 
-![Marching cubes](./static/imgs/march.PNG)
-![alt text](./static/imgs/march.png)
-![alt text](./imgs/march.png)
+
+![Marching cubes](./static/imgs/march.png)
+
