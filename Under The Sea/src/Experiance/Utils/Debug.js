@@ -1,4 +1,4 @@
-import * as lilGUI from 'lil-gui'
+import  GUI from 'lil-gui'
 
 export default class Debug
 {
@@ -9,7 +9,7 @@ export default class Debug
 
         if(this.active)
         {
-            this.ui=new lilGUI.GUI()
+            this.ui=new .GUI()
         }
     }
 }
