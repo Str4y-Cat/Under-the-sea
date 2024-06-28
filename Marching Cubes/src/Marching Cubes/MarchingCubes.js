@@ -5,6 +5,7 @@ import GUI from 'lil-gui'
 import MarchingCubes from './reference.js'
 import * as NOISE  from 'simplex-noise'
 import { tri } from 'three/examples/jsm/nodes/math/TriNoise3D.js'
+import Performance from '../performance/Performance.js'
 // import testVertexShader from '../shaders/test/vertex.glsl'
 // import testFragmentShader from '../shaders/test/fragment.glsl'
 
@@ -23,16 +24,24 @@ export default class testCubes
 
     main(size,rez,scene)
     {
+        const perform= new Performance()
+        perform.timer('createGrid')
         const gridPoints= this.createGrid(size,rez)
+        perform.timer('createGrid')
+
         // const gridPoints= this.createGrid(size,rez)
         // this.debugGrid(size,gridPoints.points,scene)
         // this.debugGridCells(gridPoints.gridCells,scene)
-
         const marchingCubes= new MarchingCubes()
+        perform.timer('creating triangle array')
+
         const testarr=[]
         //FIXME: put this in a function and optimize
+        perform.timer('polygonise')
         gridPoints.gridCells.forEach(cell=>
             {
+                
+
                 const triangles=marchingCubes.polygonise(cell,0.5)
                 if(triangles)
                     {
@@ -42,6 +51,9 @@ export default class testCubes
 
             }
         )
+        perform.timer('polygonise')
+        perform.timer('Convert to buffer')
+
         const vertices= new Float32Array(testarr.length*9)
         for (let i = 0; i < testarr.length; i++) {
             const i9=i*9
@@ -63,6 +75,10 @@ export default class testCubes
             vertices[i9+8]=tri3.z
             // console.log(testarr[i])
         }
+        perform.timer('Convert to buffer')
+
+        perform.timer('creating triangle array')
+        perform.timer('creating geometry')
 
         const geometry = new THREE.BufferGeometry();
         geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
@@ -86,6 +102,7 @@ export default class testCubes
         mesh.receiveShadow = true;
         mesh.castShadow = true;
         scene.add(mesh)
+        perform.timer('creating geometry')
 
 
         // console.log(triangleVertexArr)
