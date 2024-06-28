@@ -29,7 +29,8 @@ THREE.Mesh.prototype.raycast = acceleratedRaycast;
 const gui = new GUI()
 const debug= {}
 const perform= new Performance()
-
+gui.add(perform,'reset').name('reset average')
+// gui.add(perform,'avg').name('avg')
 
 const textureLoader= new THREE.TextureLoader()
 const matCapTexture= textureLoader.load('/textures/matCap1.png')
@@ -111,69 +112,79 @@ dragGeometry1.computeBoundsTree();
 // const dragGeometry1= new THREE.TorusGeometry(1)
 const environmentObjects=[]
 
-// for(let i=0; i<5; i++)
-//     {
-//         const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
-//         mesh.scale.x=Math.max(Math.random(),0.4)
-//         mesh.scale.y=Math.max(Math.random(),0.4)
-//         mesh.scale.z=Math.max(Math.random(),0.4)
-//         // mesh.rotation.set(new THREE.Vector3((Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI)) 
-//         mesh.rotation.x=(Math.random()-0.5)*2*Math.PI
-//         mesh.rotation.y=(Math.random()-0.5)*2*Math.PI
-//         mesh.rotation.z=(Math.random()-0.5)*2*Math.PI
-
-//         // console.log(mesh.rotation.x)
-        
-//         // mesh.position.set(new THREE.Vector3((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)) 
-//         mesh.position.x=(Math.random()-0.5)*5
-//         mesh.position.y=(Math.random()-0.5)*5
-//         mesh.position.z=(Math.random()-0.5)*5
-        
-//         mesh.layers.enable( 1 );
-       
-//         scene.add(mesh)
-//         environmentObjects.push(mesh)
-//     }
-
-for(let y=-2; y<=2; y++)
+const createRandom=()=>
     {
-        for(let x = -2 ; x<=2;x++)
+        for(let i=0; i<5; i++)
             {
-                for (let z = -2 ; z<=2;z++ )
-                    {
-                        const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
-                        mesh.scale.x=0.3
-                        mesh.scale.y=0.3
-                        mesh.scale.z=0.3
-                        // // mesh.rotation.set(new THREE.Vector3((Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI)) 
-                        // mesh.rotation.x=(Math.random()-0.5)*2*Math.PI
-                        // mesh.rotation.y=(Math.random()-0.5)*2*Math.PI
-                        // mesh.rotation.z=(Math.random()-0.5)*2*Math.PI
+                const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
+                mesh.scale.x=Math.max(Math.random(),0.4)
+                mesh.scale.y=Math.max(Math.random(),0.4)
+                mesh.scale.z=Math.max(Math.random(),0.4)
+                // mesh.rotation.set(new THREE.Vector3((Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI)) 
+                mesh.rotation.x=(Math.random()-0.5)*2*Math.PI
+                mesh.rotation.y=(Math.random()-0.5)*2*Math.PI
+                mesh.rotation.z=(Math.random()-0.5)*2*Math.PI
+        
+                // console.log(mesh.rotation.x)
                 
-                        // console.log(mesh.rotation.x)
-                        
-                        // mesh.position.set(new THREE.Vector3((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)) 
-                        mesh.position.x=x
-                        mesh.position.y=y
-                        mesh.position.z=z
-                        
-                        mesh.layers.enable( 1 );
-                       
-                        scene.add(mesh)
-                        environmentObjects.push(mesh)
-                    }
+                // mesh.position.set(new THREE.Vector3((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)) 
+                mesh.position.x=(Math.random()-0.5)*5
+                mesh.position.y=(Math.random()-0.5)*5
+                mesh.position.z=(Math.random()-0.5)*5
+                
+                mesh.layers.enable( 1 );
+               
+                scene.add(mesh)
+                environmentObjects.push(mesh)
             }
+        
     }
 
-// const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
-// mesh.scale.x=Math.abs(Math.random()-0.5)
-// mesh.scale.y=2.5
-// mesh.position.y=-1.25
-// mesh.scale.z=5
-// mesh.layers.enable( 1 );
-// scene.add(mesh)
 
-// environmentObjects.push(mesh,floor)
+const createGrid=()=>{
+    for(let y=-2; y<=2; y++)
+        {
+            for(let x = -2 ; x<=2;x++)
+                {
+                    for (let z = -2 ; z<=2;z++ )
+                        {
+                            const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
+                            mesh.scale.x=0.3
+                            mesh.scale.y=0.3
+                            mesh.scale.z=0.3
+                            // // mesh.rotation.set(new THREE.Vector3((Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI,(Math.random()-0.5)*2*Math.PI)) 
+                            // mesh.rotation.x=(Math.random()-0.5)*2*Math.PI
+                            // mesh.rotation.y=(Math.random()-0.5)*2*Math.PI
+                            // mesh.rotation.z=(Math.random()-0.5)*2*Math.PI
+                    
+                            // console.log(mesh.rotation.x)
+                            
+                            // mesh.position.set(new THREE.Vector3((Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10,(Math.random()-0.5)*2*10)) 
+                            mesh.position.x=x
+                            mesh.position.y=y
+                            mesh.position.z=z
+                            
+                            mesh.layers.enable( 1 );
+                           
+                            scene.add(mesh)
+                            environmentObjects.push(mesh)
+                        }
+                }
+        }
+}
+
+const createWall=()=>{
+    const mesh= new THREE.Mesh(dragGeometry1,dragMaterial )
+        mesh.scale.x=Math.abs(Math.random()-0.5)
+    mesh.scale.y=2.5
+    mesh.position.y=-1.25
+        mesh.scale.z=5
+    mesh.layers.enable( 1 );
+    scene.add(mesh)
+
+    environmentObjects.push(mesh,floor)
+    }
+
 
 //#endregion
 
@@ -318,7 +329,7 @@ const tick =()=>
         if(slowTick!=past){
             // perform.timer('check environment')
             
-            intersectingEvironmentObjects=rayController.update(boidController.boidMeshes,4)
+            // intersectingEvironmentObjects=rayController.update(boidController.boidMeshes,4)
 
             // perform.timer('check environment')
         }
@@ -326,9 +337,9 @@ const tick =()=>
 
         past=slowTick
 
-        // perform.timer('boid Update')
+        perform.timer('boid Update',true)
         boidController.update(intersectingEvironmentObjects)
-        // perform.timer('boid Update')
+        perform.timer('boid Update',true)
 
         intersectingEvironmentObjects={}
 

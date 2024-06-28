@@ -103,7 +103,7 @@ export default class CreateOctree
                 const box=new THREE.Box3().setFromCenterAndSize(center,scale)
 
                 let color="white"
-                console.log(`count:${count}`)
+                // console.log(`count:${count}`)
                 switch(count)
                 {
                     case 1:
@@ -184,5 +184,6 @@ export default class CreateOctree
     {
         this.removeBox(this.octree.rootNode,this.scene)
     }
+
 
 }
