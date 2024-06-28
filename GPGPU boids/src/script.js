@@ -4,7 +4,8 @@ import GUI from 'lil-gui'
 import {  OrbitControls } from 'three/examples/jsm/Addons.js'
 
 import Stats from 'three/addons/libs/stats.module.js';
-import BoidsController from './boidsGPGPU/DrawBoids';
+import BoidsControllerGPGPU from './boidsGPGPU/DrawBoids';
+import BoidsController from './boidScripts/BoidController';
 
 
 
@@ -123,7 +124,8 @@ const three={
     scene:scene,
     renderer:renderer
 }
-const boids= new BoidsController(three)
+// const boids= new BoidsControllerGPGPU(three)
+const boids= new BoidsController(200,20,scene,debug,gui,camera)
 
 //#endregion
 
