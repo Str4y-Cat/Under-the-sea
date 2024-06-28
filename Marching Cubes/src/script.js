@@ -104,27 +104,27 @@ scene.add(light.target);
 /**
  * floor
  */
-debug.floorSize=40
-const floorGeometry= new THREE.PlaneGeometry(debug.floorSize,debug.floorSize,8,8)
+// debug.floorSize=40
+// const floorGeometry= new THREE.PlaneGeometry(debug.floorSize,debug.floorSize,8,8)
 
-const floorMaterial= new THREE.MeshStandardMaterial(
-    {
-        // color:"#ffe46b",
-        color:"#ffffff",
+// const floorMaterial= new THREE.MeshStandardMaterial(
+//     {
+//         // color:"#ffe46b",
+//         color:"#ffffff",
         
         
-    })
-const floor= new THREE.Mesh(
-    floorGeometry,
-    floorMaterial
-)
-floor.rotation.x=-Math.PI/2
-floor.position.y-=1.8
-// floor.layers.enable( 1 );
+//     })
+// const floor= new THREE.Mesh(
+//     floorGeometry,
+//     floorMaterial
+// )
+// floor.rotation.x=-Math.PI/2
+// floor.position.y-=1.8
+// // floor.layers.enable( 1 );
 
-// floor.position.x=1
-floor.receiveShadow=true
-scene.add(floor)
+// // floor.position.x=1
+// floor.receiveShadow=true
+// scene.add(floor)
 
 /**
  * add controls
@@ -145,7 +145,7 @@ renderer.shadowMap.enabled = true
 
 //#endregion
 
-const marchingCubes= new MarchingCubes(40,1,10,scene)
+const marchingCubes= new MarchingCubes(40,0.5,10,scene)
 marchingCubes.debugMain(scene,gui)
 
 

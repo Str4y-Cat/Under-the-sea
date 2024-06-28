@@ -1,3 +1,8 @@
+/**
+ * cpu implementation of the marching cubes algorithm
+ * adapted from https://paulbourke.net/geometry/polygonise/
+ */
+
 import * as THREE from 'three'
 import * as NOISE  from 'simplex-noise'
 
@@ -24,6 +29,9 @@ import * as NOISE  from 'simplex-noise'
         
     }
 
+    /**
+     * sets up the lookup tables
+     */
     constants()
     {
          this.edgeTable=[
@@ -319,17 +327,16 @@ import * as NOISE  from 'simplex-noise'
             [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]];
     
     }
-     /*
-    Given a grid cell and an isolevel, calculate the triangular
-    facets required to represent the isosurface through the cell.
-    Return the number of triangular facets, the array "triangles"
-    will be loaded up with the vertices at most 5 triangular facets.
-     0 will be returned if the grid cell is either totally above
-    of totally below the isolevel.
- */
-    //gridcell of class gridcell
-    //isolevel float
-    // triangle array
+    
+    /**
+     * Given a grid cell and an isolevel, calculate the triangular
+        facets required to represent the isosurface through the cell.
+        Returns the triangle coordinates
+
+     * @param {*} grid grid object. {p: three.vector3[8], val: int[8] }
+     * @param {*} isolevel 
+     * @returns 
+     */
     polygonise(grid,isolevel)
     {
     const triangles=[]
@@ -433,7 +440,14 @@ import * as NOISE  from 'simplex-noise'
         return(p);
     }
 
-
+    /**
+     * creates a chunked marching squares environment
+     * 
+     * @param {*} size 
+     * @param {*} rez 
+     * @param {*} tileSize 
+     * @param {*} scene 
+     */
     march(size,rez,tileSize,scene)
     {
         //tileArr= getTileArr()
@@ -486,6 +500,12 @@ import * as NOISE  from 'simplex-noise'
         
     }
 
+    /**
+     * creates the buffer geometry from a vertices array
+     * @param {*} vertices 
+     * @param {*} scene 
+     * @returns 
+     */
     createGeometry(vertices,scene)
     {
         const geometry = new THREE.BufferGeometry();
@@ -500,6 +520,12 @@ import * as NOISE  from 'simplex-noise'
         return mesh
     }
 
+    /**
+     * calculates a 2d array of chunk values based on the size and tilesize
+     * @param {*} size 
+     * @param {*} tileSize 
+     * @returns 
+     */
     tileArr(size,tileSize)
     {
         const tileArr=[]
@@ -522,7 +548,14 @@ import * as NOISE  from 'simplex-noise'
         // console.log(tileArr)
     }
 
-
+    /**
+     * creates a grid based on the current tile supplied to the function. should recieve a min vec2 and a max vec2
+     * 
+     * @param {*} {min,max}
+     * @param {*} SIZE 
+     * @param {*} rez 
+     * @returns 
+     */
     createGrid({min,max},SIZE,rez)
     {
         const height=SIZE/2
@@ -552,7 +585,14 @@ import * as NOISE  from 'simplex-noise'
         return gridCells
     }
 
-
+    /**
+     * sets up the cell object. sets up all vetices that belong to a cell
+     * @param {*} x 
+     * @param {*} y 
+     * @param {*} z 
+     * @param {*} rez 
+     * @returns 
+     */
     createCell(x,y,z,rez)
     {
         const X= Math.round((x+rez)*100)/100
@@ -577,6 +617,13 @@ import * as NOISE  from 'simplex-noise'
         return {p,val}
     }
 
+    /**
+     * debug method. draws a box based on the max,min and height 
+     * 
+     * @param {*} min 
+     * @param {*} max 
+     * @param {*} height 
+     */
     createBox(min,max,height)
     {
         // console.log(min)
@@ -595,28 +642,61 @@ import * as NOISE  from 'simplex-noise'
         // return box
     }
 
+    /**
+     * density function for the marching cubes function
+     * 
+     * @param {*} x 
+     * @param {*} y 
+     * @param {*} z 
+     * @returns 
+     */
     density(x,y,z)
     {
+        // warp = noiseVol2.Sample( TrilinearRepeat, ws*0.004 ).xyz; 
         let density=y
+
+        const warp =this.noise3D(x*0.004,y*0.004,z*0.004)
+        x += warp * 8;
+        y += warp * 8;
+        z += warp * 8;
+        
         //FIXME; create a dedicated function for this
-        density+= this.noise3D(x*4.03,y*4.03,z*4.03)*0.25
+        // density+= this.noise3D(x*4.03,y*4.03,z*4.03)*0.25
         // density+= this.noise3D(x*1.96,y*1.96,z*1.96)*0.5
         // density+= this.noise3D(x*1.01,y*1.01,z*1.01)*1
-        density+= this.noise3D(x*0.2,y*0.2,z*0.2)*4
-        density+= this.noise3D(x*0.1,y*0.1,z*0.1)*5
+        //1
+        density+= this.noise3D(x*0.2,y*0.2,z*0.2)*2
+        density+= this.noise3D(x*0.1,y*0.1,z*0.1)*7
+
+
+        //2
+        // density+= this.noise3D(x*0.2,y*0.2,z*0.2)*2
+        // density+= this.noise3D(x*0.8,y*0.8,z*0.8)*0.2
+
+        // density+= this.noise3D(x*0.1,y*0.1,z*0.1)*14
+        // density+= this.noise3D(x*0.01,y*0.01,z*0.01)*7
+
+        //3
+        // density+= this.noise3D(x*1,y*0.5,z*1)*3
+        // density+= this.noise3D(x*0.1,y*0.1,z*0.1)*7
 
 
 
-        if(y<=-2)
-            {
-                density=1
-            }
+        // if(y<=-2)
+        //     {
+        //         density=1
+        //     }
         // density+= this.noise.perlin3(x,y,z)
         // this.perform.counter('density')
 
         return density
     }
 
+    /**
+     * removes and opens memory for all meshes in the array
+     * @param {*} arr 
+     * @param {*} scene 
+     */
     destroyMesh(arr,scene)
     {
         arr.forEach(mesh=>
@@ -628,6 +708,12 @@ import * as NOISE  from 'simplex-noise'
         )
     }
 
+    /**
+     * sets up the debug view if its wanted
+     * 
+     * @param {*} scene 
+     * @param {*} gui 
+     */
     debugMain(scene,gui)
     {
         this.debug.show=true
@@ -699,21 +785,14 @@ import * as NOISE  from 'simplex-noise'
     }
  }
 
+ /**
+  * used. not sure if this one is nessecary
+  */
  class Triangle
  {
     constructor()
     {
         this.p=[]
-    }
-
-    
- }
- class GridCell
- {
-    constructor()
-    {
-        this.p={}
-        // this.val=values||[]
     }
 
     
