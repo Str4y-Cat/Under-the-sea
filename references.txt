@@ -24,3 +24,7 @@ strange things!
 - frame rate tanks as soon as envirnment object is added to world object arr
 
 o
+
+marching cubes
+- https://developer.nvidia.com/gpugems/gpugems3/part-i-geometry/chapter-1-generating-complex-procedural-terrains-using-gpu
+- https://paulbourke.net/geometry/polygonise/
