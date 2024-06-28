@@ -17,7 +17,7 @@ export default class Floor
         this.setMaterial()
         this.setMesh()
 
-        console.log('wah')
+        // console.log('wah')
     }
 
     setGeometry()
@@ -58,8 +58,8 @@ export default class Floor
         this.mesh=new THREE.Mesh(this.geometry,this.material)
         this.mesh.rotation.x=-Math.PI *0.5
         this.mesh.recieveShadow=true
-        console.log(this.mesh)
-        console.log(this.mesh.recieveShadow)
+        // console.log(this.mesh)
+        // console.log(this.mesh.recieveShadow)
 
         this.scene.add(this.mesh)
     }

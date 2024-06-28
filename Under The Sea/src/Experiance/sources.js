@@ -1,3 +1,5 @@
+//set the import locations
+
 export default[
     {
         name:"environmentMapTexture",

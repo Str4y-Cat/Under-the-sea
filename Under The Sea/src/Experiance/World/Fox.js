@@ -33,9 +33,9 @@ export default class Fox
             {
                 if(child instanceof THREE.Mesh)
                     {
-                        console.log(child)
+                        // console.log(child)
                         child.castShadow=true
-                        console.log(child.castShadow)
+                        // console.log(child.castShadow)
 
                     }
             })
