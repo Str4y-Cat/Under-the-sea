@@ -1,16 +1,5 @@
-# Three.js Journey
+# BOID Optimisations
 
-## Setup
-Download [Node.js](https://nodejs.org/en/download/).
-Run this followed commands:
+this is an attempt at moving the boid algorithm to the gpu. Unfortunately I could not get this to work in the time left.
 
-``` bash
-# Install dependencies (only the first time)
-npm install
-
-# Run the local server at localhost:8080
-npm run dev
-
-# Build for production in the dist/ directory
-npm run build
-```
+So i just updated the debug ability for the standard boid algorithm. 
