@@ -16,3 +16,5 @@ The marching cubes algorithm converts 3D scalar data into detailed surfaces, mak
 - **Tiled Geometry**: CPU optimised using chunks/tiles instead of loading everything at once
 
 ![Marching cubes](./static/imgs/march.PNG)
+![alt text](./static/imgs/march.png)
+![alt text](./imgs/march.png)
