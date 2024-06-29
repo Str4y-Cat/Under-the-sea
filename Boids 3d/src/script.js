@@ -185,7 +185,7 @@ const createWall=()=>{
     environmentObjects.push(mesh,floor)
     }
 
-
+createRandom()
 //#endregion
 
 //#region octree
