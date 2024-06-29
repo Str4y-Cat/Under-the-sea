@@ -8,18 +8,19 @@ export default class BoidLogic
      * @param {object} param2
      * 
      */
-    constructor(boidCount,displaySizes,startValues)
+    constructor(boidCount,size)
     {
         //world variables
-        this.sizes=displaySizes
-        this.sceneSize=startValues.sceneSize/2|| defaultValue(2,"sceneSize")
+        // this.sizes=displaySizes
+        this.sceneSize=size/2|| defaultValue(2,"sceneSize")
         
-        this.transPadding = startValues.transPadding || defaultValue(10,"transPadding");
-        this.solidPadding = startValues.solidPadding || defaultValue(1,"solidPadding");
-        this.boundingBoxTransparent={
-            width : this.sizes.width + this.transPadding * 2,
-            height : this.sizes.height + this.transPadding * 2
-        }
+        // this.transPadding = startValues.transPadding || defaultValue(10,"transPadding");
+        this.solidPadding = defaultValue(1,"solidPadding");
+        // this.boundingBoxTransparent={
+        //     width : this.sizes.width + this.transPadding * 2,
+        //     height : this.sizes.height + this.transPadding * 2
+        // }
+        //TODO use a box three for the scene size?
         this.boundingBoxSolid={
             top: this.sceneSize,
             bottom:-this.sceneSize,
@@ -30,6 +31,8 @@ export default class BoidLogic
         }
 
         //debuggable objects
+        //TODO fix this kak
+        const startValues={}
         this.setUpTweakableValues(startValues)
 
         //boid objects

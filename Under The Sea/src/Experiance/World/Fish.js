@@ -13,16 +13,37 @@ export default class Fish
         this.debug= this.experience.debug
         this.perform= this.experience.Perform
 
-        //Debug
-        if(this.debug.active)
-        {
-            this.debugFolder=this.debug.ui.addFolder("Fish")
-        }
+        
     
         this.boids= new BoidController(200,40,this.scene,{},this.debug.ui,this.experience.camera,)
+        this.setFishGeometry()
+        this.setFishMaterial()
+        this.createBoids()
         //setUp
         //create the fish
+
+        //Debug
+        if(this.debug.active)
+            {
+                this.debugFolder=this.debug.ui.addFolder("Fish")
+                this.boids.debug(this.debugFolder)
+            }
         
+    }
+
+    setFishMaterial()
+    {
+        this.boids.setBasicMaterial('white')
+    }
+
+    setFishGeometry()
+    {
+        this.boids.setGeometry()
+    }
+
+    createBoids()
+    {
+        this.boids.init()
     }
 
 

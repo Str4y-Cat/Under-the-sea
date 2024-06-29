@@ -1,5 +1,7 @@
 import BoidLogic from "./BoidLogic";
 import * as THREE from 'three'
+import Experience from "../Experiance";
+
 
 export default class BoidController
 {
@@ -11,21 +13,16 @@ export default class BoidController
      *  
      * 
      */
-    constructor(count, sizes, scene,debug,camera,texture)
+    constructor(count, size)
     {
-        this.camera=camera
-        this.texture= texture
+        this.experience= new Experience()
+        // this.gui= this.experience.debug.ui
         this.global={}
 
-
-        this.scene=scene
-        this.sceneSize=debug.floorSize
-        startValues.sceneSize=this.sceneSize
-
-
-        this.boidLogic=new BoidLogic(count, sizes,startValues)
+        this.scene=this.experience.scene
+        
+        this.boidLogic=new BoidLogic(count, size)
         this.boidMeshes= []
-        this.addMeshes(this.boidLogic.boidArray)
 
 
         // this.gui=gui
@@ -34,22 +31,64 @@ export default class BoidController
 
     }
 
+    init()
+    {
+        this.addMeshes(this.boidLogic.boidArray)
+
+    }
+
     addMeshes(arr)
     {
         //create geometry
-        const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
+        // const geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
 
         //create material
-        const material = new THREE.MeshMatcapMaterial( {matcap:this.texture} );
-        geometry.rotateX(-Math.PI * 0.5);
+        // const material = new THREE.MeshMatcapMaterial( {matcap:this.texture} );
 
-        arr.forEach((boid) => {
-            this.boidMeshes.push(this.createMesh(boid,geometry,material))
-        });
-
-        this.global.boidCount=this.boidMeshes.length
+        if(this.geometry&&this.material)
+            {
+                arr.forEach((boid) => {
+                    this.boidMeshes.push(this.createMesh(boid,this.geometry,this.material))
+                });
+        
+                this.global.boidCount=this.boidMeshes.length
+            }
+        
  
     }
+
+    setGeometry()
+    {
+        this.geometry = new THREE.ConeGeometry( 0.027, 0.132,3 ); 
+        this.geometry.rotateX(-Math.PI * 0.5);
+
+    }
+
+    setMatCapMaterial(texture)
+    {
+        this.material = new THREE.MeshMatcapMaterial( {matcap:texture} );
+    }
+
+    setBasicMaterial(color)
+    {
+        const Color= color||'green'
+        this.material = new THREE.MeshBasicMaterial( {color:Color} );
+
+    }
+
+    setStandardMaterial()
+    {
+        this.material = new THREE.MeshStandardMaterial(  );
+    }
+
+    setCustomMaterial(material)
+    {
+        this.material= material
+    }
+
+
+
+
 
     createMesh({x,y,z}, geometry,material)
     {
@@ -158,6 +197,7 @@ export default class BoidController
     {
         // values.
     //    const boidsFolder= this.gui.addFolder('Boids')
+        
         gui.add(this.global,'boidCount').step(1). min(0).max(3000).onChange((count)=>
         {
             if(count>this.boidMeshes.length)
@@ -199,12 +239,13 @@ export default class BoidController
 
     /**DEBUG
      */
-    debug()
+    debug(debugFolder)
     {
-
-
-        this.debugSolidBorderBox()
-        this.debugHalos()
+    // {   const debugValue
+        
+        // this.debugSolidBorderBox(debugFolder)
+        // this.debugHalos(debugFolder)
+        this.addControls(debugFolder)
     }
 
     //debug border box
