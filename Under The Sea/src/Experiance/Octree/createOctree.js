@@ -4,15 +4,15 @@ import * as THREE from 'three'
 
 export default class CreateOctree
 {
-    constructor(worldObjects,minNodeSize,scene)
+    constructor(worldObjects,minNodeSize,marchCubes)
     {
         this.worldObjects=worldObjects
+        this.marchCubes=marchCubes||false
+        console.log(marchCubes)
         this.minNodeSize= minNodeSize||5
-        this.octree= new Octree(this.worldObjects,this.minNodeSize)
+        this.octree= new Octree(this.worldObjects,this.minNodeSize,marchCubes)
         this.drawMeshes=[]
-        
 
-        
     }
 
 

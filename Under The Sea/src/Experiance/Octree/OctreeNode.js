@@ -19,6 +19,7 @@ export default  class OctreeNode
         this.minSize = minNodeSize
         //NOTE:add a list of objects within the children
         this.worldObjects=[]
+        this.worldObjectsId=[]
         this.containsObject=false
 
         this.nodeSize =  new THREE.Vector3()
@@ -133,7 +134,8 @@ export default  class OctreeNode
         if(this.nodeSize.y<=this.minSize)
             {
                 // this.containsObject=true
-                this.worldObjects.push(worldObj)
+                // this.worldObjects.push(worldObj)
+                this.worldObjectsId.push(worldObj[0])
                 this.containsObject=true
                 // console.log(this.worldObjects)
                 // console.log(this)
@@ -161,7 +163,7 @@ export default  class OctreeNode
                     }
                 //if there is an object within this box, recursive divide box
                 //set dividing flag to true
-                if(this.children[i].nodeBounds.intersectsBox(new THREE.Box3().setFromObject(worldObj)))
+                if(this.children[i].nodeBounds.intersectsBox(new THREE.Box3().setFromPoints([worldObj[1].min,worldObj[1].max])))
                     {
 
                         dividing=true

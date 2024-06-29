@@ -3,9 +3,10 @@ import OctreeNode from "./OctreeNode";
 
 export default class Octree
 {
-    constructor(worldObjects,minNodeSize)
+    constructor(worldObjects,minNodeSize,marchingCubes)
     {
 
+        this.marchingCubes=marchingCubes||false
         //create a new box
         const bounds = this.setUpBounds(worldObjects)
 
@@ -27,15 +28,29 @@ export default class Octree
     {
         //create a new box
         const bounds = new THREE.Box3() 
+        if(this.marchingCubes)
+            {
+                console.log("settingUP")
+                worldObjects.forEach(mesh => {
 
+                    //grow the bounds
+                    // console.log(mesh)
+                    bounds.expandByPoint(mesh[1].min)
+                    bounds.expandByPoint(mesh[1].max)
+        
+                });
+            }
+
+        else{
         //loop through all meshes and grow the box to encapsulate all
+        console.log('here')
         worldObjects.forEach(mesh => {
-
+            
             //grow the bounds
             // console.log(mesh)
             bounds.expandByObject(mesh)
 
-        });
+        });}
 
         //copy the size of the bounds
         const size= new THREE.Vector3()
