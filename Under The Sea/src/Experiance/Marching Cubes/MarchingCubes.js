@@ -12,10 +12,13 @@ import * as NOISE  from 'simplex-noise'
     {
         this.debug={}
         this.debug.size=size
+        this.size=size
         this.debug.rez=rez
         this.debug.tileSize=tileSize
         this.environmentObjects=[]
         this.debug.tileDivisions=[]
+
+        this.testarr=[]
 
         this.noise3D = NOISE.createNoise3D();
 
@@ -454,7 +457,9 @@ import * as NOISE  from 'simplex-noise'
         console.log(tileArr)
 
         const vec3Vertices=[]
+        let tileID=0
         tileArr.forEach(tile => {
+
             const grid= this.createGrid(tile,size,rez)
             grid.forEach(cell=>
                 {
@@ -485,10 +490,13 @@ import * as NOISE  from 'simplex-noise'
                 vertices[i9+6]=tri3.x
                 vertices[i9+7]=tri3.y
                 vertices[i9+8]=tri3.z
+                const box=new THREE.Box3().setFromPoints([tri1,tri2,tri3])
+                this.testarr.push([tileID,box])
                 // console.log(testarr[i])
             }
-    
+            
             this.environmentObjects.push(this.createGeometry(vertices,scene))
+            tileID++
         });
         //for each tile
             //create grid
@@ -509,7 +517,8 @@ import * as NOISE  from 'simplex-noise'
         geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
         geometry.computeVertexNormals () 
         geometry.computeBoundingBox();
-        const material = new THREE.MeshStandardMaterial( { color: "#ff6be0" } );
+        const material = new THREE.MeshLambertMaterial( { color: "#ff6be0" } );
+        // const material = new THREE.MeshToonMaterial( { color: "#ff6be0" } );
 
         const mesh = new THREE.Mesh( geometry, material );
         mesh.receiveShadow = true;
@@ -654,11 +663,16 @@ import * as NOISE  from 'simplex-noise'
     {
         // warp = noiseVol2.Sample( TrilinearRepeat, ws*0.004 ).xyz; 
         let density=y
+        density+=Math.cos(z*0.4)+Math.sin(x*0.4)
 
-        const warp =this.noise3D(x*0.004,y*0.004,z*0.004)
-        x += warp * 8;
-        y += warp * 8;
-        z += warp * 8;
+        
+         
+
+        // const warp =this.noise3D(x*0.004,y*0.004,z*0.004)
+        // x += warp * 8;
+        // y += warp * 8;
+        // z += warp * 8;
+
         
         //FIXME; create a dedicated function for this
         // density+= this.noise3D(x*4.03,y*4.03,z*4.03)*0.25
@@ -681,6 +695,42 @@ import * as NOISE  from 'simplex-noise'
         // density+= this.noise3D(x*0.1,y*0.1,z*0.1)*7
 
 
+
+        //4
+        // density+= this.noise3D(x*0.2,y*0.2,z*0.2)*2
+        // density+= this.noise3D(x*0.1,y*0.1,z*0.1)*1
+        // density+= this.noise3D(x*0.2,y*0.2,z*0.2)*1
+
+        // density+= this.noise3D(x*0.3,y*0.3,z*0.3)*4
+        // density+= this.noise3D(x*0.4,y*0.4,z*0.4)*0.2
+
+
+        // density+= this.noise3D(x*0.5,y*0.6,z*0.5)*1
+        // density+= this.noise3D(x*0.1,y*0.1,z*0.1)*1
+
+        
+        if(x>this.size/2.01)
+            {
+                density=x
+            }
+         if(x<-this.size/2.01)
+            {
+                density=-x
+            }
+
+        if(z>this.size/2.01)
+            {
+                density=z
+            }
+        else if(z<-this.size/2.01)
+            {
+                density=-z
+            }
+        // if(x<-this.size/2)
+        //     {
+        //         density=y
+        //     }
+            
 
         // if(y<=-2)
         //     {
