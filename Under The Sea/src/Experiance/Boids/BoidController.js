@@ -20,7 +20,7 @@ export default class BoidController
         this.global={}
 
         this.scene=this.experience.scene
-        
+        this.size=size
         this.boidLogic=new BoidLogic(count, size)
         this.boidMeshes= []
 
@@ -241,11 +241,34 @@ export default class BoidController
      */
     debug(debugFolder)
     {
-    // {   const debugValue
-        
+    // {   
+        this.debugValue=
+        {
+            showBorder:false,
+            border:null
+
+        }
         // this.debugSolidBorderBox(debugFolder)
         // this.debugHalos(debugFolder)
         this.addControls(debugFolder)
+        debugFolder.add(this.debugValue,'showBorder').onChange(bool=>
+            {
+                if(bool)
+                    {
+                        this.debugValue.border=this.debugSolidBorderBox()
+                    }
+                else
+                {
+                    if(this.debugValue.border)
+                        {
+                            this.debugValue.border.geometry.dispose()
+                            this.debugValue.border.material.dispose()
+                            this.scene.remove(this.debugValue.border)
+                        }
+                }
+            }
+        )
+
     }
 
     //debug border box
@@ -255,7 +278,7 @@ export default class BoidController
         //     new THREE.BoxGeometry(this.sceneSize,this.sceneSize,this.sceneSize),
         //     new THREE.MeshBasicMaterial({wireframe:true})
         // )
-        const boxGeometry= new THREE.BoxGeometry(this.sceneSize,this.sceneSize,this.sceneSize)
+        const boxGeometry= new THREE.BoxGeometry(this.size,this.size,this.size)
         
 
         const box= new THREE.LineSegments(
@@ -264,6 +287,7 @@ export default class BoidController
 
         )
         this.scene.add(box)
+        return box
 
 
     }
