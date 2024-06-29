@@ -8,23 +8,24 @@ import * as NOISE  from 'simplex-noise'
 
  export default class MarchingCubes
  {
-    constructor(size,rez, tileSize,scene)
+    constructor(size,rez, tileSize,scene,floor)
     {
         this.debug={}
         this.debug.size=size
         this.size=size
+        this.floor=floor
         this.debug.rez=rez
         this.debug.tileSize=tileSize
         this.environmentObjects=[]
         this.debug.tileDivisions=[]
 
-        this.testarr=[]
+        this.envBoundingBox=[]
 
         this.noise3D = NOISE.createNoise3D();
 
         this.constants()
 
-        this.march(size,rez,tileSize,scene)
+        this.march(size,rez,tileSize,scene,floor)
         
     }
 
@@ -448,7 +449,7 @@ import * as NOISE  from 'simplex-noise'
      * @param {*} tileSize 
      * @param {*} scene 
      */
-    march(size,rez,tileSize,scene)
+    march(size,rez,tileSize,scene,floor)
     {
         //tileArr= getTileArr()
         
@@ -480,19 +481,19 @@ import * as NOISE  from 'simplex-noise'
     
     
                 vertices[i9+0]=tri1.x
-                vertices[i9+1]=tri1.y
+                vertices[i9+1]=(tri1.y>floor)?tri1.y:floor
                 vertices[i9+2]=tri1.z
     
                 vertices[i9+3]=tri2.x
-                vertices[i9+4]=tri2.y
+                vertices[i9+4]=(tri2.y>floor)?tri2.y:floor
                 vertices[i9+5]=tri2.z
     
                 vertices[i9+6]=tri3.x
-                vertices[i9+7]=tri3.y
+                vertices[i9+7]=(tri3.y>floor)?tri3.y:floor
                 vertices[i9+8]=tri3.z
                 const box=new THREE.Box3().setFromPoints([tri1,tri2,tri3])
-                this.testarr.push([tileID,box])
-                // console.log(testarr[i])
+                this.envBoundingBox.push([tileID,box])
+                // console.log(envBoundingBox[i])
             }
             
             this.environmentObjects.push(this.createGeometry(vertices,scene))

@@ -22,13 +22,14 @@ export default class World
             {
                 // console.log('resourcse are ready')
                 this.coral= new Coral()
-                // this.floor=new Floor()
-                // this.fish=new Fish()
+                this.floor=new Floor()
+                this.fish=new Fish()
                 // this.fox=new Fox()
                 this.environment=new Environment()
 
-
-                // this.Octree=new CreateOctree([...this.coral.environmentObjects],1)
+                console.log(this.coral.boundingBoxes)
+                this.Octree=new CreateOctree(this.coral.boundingBoxes,1,true)
+                //FIXME move this into debug
                 // this.Octree.debug(this.scene)
             })
 

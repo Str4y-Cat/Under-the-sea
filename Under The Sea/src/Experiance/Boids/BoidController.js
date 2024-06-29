@@ -1,6 +1,8 @@
 import BoidLogic from "./BoidLogic";
 import * as THREE from 'three'
 import Experience from "../Experiance";
+import WorldValues from "../WorldValues";
+
 
 
 export default class BoidController
@@ -16,6 +18,9 @@ export default class BoidController
     constructor(count, size)
     {
         this.experience= new Experience()
+        this.minHeight= WorldValues.floorHeight
+        this.maxHeight= WorldValues.roofHeight
+
         // this.gui= this.experience.debug.ui
         this.global={}
 
@@ -278,16 +283,19 @@ export default class BoidController
         //     new THREE.BoxGeometry(this.sceneSize,this.sceneSize,this.sceneSize),
         //     new THREE.MeshBasicMaterial({wireframe:true})
         // )
-        const boxGeometry= new THREE.BoxGeometry(this.size,this.size,this.size)
-        
+        // const boxGeometry= new THREE.BoxGeometry(this.size,this.size,this.size)
+        const min= new THREE.Vector3(-this.size/2,this.minHeight,-this.size/2)
+        const max= new THREE.Vector3(this.size/2,this.maxHeight,this.size/2)
+        const box= new THREE.Box3(min,max)
 
-        const box= new THREE.LineSegments(
-            new THREE.EdgesGeometry(boxGeometry),
-            new THREE.LineBasicMaterial({color:"red"})
+        const helper= new THREE.Box3Helper(box,'blue')
+        // const box= new THREE.LineSegments(
+        //     new THREE.EdgesGeometry(boxGeometry),
+        //     new THREE.LineBasicMaterial({color:"red"})
 
-        )
-        this.scene.add(box)
-        return box
+        // )
+        this.scene.add(helper)
+        return helper
 
 
     }

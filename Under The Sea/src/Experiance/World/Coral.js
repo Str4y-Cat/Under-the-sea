@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 
 import Experience from "../Experiance";
+import WorldValues from '../WorldValues';
 import MarchingCubes from '../Marching Cubes/MarchingCubes';
 
 export default class Coral
@@ -11,18 +12,22 @@ export default class Coral
         this.scene= this.experience.scene
         this.resources= this.experience.resources
         this.debug=this.experience.debug
+        this.worldValues= WorldValues
+        
         // console.log(this.debug)
         
-        this.coralVariables={}
-        this.coralVariables.size=40
-        this.coralVariables.rez=1
-        this.coralVariables.tileSize=10
+        this.coralVariables=this.worldValues.coralVariables
+        // this.coralVariables.size=40
+        // this.coralVariables.rez=1
+        // this.coralVariables.tileSize=10
 
 
 
-        this.MarchingCubes= new MarchingCubes(this.coralVariables.size,this.coralVariables.rez,this.coralVariables.tileSize,this.scene)
+        this.MarchingCubes= new MarchingCubes(this.coralVariables.size,this.coralVariables.rez,this.coralVariables.tileSize,this.scene,this.worldValues.floorHeight-1)
         this.environmentObjects= this.MarchingCubes.environmentObjects
-        console.log(this.environmentObjects)
+        // console.log(this.environmentObjects)
+        console.log(this.MarchingCubes.envBoundingBox)
+        this.boundingBoxes=this.MarchingCubes.envBoundingBox
         if(this.debug.active)
             {
                 this.debugFolder=this.debug.ui.addFolder("Coral")

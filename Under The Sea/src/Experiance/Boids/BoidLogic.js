@@ -1,3 +1,4 @@
+import WorldValues from "../WorldValues";
 
 export default class BoidLogic
 {
@@ -13,7 +14,8 @@ export default class BoidLogic
         //world variables
         // this.sizes=displaySizes
         this.sceneSize=size/2|| defaultValue(2,"sceneSize")
-        
+        this.minHeight= WorldValues.floorHeight
+        this.maxHeight= WorldValues.roofHeight
         // this.transPadding = startValues.transPadding || defaultValue(10,"transPadding");
         this.solidPadding = defaultValue(1,"solidPadding");
         // this.boundingBoxTransparent={
@@ -22,8 +24,8 @@ export default class BoidLogic
         // }
         //TODO use a box three for the scene size?
         this.boundingBoxSolid={
-            top: this.sceneSize,
-            bottom:-this.sceneSize,
+            top: this.maxHeight,
+            bottom:this.minHeight,
             left: -this.sceneSize,
             right: this.sceneSize,
             back: -this.sceneSize,
@@ -64,8 +66,8 @@ export default class BoidLogic
     updateSolidBoundingBox(padding){
         this.solidPadding=padding
         
-        this.boundingBoxSolid.top= this.sceneSize
-        this.boundingBoxSolid.bottom=-this.sceneSize
+        this.boundingBoxSolid.top= this.maxHeight
+        this.boundingBoxSolid.bottom=this.floorHeight
         this.boundingBoxSolid.left= -this.sceneSize
         this.boundingBoxSolid.right= this.sizes.width
         
@@ -77,9 +79,10 @@ export default class BoidLogic
         // console.log(`count:${count}`)
         for(let i = 0; i< count; i++)
             {   
-                const x= (Math.random()-0.5)*this.sceneSize
-                const y= (Math.random()-0.5)*this.sceneSize
-                const z= (Math.random()-0.5)*this.sceneSize
+                const x= (Math.random()-0.5)*2*this.sceneSize
+                const y= Math.max(this.minHeight,(Math.random()-0.5)*this.sceneSize)
+                // const y= (Math.random()-0.5)*2*this.sceneSize
+                const z= (Math.random()-0.5)*2*this.sceneSize
 
                 const vx= (Math.random()-0.5)*2*this.maxSpeed
                 const vy= (Math.random()-0.5)*2*this.maxSpeed
