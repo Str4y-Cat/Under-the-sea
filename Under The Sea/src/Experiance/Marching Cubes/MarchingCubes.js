@@ -457,20 +457,29 @@ import * as NOISE  from 'simplex-noise'
         const tileArr= this.tileArr(size,tileSize)
         console.log(tileArr)
 
-        const vec3Vertices=[]
+        
         let tileID=0
         tileArr.forEach(tile => {
-
+            const vec3Vertices=[]
+            console.log(tile)
             const grid= this.createGrid(tile,size,rez)
             grid.forEach(cell=>
                 {
                     const triangles=this.polygonise(cell,0.5)
+                    
                     if(triangles)
                         {
+                            // console.log(triangles)
                             vec3Vertices.push(...triangles)
                         }
+                        
+                    
                 }
+                
             )
+            // console.log("vec3Vertices")
+
+            // console.log(vec3Vertices)
             
             const vertices= new Float32Array(vec3Vertices.length*9)
             for (let i = 0; i < vec3Vertices.length; i++) {
@@ -491,14 +500,22 @@ import * as NOISE  from 'simplex-noise'
                 vertices[i9+6]=tri3.x
                 vertices[i9+7]=(tri3.y>floor)?tri3.y:floor
                 vertices[i9+8]=tri3.z
+
                 const box=new THREE.Box3().setFromPoints([tri1,tri2,tri3])
                 this.envBoundingBox.push([tileID,box])
                 // console.log(envBoundingBox[i])
             }
             
+            console.log('running')
+            console.log(this.envBoundingBox)
+            console.log(vec3Vertices.length)
+
+
             this.environmentObjects.push(this.createGeometry(vertices,scene))
             tileID++
         });
+        // console.log(vec3Vertices)
+
         //for each tile
             //create grid
             //polygonize
@@ -518,7 +535,7 @@ import * as NOISE  from 'simplex-noise'
         geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
         geometry.computeVertexNormals () 
         geometry.computeBoundingBox();
-        const material = new THREE.MeshLambertMaterial( { color: "#ff6be0" } );
+        const material = new THREE.MeshLambertMaterial( { wireframe:true,color: "#ff6be0" } );
         // const material = new THREE.MeshToonMaterial( { color: "#ff6be0" } );
 
         const mesh = new THREE.Mesh( geometry, material );
