@@ -18,7 +18,9 @@ export default class Environment
             }
 
         // this.setSunLight()
-        this.setEnvironmentMap()
+            this.setHemisphereLight()
+
+        // this.setEnvironmentMap()
         // this.addHelper()
     }
 
@@ -108,6 +110,14 @@ export default class Environment
             .step(0.001)
             .onChange(this.environmentMap.updateMaterial())
         }
+    }
+
+    setHemisphereLight()
+    {
+        const hemiLight = new THREE.HemisphereLight( "8cd2f8", "#140449", 2 );
+        
+        // hemiLight.position.set( 0, 0, 0 );
+        this.scene.add( hemiLight );
     }
 
     addHelper()
