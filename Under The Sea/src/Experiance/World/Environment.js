@@ -10,25 +10,27 @@ export default class Environment
         this.scene= this.experience.scene
         this.resources= this.experience.resources
         this.debug=this.experience.debug
-    
+        this.debugValues={color:"#ffffff"}
         //Debug
         if(this.debug.active)
             {
                 this.debugFolder= this.debug.ui.addFolder("Environment")
             }
 
-        this.setSunLight()
+        // this.setSunLight()
         this.setEnvironmentMap()
+        // this.addHelper()
     }
 
     setSunLight(){
-        this.sunLight = new THREE.DirectionalLight('#ffffff', 4)
+        this.sunLight = new THREE.DirectionalLight(this.debugValues.color, 4)
         this.sunLight.castShadow = true
         this.sunLight.shadow.camera.far = 15
         this.sunLight.shadow.mapSize.set(1024, 1024)
         this.sunLight.shadow.normalBias = 0.05
         this.sunLight.position.set(3.5, 2, - 1.25)
         this.scene.add(this.sunLight)
+
 
 
         //debug
@@ -42,6 +44,15 @@ export default class Environment
                 .step(0.001)
 
                 this.debugFolder
+                .addColor(this.debugValues,'color')
+                .name('Sunlight Color')
+                .onChange(color=>
+                    {
+                        this.sunLight.color.set(new THREE.Color(color))
+                    }
+                )
+
+                this.debugFolder
                 .add(this.sunLight.position,'x')
                 .name('Sunlight Xposition')
                 .min(-5)
@@ -50,14 +61,14 @@ export default class Environment
 
                 this.debugFolder
                 .add(this.sunLight.position,'y')
-                .name('Sunlight Xposition')
+                .name('Sunlight Yposition')
                 .min(-5)
                 .max(5)
                 .step(0.001)
 
                 this.debugFolder
                 .add(this.sunLight.position,'z')
-                .name('Sunlight Xposition')
+                .name('Sunlight Zposition')
                 .min(-5)
                 .max(5)
                 .step(0.001)
@@ -97,5 +108,11 @@ export default class Environment
             .step(0.001)
             .onChange(this.environmentMap.updateMaterial())
         }
+    }
+
+    addHelper()
+    {
+        const helper = new THREE.DirectionalLightHelper( this.sunLight, 5 );
+        this.scene.add( helper );
     }
 }

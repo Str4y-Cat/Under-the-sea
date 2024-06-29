@@ -32,6 +32,7 @@ export default class Octree
         worldObjects.forEach(mesh => {
 
             //grow the bounds
+            // console.log(mesh)
             bounds.expandByObject(mesh)
 
         });

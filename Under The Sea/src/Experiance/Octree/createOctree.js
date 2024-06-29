@@ -10,11 +10,7 @@ export default class CreateOctree
         this.minNodeSize= minNodeSize||5
         this.octree= new Octree(this.worldObjects,this.minNodeSize)
         this.drawMeshes=[]
-        if(scene){
-            this.scene=scene
-            // this.draw(this.octree.rootNode,scene)
-            this.showOctree()
-        }
+        
 
         
     }
@@ -185,5 +181,13 @@ export default class CreateOctree
         this.removeBox(this.octree.rootNode,this.scene)
     }
 
+    debug(scene)
+    {
+        
+        this.scene=scene
+        // this.draw(this.octree.rootNode,scene)
+        this.showOctree()
+        
+    }
 
 }

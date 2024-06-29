@@ -21,7 +21,8 @@ export default class Coral
 
 
         this.MarchingCubes= new MarchingCubes(this.coralVariables.size,this.coralVariables.rez,this.coralVariables.tileSize,this.scene)
-
+        this.environmentObjects= this.MarchingCubes.environmentObjects
+        console.log(this.environmentObjects)
         if(this.debug.active)
             {
                 this.debugFolder=this.debug.ui.addFolder("Coral")

@@ -15,7 +15,7 @@ export default class Fish
 
         
     
-        this.boids= new BoidController(200,40,this.scene,{},this.debug.ui,this.experience.camera,)
+        this.boids= new BoidController(200,40)
         this.setFishGeometry()
         this.setFishMaterial()
         this.createBoids()

@@ -54,6 +54,8 @@ export default class Experience{
             {
                 this.update()
             })
+
+        console.log(this.scene)
     }
 
     resize(){

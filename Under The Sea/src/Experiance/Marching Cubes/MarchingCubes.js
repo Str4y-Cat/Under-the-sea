@@ -14,7 +14,7 @@ import * as NOISE  from 'simplex-noise'
         this.debug.size=size
         this.debug.rez=rez
         this.debug.tileSize=tileSize
-        this.debug.envMesh=[]
+        this.environmentObjects=[]
         this.debug.tileDivisions=[]
 
         this.noise3D = NOISE.createNoise3D();
@@ -488,7 +488,7 @@ import * as NOISE  from 'simplex-noise'
                 // console.log(testarr[i])
             }
     
-            this.debug.envMesh.push(this.createGeometry(vertices,scene))
+            this.environmentObjects.push(this.createGeometry(vertices,scene))
         });
         //for each tile
             //create grid
@@ -508,11 +508,14 @@ import * as NOISE  from 'simplex-noise'
         const geometry = new THREE.BufferGeometry();
         geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
         geometry.computeVertexNormals () 
+        geometry.computeBoundingBox();
         const material = new THREE.MeshStandardMaterial( { color: "#ff6be0" } );
 
         const mesh = new THREE.Mesh( geometry, material );
         mesh.receiveShadow = true;
         mesh.castShadow = true;
+        
+        mesh.layers.enable(1)
         scene.add(mesh)
         return mesh
     }
@@ -727,7 +730,7 @@ import * as NOISE  from 'simplex-noise'
         //update rez
         gui.add(this.debug,'rez').min(0.1).max(5).step(0.1).onFinishChange((num)=>
         {
-            this.destroyMesh(this.debug.envMesh,scene)
+            this.destroyMesh(this.environmentObjects,scene)
             this.destroyMesh(this.debug.tileDivisions,scene)
             
             this.march(this.debug.size,num,this.debug.tileSize,scene)
@@ -735,7 +738,7 @@ import * as NOISE  from 'simplex-noise'
 
         gui.add(this.debug,'size').min(1).max(100).step(1).onFinishChange((num)=>
             {
-                this.destroyMesh(this.debug.envMesh,scene)
+                this.destroyMesh(this.environmentObjects,scene)
                 this.destroyMesh(this.debug.tileDivisions,scene)
                 
                 this.march(num,this.debug.rez,this.debug.tileSize,scene)
@@ -743,7 +746,7 @@ import * as NOISE  from 'simplex-noise'
 
         gui.add(this.debug,'tileSize').min(1).max(50).step(1).onFinishChange((num)=>
             {
-                this.destroyMesh(this.debug.envMesh,scene)
+                this.destroyMesh(this.environmentObjects,scene)
                 this.destroyMesh(this.debug.tileDivisions,scene)
                 this.debug.tileDivisions=[]
                 
