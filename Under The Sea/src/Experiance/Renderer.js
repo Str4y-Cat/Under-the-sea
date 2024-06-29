@@ -37,7 +37,7 @@ export default class Renderer
     }
 
     update(){
-        console.log('Debug: Updating renderer')
+        // console.log('Debug: Updating renderer')
         this.instance.render(this.scene,this.camera.instance)
     }
 }

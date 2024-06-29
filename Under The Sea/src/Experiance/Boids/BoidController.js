@@ -11,7 +11,7 @@ export default class BoidController
      *  
      * 
      */
-    constructor(count, sizes, scene,debug,gui,camera,texture)
+    constructor(count, sizes, scene,debug,camera,texture)
     {
         this.camera=camera
         this.texture= texture
@@ -28,9 +28,9 @@ export default class BoidController
         this.addMeshes(this.boidLogic.boidArray)
 
 
-        this.gui=gui
+        // this.gui=gui
         
-        this.addControls()
+        // this.addControls()
 
     }
 

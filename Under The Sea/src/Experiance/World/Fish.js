@@ -10,6 +10,8 @@ export default class Fish
         this.experience= new Experience()
         this.scene= this.experience.scene
         this.resources= this.experience.resources
+        this.debug= this.experience.debug
+        this.perform= this.experience.Perform
 
         //Debug
         if(this.debug.active)
@@ -24,7 +26,13 @@ export default class Fish
     }
 
 
+    update()
+    {
+        // this.perform.timer('boid Update')
+        this.boids.update([])
+        // this.perform.timer('boid Update')
 
+    }
 
 
 

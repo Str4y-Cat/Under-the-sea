@@ -31,6 +31,10 @@ export default class World
 
     update()
     {
+        if(this.fish)
+            {
+                this.fish.update()
+            }
         if(this.fox)
             this.fox.update()
     }

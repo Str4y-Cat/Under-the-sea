@@ -8,6 +8,9 @@ import World from './World/World'
 import Resources from './Utils/Resources'
 import sources from './sources'
 import Debug from './Utils/Debug'
+import Perform from './Utils/Performance'
+import Stats from 'three/addons/libs/stats.module.js';
+
 // import World from '.World/World.js'
 
 //convert to singleton
@@ -24,6 +27,10 @@ export default class Experience{
         //global access 
         window.experience=this
 
+        // stats
+        this.stats = new Stats();
+        document.body.appendChild( this.stats.dom );
+
         //options
         this.canvas=canvas
 
@@ -36,6 +43,7 @@ export default class Experience{
         this.camera= new Camera()
         this.renderer=new Renderer()
         this.world= new World()
+        this.Perform= new Perform()
         //sizes resize event
         this.sizes.on('resize',()=>{
             this.resize()
@@ -56,9 +64,13 @@ export default class Experience{
 
     update(){
         // console.log('update the experiance')
+        this.stats.begin();
+
         this.camera.update()
         this.world.update()
         this.renderer.update()
+        this.stats.end();
+
     }
 
     destroy()
