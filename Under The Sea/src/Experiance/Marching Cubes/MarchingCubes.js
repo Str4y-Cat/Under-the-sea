@@ -455,13 +455,13 @@ import * as NOISE  from 'simplex-noise'
         
 
         const tileArr= this.tileArr(size,tileSize)
-        console.log(tileArr)
+        // console.log(tileArr)
 
         
         let tileID=0
         tileArr.forEach(tile => {
             const vec3Vertices=[]
-            console.log(tile)
+            // console.log(tile)
             const grid= this.createGrid(tile,size,rez)
             grid.forEach(cell=>
                 {
@@ -506,9 +506,9 @@ import * as NOISE  from 'simplex-noise'
                 // console.log(envBoundingBox[i])
             }
             
-            console.log('running')
-            console.log(this.envBoundingBox)
-            console.log(vec3Vertices.length)
+            // console.log('running')
+            // console.log(this.envBoundingBox)
+            // console.log(vec3Vertices.length)
 
 
             this.environmentObjects.push(this.createGeometry(vertices,scene))

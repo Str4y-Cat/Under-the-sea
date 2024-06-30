@@ -6,6 +6,7 @@ import Floor from "./Floor";
 import Fox from "./Fox";
 import Coral from "./Coral";
 import Fish from "./Fish";
+import Player from "./Player";
 import CreateOctree from "../Octree/createOctree";
 import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from 'three-mesh-bvh';
 
@@ -35,12 +36,13 @@ export default class World
                 // this.fox=new Fox()
                 this.environment=new Environment()
 
-                console.log(this.coral.environmentObjects)
-                console.log(this.coral.boundingBoxes)
+                
                 this.Octree=new CreateOctree(this.coral.boundingBoxes,1,true)
-                console.log(this.Octree)
+                
                 this.fish.setVision(this.Octree,this.coral.environmentObjects)
                 //FIXME move this into debug
+                this.player= new Player()
+
                 // this.Octree.debug(this.scene)
             })
 
@@ -61,5 +63,10 @@ export default class World
             }
         if(this.fox)
             this.fox.update()
+
+        if(this.player)
+            {
+                this.player.update()
+            }
     }
 }

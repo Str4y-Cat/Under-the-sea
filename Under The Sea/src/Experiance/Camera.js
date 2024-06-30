@@ -14,7 +14,7 @@ export default class Camera
         // console.log("camera")
 
         this.setInstance()
-        this.setOrbitControls()
+        // this.setOrbitControls()
     }
 
     setInstance()
@@ -25,11 +25,11 @@ export default class Camera
         this.scene.add(this.instance)
     }
 
-    setOrbitControls()
-    {
-        this.controls= new OrbitControls(this.instance, this.canvas)
-        this.controls.enableDamping=true
-    }
+    // setOrbitControls()
+    // {
+    //     this.controls= new OrbitControls(this.instance, this.canvas)
+    //     this.controls.enableDamping=true
+    // }
 
     resize()
     {
@@ -42,6 +42,6 @@ export default class Camera
     update()
     {
         // console.log("DEBUG: Updating Camera")
-        this.controls.update()
+        // this.controls.update()
     }
 }

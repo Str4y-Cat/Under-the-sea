@@ -137,7 +137,7 @@ export default  class OctreeNode
                 // this.worldObjects.push(worldObj)
                 this.worldObjectsId.push(worldObj[0])
                 this.containsObject=true
-                console.log(worldObj[0])
+                // console.log(worldObj[0])
                 // console.log(this.worldObjects)
                 // console.log(this)
                 return;

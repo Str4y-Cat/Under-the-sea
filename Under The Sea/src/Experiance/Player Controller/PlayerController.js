@@ -1,5 +1,5 @@
-import FlightController from './Player Controller/Flight Controller.js'
-import CameraController from './Player Controller/cameraController.js';
+import FlightController from './Flight Controller.js'
+import CameraController from './cameraController.js';
 import Experience from "../Experiance";
 
 
@@ -8,17 +8,14 @@ export default class PlayerController
 {
     constructor(player)
     {   
-        this.experience= new Experience()
-
+        this.experience=new Experience()
         this.scene= this.experience.scene
-        this.camera=this.experience.camera
+        this.camera=this.experience.camera.instance
         this.player=player
-        // this.camera= camera
-
-        // this.scene= this.experience.scene
+        
 
         this.playerControls= new FlightController(player,this.scene)
-        this.cameraControls= new CameraController(camera)
+        this.cameraControls= new CameraController(this.camera)
 
     }
 
@@ -26,6 +23,7 @@ export default class PlayerController
     {
         // const delta= ...
         this.playerControls.updateQ(delta)
+        // console.log(delta)
         this.cameraControls.Update(delta,this.playerControls,this.player)
     }
 
