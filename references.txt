@@ -31,3 +31,6 @@ marching cubes
 
 third person camera
 - https://www.youtube.com/watch?v=UuNPHOJ_V5o
+
+fish models
+https://poly.pizza/m/Ymu8ftrmuT
