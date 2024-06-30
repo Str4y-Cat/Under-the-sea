@@ -3,6 +3,10 @@ export default
     floorHeight:-3,
     roofHeight:15,
 
+    boids:{
+        count:8
+    },
+
     coralVariables:
     {
         size:40,

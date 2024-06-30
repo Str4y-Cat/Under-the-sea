@@ -33,7 +33,8 @@ export default class World
                 this.coral= new Coral()
                 this.floor=new Floor()
                 this.fish=new Fish()
-                // this.fox=new Fox()
+                console.log('created fish')
+                this.fox=new Fox()
                 this.environment=new Environment()
 
                 
@@ -41,7 +42,7 @@ export default class World
                 
                 this.fish.setVision(this.Octree,this.coral.environmentObjects)
                 //FIXME move this into debug
-                this.player= new Player()
+                // this.player= new Player()
 
                 // this.Octree.debug(this.scene)
             })

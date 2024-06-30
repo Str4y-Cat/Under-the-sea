@@ -82,9 +82,9 @@ export default class Octree
      */
     addObjects(worldObjects)
     {
-        console.log("worldObjects")
+        // console.log("worldObjects")
 
-        console.log(worldObjects)
+        // console.log(worldObjects)
         worldObjects.forEach(obj => {
             this.rootNode.addObject(obj)
         });

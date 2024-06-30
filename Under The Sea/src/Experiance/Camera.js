@@ -25,11 +25,11 @@ export default class Camera
         this.scene.add(this.instance)
     }
 
-    // setOrbitControls()
-    // {
-    //     this.controls= new OrbitControls(this.instance, this.canvas)
-    //     this.controls.enableDamping=true
-    // }
+    setOrbitControls()
+    {
+        this.controls= new OrbitControls(this.instance, this.canvas)
+        this.controls.enableDamping=true
+    }
 
     resize()
     {

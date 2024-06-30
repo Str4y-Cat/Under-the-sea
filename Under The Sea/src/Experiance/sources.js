@@ -29,6 +29,12 @@ export default[
         path:   'models/Fox/glTF/Fox.gltf'
 
     },
+    {
+        name:'fishModel',
+        type:'gltfModel',
+        path:   'models/Fish/glTF/Fish.gltf'
+
+    },
 
 
 
