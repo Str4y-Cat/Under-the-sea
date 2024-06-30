@@ -105,82 +105,82 @@ export default class FirstPersonControls {
 
 		};
 
-		this.onPointerDown = function ( event ) {
+		// this.onPointerDown = function ( event ) {
 
-			if ( this.domElement !== document ) {
+		// 	if ( this.domElement !== document ) {
 
-				this.domElement.focus();
+		// 		this.domElement.focus();
 
-			}
+		// 	}
 
-			if ( this.activeLook ) {
+		// 	if ( this.activeLook ) {
 
-				switch ( event.button ) {
+		// 		switch ( event.button ) {
 
-					case 0: this.moveForward = true; break;
-					case 2: this.moveBackward = true; break;
+		// 			case 0: this.moveForward = true; break;
+		// 			case 2: this.moveBackward = true; break;
 
-				}
+		// 		}
 
-			}
+		// 	}
 
-			this.mouseDragOn = true;
+		// 	this.mouseDragOn = true;
 
-		};
+		// };
 
-		this.onPointerUp = function ( event ) {
+		// this.onPointerUp = function ( event ) {
 
-			if ( this.activeLook ) {
+		// 	if ( this.activeLook ) {
 
-				switch ( event.button ) {
+		// 		switch ( event.button ) {
 
-					case 0: this.moveForward = false; break;
-					case 2: this.moveBackward = false; break;
+		// 			case 0: this.moveForward = false; break;
+		// 			case 2: this.moveBackward = false; break;
 
-				}
+		// 		}
 
-			}
+		// 	}
 
-			this.mouseDragOn = false;
+		// 	this.mouseDragOn = false;
 
-		};
+		// };
 
-		this.onPointerMove = function ( event ) {
+		// this.onPointerMove = function ( event ) {
 
-			if ( this.domElement === document ) {
+		// 	if ( this.domElement === document ) {
 
-				this.pointerX = event.pageX - this.viewHalfX;
-				this.pointerY = event.pageY - this.viewHalfY;
+		// 		this.pointerX = event.pageX - this.viewHalfX;
+		// 		this.pointerY = event.pageY - this.viewHalfY;
 
-			} else {
+		// 	} else {
 
-				this.pointerX = event.pageX - this.domElement.offsetLeft - this.viewHalfX;
-				this.pointerY = event.pageY - this.domElement.offsetTop - this.viewHalfY;
+		// 		this.pointerX = event.pageX - this.domElement.offsetLeft - this.viewHalfX;
+		// 		this.pointerY = event.pageY - this.domElement.offsetTop - this.viewHalfY;
 
-			}
+		// 	}
 
-		};
+		// };
 
 		this.onKeyDown = function ( event ) {
 
-			switch ( event.code ) {
+			// switch ( event.code ) {
 
-				case 'ArrowUp':
-				case 'KeyW': this.moveForward = true; break;
+			// 	case 'ArrowUp':
+			// 	case 'KeyW': this.moveForward = true; break;
 
-				case 'ArrowLeft':
-				case 'KeyA': this.moveLeft = true; break;
+			// 	case 'ArrowLeft':
+			// 	case 'KeyA': this.moveLeft = true; break;
 
-				case 'ArrowDown':
-				case 'KeyS': this.moveBackward = true; break;
+			// 	case 'ArrowDown':
+			// 	case 'KeyS': this.moveBackward = true; break;
 
-				case 'ArrowRight':
-				case 'KeyD': this.moveRight = true; break;
+			// 	case 'ArrowRight':
+			// 	case 'KeyD': this.moveRight = true; break;
 
-				case 'KeyR': this.moveUp = true; break;
-				case 'KeyF': this.moveDown = true; break;
+			// 	case 'KeyR': this.moveUp = true; break;
+			// 	case 'KeyF': this.moveDown = true; break;
 
-			}
+			// }
 
             switch (event.keyCode) {
                 case 87: // w
@@ -216,24 +216,24 @@ export default class FirstPersonControls {
 
 		this.onKeyUp = function ( event ) {
 
-			switch ( event.code ) {
+			// switch ( event.code ) {
 
-				case 'ArrowUp':
-				case 'KeyW': this.moveForward = false; break;
+			// 	case 'ArrowUp':
+			// 	case 'KeyW': this.moveForward = false; break;
 
-				case 'ArrowLeft':
-				case 'KeyA': this.moveLeft = false; break;
+			// 	case 'ArrowLeft':
+			// 	case 'KeyA': this.moveLeft = false; break;
 
-				case 'ArrowDown':
-				case 'KeyS': this.moveBackward = false; break;
+			// 	case 'ArrowDown':
+			// 	case 'KeyS': this.moveBackward = false; break;
 
-				case 'ArrowRight':
-				case 'KeyD': this.moveRight = false; break;
+			// 	case 'ArrowRight':
+			// 	case 'KeyD': this.moveRight = false; break;
 
-				case 'KeyR': this.moveUp = false; break;
-				case 'KeyF': this.moveDown = false; break;
+			// 	case 'KeyR': this.moveUp = false; break;
+			// 	case 'KeyF': this.moveDown = false; break;
 
-			}
+			// }
 
             switch(event.keyCode) {
                 case 87: // w
@@ -267,25 +267,25 @@ export default class FirstPersonControls {
 
 		};
 
-		this.lookAt = function ( x, y, z ) {
+		// this.lookAt = function ( x, y, z ) {
 
-			if ( x.isVector3 ) {
+		// 	if ( x.isVector3 ) {
 
-				_target.copy( x );
+		// 		_target.copy( x );
 
-			} else {
+		// 	} else {
 
-				_target.set( x, y, z );
+		// 		_target.set( x, y, z );
 
-			}
+		// 	}
 
-			this.object.lookAt( _target );
+		// 	this.object.lookAt( _target );
 
-			setOrientation( this );
+		// 	setOrientation( this );
 
-			return this;
+		// 	return this;
 
-		};
+		// };
 
 		// this.update = function () {
 
@@ -403,6 +403,7 @@ export default class FirstPersonControls {
               const acc = this.acceleration_.clone();
               if (input.shift) {
                 acc.multiplyScalar(2.0);
+                velocity.multiplyScalar(2.0);
               }
           
               if (input.axis1Forward) {
@@ -465,6 +466,124 @@ export default class FirstPersonControls {
             //   console.log(pos)
               
               this.object.position.copy(pos);
+              const euler=new THREE.Euler().setFromQuaternion(_R)
+            //   this.object.rotation.set(euler.x,euler.y,0,"XYZ")
+              this.object.quaternion.copy(_R);
+            //   this.object.rotation.z=0
+              this.updateAttributes()
+              
+            //   console.log(this.object.position)
+            //   console.log(this.object.quaternion)
+              
+        };
+
+        this.updateE = function (timeInSeconds){
+            // if (this.dead_) {
+            //     return;
+            //   }
+                // console.log(this)
+        
+              const input = this.Attributes.InputCurrent;
+            //   console.log(this.Attributes.InputCurrent)
+              
+
+              if (!input) {
+                return;
+              }
+        
+              const velocity = this.velocity_;
+              const frameDecceleration = new THREE.Vector3(
+                  velocity.x * this.decceleration_.x,
+                  velocity.y * this.decceleration_.y,
+                  velocity.z * this.decceleration_.z
+              );
+              
+              frameDecceleration.multiplyScalar(timeInSeconds);
+        
+              velocity.add(frameDecceleration);
+            //   velocity.z = -math.clamp(Math.abs(velocity.z), 2, 2);
+            if(input.space){
+              velocity.z = -math.clamp(Math.abs(velocity.z), 2, 2);
+
+            }
+            else{
+                velocity.z = -math.clamp(0,0,0);     
+            }
+          
+            //   console.log(object)
+              const _PARENT_Q = this.object.rotation.clone();
+              const _PARENT_P = this.object.rotation.clone();
+        
+              const _Q = new THREE.Euler();
+              const _A = new THREE.Vector3();
+              const _R = _PARENT_Q.clone();
+          
+              const acc = this.acceleration_.clone();
+              if (input.shift) {
+                acc.multiplyScalar(2.0);
+                velocity.multiplyScalar(2.0);
+              }
+          
+              if (input.axis1Forward) {
+                
+                _Q.set(timeInSeconds * acc.y * input.axis1Forward,1,1,"XYZ");
+                _R.applyEuler(_Q);
+              }
+              if (input.axis1Side) {
+                // _A.set(0, 1, 0);
+                _Q.set(1,timeInSeconds * acc.y * input.axis1Forward,1,"XYZ");
+                _R.applyEuler(_Q);
+              }
+            //   if (input.axis2Side) {
+            //     _A.set(0, 0, -1);
+            //     _Q.setFromAxisAngle(_A, Math.PI * timeInSeconds * acc.y * input.axis2Side);
+            //     _R.multiply(_Q);
+            //   }
+          
+              const forward = new THREE.Vector3(0, 0, 1);
+              forward.applyEuler(_PARENT_Q);
+              forward.normalize();
+            //   console.log(forward)
+          
+              const updown = new THREE.Vector3(0, 1, 0);
+              updown.applyEuler(_PARENT_Q);
+              updown.normalize();
+            //   console.log(updown)
+
+        
+              const sideways = new THREE.Vector3(1, 0, 0);
+              sideways.applyEuler(_PARENT_Q);
+              sideways.normalize();
+            //   console.log(sideways)
+
+          
+              sideways.multiplyScalar(velocity.x * timeInSeconds);
+              updown.multiplyScalar(velocity.y * timeInSeconds);
+              forward.multiplyScalar(velocity.z * timeInSeconds);
+            //   console.log(sideways)
+            //   console.log(updown)
+            //   console.log(forward)
+
+          
+              const pos = _PARENT_P;
+            //   console.log(pos)
+
+              pos.add(forward);
+            //   console.log(forward)
+
+            //   console.log(pos)
+
+              pos.add(sideways);
+            //   console.log(sideways)
+
+            //   console.log(pos)
+
+              pos.add(updown);
+            //   console.log(updown)
+
+            //   console.log(pos)
+              
+              this.object.position.copy(pos);
               this.object.quaternion.copy(_R);
             //   this.object.rotation.z=0
               this.updateAttributes()
@@ -481,47 +600,47 @@ export default class FirstPersonControls {
             this.Attributes.InputPrevious = {...this.Attributes.InputCurrent};
         }
 
-		this.dispose = function () {
+		// this.dispose = function () {
 
-			this.domElement.removeEventListener( 'contextmenu', contextmenu );
-			this.domElement.removeEventListener( 'pointerdown', _onPointerDown );
-			this.domElement.removeEventListener( 'pointermove', _onPointerMove );
-			this.domElement.removeEventListener( 'pointerup', _onPointerUp );
+		// 	this.domElement.removeEventListener( 'contextmenu', contextmenu );
+		// 	this.domElement.removeEventListener( 'pointerdown', _onPointerDown );
+		// 	this.domElement.removeEventListener( 'pointermove', _onPointerMove );
+		// 	this.domElement.removeEventListener( 'pointerup', _onPointerUp );
 
-			window.removeEventListener( 'keydown', _onKeyDown );
-			window.removeEventListener( 'keyup', _onKeyUp );
+		// 	window.removeEventListener( 'keydown', _onKeyDown );
+		// 	window.removeEventListener( 'keyup', _onKeyUp );
 
-		};
+		// };
 
-		const _onPointerMove = this.onPointerMove.bind( this );
-		const _onPointerDown = this.onPointerDown.bind( this );
-		const _onPointerUp = this.onPointerUp.bind( this );
+		// const _onPointerMove = this.onPointerMove.bind( this );
+		// const _onPointerDown = this.onPointerDown.bind( this );
+		// const _onPointerUp = this.onPointerUp.bind( this );
 		const _onKeyDown = this.onKeyDown.bind( this );
 		const _onKeyUp = this.onKeyUp.bind( this );
 
 		this.domElement.addEventListener( 'contextmenu', contextmenu );
-		this.domElement.addEventListener( 'pointerdown', _onPointerDown );
-		this.domElement.addEventListener( 'pointermove', _onPointerMove );
-		this.domElement.addEventListener( 'pointerup', _onPointerUp );
+		// this.domElement.addEventListener( 'pointerdown', _onPointerDown );
+		// this.domElement.addEventListener( 'pointermove', _onPointerMove );
+		// this.domElement.addEventListener( 'pointerup', _onPointerUp );
 
 		window.addEventListener( 'keydown', _onKeyDown );
 		window.addEventListener( 'keyup', _onKeyUp );
 
-		function setOrientation( controls ) {
+		// function setOrientation( controls ) {
 
-			const quaternion = controls.object.quaternion;
+		// 	const quaternion = controls.object.quaternion;
 
-			_lookDirection.set( 0, 0, - 1 ).applyQuaternion( quaternion );
-			_spherical.setFromVector3( _lookDirection );
+		// 	_lookDirection.set( 0, 0, - 1 ).applyQuaternion( quaternion );
+		// 	_spherical.setFromVector3( _lookDirection );
 
-			lat = 90 - MathUtils.radToDeg( _spherical.phi );
-			lon = MathUtils.radToDeg( _spherical.theta );
+		// 	lat = 90 - MathUtils.radToDeg( _spherical.phi );
+		// 	lon = MathUtils.radToDeg( _spherical.theta );
 
-		}
+		// }
 
 		this.handleResize();
 
-		setOrientation( this );
+		// setOrientation( this );
 
 	}
 
