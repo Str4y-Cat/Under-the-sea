@@ -26,7 +26,7 @@ export default class Coral
         this.MarchingCubes= new MarchingCubes(this.coralVariables.size,this.coralVariables.rez,this.coralVariables.tileSize,this.scene,this.worldValues.floorHeight-1)
         this.environmentObjects= this.MarchingCubes.environmentObjects
         // console.log(this.environmentObjects)
-        console.log(this.MarchingCubes.envBoundingBox)
+        // console.log(this.MarchingCubes.envBoundingBox)
         this.boundingBoxes=this.MarchingCubes.envBoundingBox
         if(this.debug.active)
             {

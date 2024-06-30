@@ -535,7 +535,7 @@ import * as NOISE  from 'simplex-noise'
         geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
         geometry.computeVertexNormals () 
         geometry.computeBoundingBox();
-        const material = new THREE.MeshLambertMaterial( { wireframe:true,color: "#ff6be0" } );
+        const material = new THREE.MeshLambertMaterial( {color: "#ff6be0" } );
         // const material = new THREE.MeshToonMaterial( { color: "#ff6be0" } );
 
         const mesh = new THREE.Mesh( geometry, material );

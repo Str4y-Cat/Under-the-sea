@@ -365,6 +365,6 @@ class Boid
 }
 
 function defaultValue(x,name){
-    console.log(`Defaulted on ${name}`)
+    // console.log(`Defaulted on ${name}`)
     return x
 }
