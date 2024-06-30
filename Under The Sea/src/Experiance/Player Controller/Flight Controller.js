@@ -279,7 +279,8 @@ export default class FirstPersonControls {
               // this.object.lookAt(test)
             //   this.object.rotation.z=0
               this.updateAttributes()
-              
+              // this.object.position.copy(pos);
+              return 
             //   console.log(this.object.position)
               // console.log(this.object.quaternion)
               

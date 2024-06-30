@@ -10,7 +10,7 @@ export default class Player
         this.experience= new Experience()
         this.scene= this.experience.scene
         this.camera=this.experience.camera
-        this.resources= this.experience.resources
+        this.resource= this.experience.resources.items.playerModel
         this.debug= this.experience.debug
         this.perform= this.experience.Perform
         this.start=0
@@ -19,7 +19,11 @@ export default class Player
         this.setPlayerMaterial()
         this.setPlayerGeometry()
         this.setMesh()
+
+        this.setModel()
+        // this.setPlayerModel()
         this.setController()
+        this.setAnimations()
 
         
         //setUp
@@ -49,12 +53,30 @@ export default class Player
     setMesh()
     {
         this.mesh= new THREE.Mesh(this.geometry,this.material)
-        this.scene.add(this.mesh)
+        // this.scene.add(this.mesh)
+    }
+
+    setModel()
+    {
+        // console.log(this.resource.scene.children[0])
+        this.fishModel=this.resource.scene.children[0]
+        this.fishModel.scale.set(0.1,0.1,0.1)
+        this.scene.add(this.fishModel)
+    }
+
+    setAnimations()
+    {
+        console.log(this.resource)
+        this.mixer= new THREE.AnimationMixer(this.resource.scene)
+        const action = this.mixer.clipAction(this.resource.animations[0])
+        action.play()
     }
 
     setController()
     {
+        // console.log(this.mesh)
         this.playerController=new PlayerController(this.mesh,this.camera)
+
     }
 
 
@@ -67,6 +89,15 @@ export default class Player
         this.prevTime=this.current
 
         this.playerController.update(this.delta/1000)
+        this.fishModel.position.copy(this.mesh.position)
+        this.fishModel.rotation.copy(this.mesh.rotation)
+
+        if(this.mixer)
+            {
+                this.mixer.update(this.delta)
+
+            }
+        // console.log(this.fishModel.position)
 
 
     }
