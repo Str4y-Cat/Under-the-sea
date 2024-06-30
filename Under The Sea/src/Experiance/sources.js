@@ -35,6 +35,12 @@ export default[
         path:   'models/Fish/glTF/Fish.gltf'
 
     },
+    {
+        name:'fishModelBinary',
+        type:'gltfModel',
+        path:   'models/Fish/Binary/Fish.glb'
+
+    },
 
 
 

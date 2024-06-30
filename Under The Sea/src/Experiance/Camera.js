@@ -14,7 +14,7 @@ export default class Camera
         // console.log("camera")
 
         this.setInstance()
-        // this.setOrbitControls()
+        this.setOrbitControls()
     }
 
     setInstance()
@@ -42,6 +42,6 @@ export default class Camera
     update()
     {
         // console.log("DEBUG: Updating Camera")
-        // this.controls.update()
+        this.controls.update()
     }
 }

@@ -30,7 +30,7 @@ export default class World
             {
                 // console.log('resourcse are ready')
                 this.start=0
-                this.coral= new Coral()
+                // this.coral= new Coral()
                 this.floor=new Floor()
                 this.fish=new Fish()
                 console.log('created fish')
@@ -38,9 +38,9 @@ export default class World
                 this.environment=new Environment()
 
                 
-                this.Octree=new CreateOctree(this.coral.boundingBoxes,1,true)
+                // this.Octree=new CreateOctree(this.coral.boundingBoxes,1,true)
                 
-                this.fish.setVision(this.Octree,this.coral.environmentObjects)
+                // this.fish.setVision(this.Octree,this.coral.environmentObjects)
                 //FIXME move this into debug
                 // this.player= new Player()
 
