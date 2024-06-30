@@ -7,7 +7,14 @@ export default
     {
         size:40,
         rez:1,
-        tileSize:10
+        tileSize:2
     },
+
+    rays:
+    {
+        count:50,
+        angle:-0.5
+
+    }
 
 }
