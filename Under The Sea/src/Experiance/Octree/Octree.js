@@ -9,6 +9,7 @@ export default class Octree
         this.marchingCubes=marchingCubes||false
         //create a new box
         const bounds = this.setUpBounds(worldObjects)
+        
 
         //create rootNode
         this.rootNode= new OctreeNode(bounds,minNodeSize)
@@ -81,6 +82,9 @@ export default class Octree
      */
     addObjects(worldObjects)
     {
+        console.log("worldObjects")
+
+        console.log(worldObjects)
         worldObjects.forEach(obj => {
             this.rootNode.addObject(obj)
         });
@@ -95,6 +99,7 @@ export default class Octree
      */
     getObjects(obj,scene)
     {
+        // console.log(obj)
         let box =obj;
         if(!obj.isBox3||obj.isBox3==null){
              box= new THREE.Box3().setFromObject(obj)
@@ -106,6 +111,32 @@ export default class Octree
         return uniqueIntersections
 
     }
+
+        /**
+     * Recursively checks children, returns a list of THREE.JS Meshes that intersect with the provided object
+     * 
+     * @param {*} mesh 
+     * @param {*} scene 
+     * @returns 
+     */
+        getObjectId(obj,scene)
+        {
+            // console.log(obj)
+            let box=obj;
+            if(!obj.isBox3||obj.isBox3==null){
+                 box= new THREE.Box3().setFromObject(obj)
+            }
+            
+            const intersections=this.intersectsObject(this.rootNode,box,scene)
+            const uniqueIntersections = Array.from(new Set(intersections))
+            // if(uniqueIntersections.length>0){
+            //     console.log("uniqueIntersections")
+            //     console.log(uniqueIntersections)
+            // }
+            
+            return uniqueIntersections
+    
+        }
 
 
 
@@ -166,7 +197,9 @@ export default class Octree
                         }
                         
                         
-                        return node.worldObjects
+                        // return node.worldObjects
+                        // this.worldObjectsId
+                        return node.worldObjectsId
                     }
 
                 //loop through children
@@ -190,6 +223,7 @@ export default class Octree
                             }
                     }
             }
+        
         return array
             
     }

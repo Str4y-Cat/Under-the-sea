@@ -137,6 +137,7 @@ export default  class OctreeNode
                 // this.worldObjects.push(worldObj)
                 this.worldObjectsId.push(worldObj[0])
                 this.containsObject=true
+                console.log(worldObj[0])
                 // console.log(this.worldObjects)
                 // console.log(this)
                 return;
@@ -163,7 +164,7 @@ export default  class OctreeNode
                     }
                 //if there is an object within this box, recursive divide box
                 //set dividing flag to true
-                if(this.children[i].nodeBounds.intersectsBox(new THREE.Box3().setFromPoints([worldObj[1].min,worldObj[1].max])))
+                if(this.children[i].nodeBounds.intersectsBox(worldObj[1]))
                     {
 
                         dividing=true

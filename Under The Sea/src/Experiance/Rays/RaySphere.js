@@ -41,7 +41,7 @@ export default class RaySphere
             
         }
         this.debug.origin=new THREE.Vector3(0,0,0)
-        this.setUpDebug()
+        // this.setUpDebug()
         this.needsUpdate=false
         
         

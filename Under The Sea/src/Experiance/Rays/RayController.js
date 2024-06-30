@@ -1,19 +1,26 @@
 import * as THREE from 'three'
 import { arrayBuffer, attribute } from 'three/examples/jsm/nodes/Nodes.js'
 import RaySphere from './RaySphere'
+import WorldValues from '../WorldValues'
+import Experience from '../Experiance'
 
 
 export default class 
 {
-    constructor(count,rayAngleLimit,environment,scene,gui)
+    constructor(environment,environmentMeshes)
     {
+        this.experience=new Experience()
         this.environment= environment
-        // console.log('environment objects')
-        // console.log(this.environment)
-        this.scene=scene
-        this.gui=gui
+        this.environmentMeshes= environmentMeshes
+        console.log(environmentMeshes)
+        console.log(this.environment)
+        this.scene=this.experience.scene
+        this.debug= this.experience.debug.ui
         // this.raySphere= new RaySphere(count,rayAngleLimit,scene,gui,{environment:environment})
-        this.raySphere= new RaySphere(400,1,scene,gui,{environment:environment})
+
+        this.rayCount=WorldValues.rays.count
+        this.rayAngle=WorldValues.rays.angle
+        this.raySphere= new RaySphere(this.rayCount,this.rayAngle,this.scene,this.gui,{environment:environment})
 
         this.stagger= 
         {
@@ -59,12 +66,28 @@ export default class
         for(let i = iStart; i<iEnd; i++){
 
             //finds environments objects that the boid intersects with
-            const enviromentObjects=this.environment.getObjects(boidPositions[i])
+            const enviromentObjectIds=this.environment.getObjectId(boidPositions[i])
+            const enviromentObjects=[]
+
+            if(enviromentObjectIds.length>0)
+                {
+                    
+                    // console.log(enviromentObjectIds)
+                    // console.log(boidPositions[i])
+                    // console.log(i)
+
+                    enviromentObjectIds.forEach((id)=>
+                        {
+                            enviromentObjects.push(this.environmentMeshes[id])
+                        })
+                }
+            
             let environmentIntersections
             
             //if there are intersections, cast the rays
             if(enviromentObjects.length>0)
             {
+
                 //rotate raySphere to match boid
                 const targets= this.raySphere.rotateTo(boidPositions[i])
                 
@@ -74,20 +97,30 @@ export default class
                 //cast rays on that sphere
                 environmentIntersections = this.raySphere.castRays(targets,boidPositions[i].position, enviromentObjects)
                 // this.raySphere.counter('return',true)
-            
+                // console.log("environmentIntersections")
+                // console.log(environmentIntersections)
                 
             }
             
             //if there are intersections
             if(environmentIntersections)
                 {
+                    // console.log('setting found intersection')
                     //sets a new object in the found intersections obj
                     // {currentIndex: {distance:k, position: { x,y,z}}}
                     foundIntersections[i]=environmentIntersections
+                    // console.log(foundIntersections)
+
+
                 }
             // this.raySphere.timer('checkEnviroment')
         }
+        // if(foundIntersections[0]!=null){
+        //     console.log("foundIntersections is not null")
+        //     console.log(foundIntersections)
 
+        // }
+        // console.log(foundIntersections)
         return foundIntersections
     }
 
