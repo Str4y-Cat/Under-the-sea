@@ -102,7 +102,7 @@ export default class BoidController
         boidMesh.position.set(x,y,z)
 
         // console.log()
-        this.scene.add(boidMesh)
+        // this.scene.add(boidMesh)
         return boidMesh
     }
 
@@ -164,33 +164,36 @@ export default class BoidController
 
         this.boidLogic.update(environmenObjects)
 
-        
-        // this.boidMeshes.forEach((boidMesh,i)=>
-        // {
-        //     // console.log(i)
-        //     // console.log(this.boidLogic.boidArray[i])
-        //     // console.log(this.boidLogic.boidArray)
-        //     const boid= this.boidLogic.boidArray[i]
-
-        //     // console.log(boidMesh)
-        //     boidMesh.position.x=boid.x
-        //     boidMesh.position.y=boid.y
-        //     boidMesh.position.z=boid.z
-        //     // console.log(boid.z)
-        //     boidMesh.lookAt(new THREE.Vector3(boid.targetX,boid.targetY,boid.targetZ))
+        if(this.boidMeshes)
+            {
+                this.boidMeshes.forEach((boidMesh,i)=>
+                    {
+                        // console.log(i)
+                        // console.log(this.boidLogic.boidArray[i])
+                        // console.log(this.boidLogic.boidArray)
+                        const boid= this.boidLogic.boidArray[i]
             
-
-        //     // if(i==0&&this.debugHalos.protectedCircle)
-        //     //     {
-        //     //         this.debugHalos.protectedCircle.position.copy( boidMesh.position)
-        //     //         this.debugHalos.protectedCircle.lookAt(this.camera.position);
-        //     //         // console.log(this.scene.children) 
-        //     //         this.debugHalos.viewCircle.position.copy( boidMesh.position)
-        //     //         this.debugHalos.viewCircle.lookAt(this.camera.position);
-
-        //     //     }
-
-        // })
+                        // console.log(boidMesh)
+                        boidMesh.position.x=boid.x
+                        boidMesh.position.y=boid.y
+                        boidMesh.position.z=boid.z
+                        // console.log(boid.z)
+                        boidMesh.lookAt(new THREE.Vector3(boid.targetX,boid.targetY,boid.targetZ))
+                        
+            
+                        // if(i==0&&this.debugHalos.protectedCircle)
+                        //     {
+                        //         this.debugHalos.protectedCircle.position.copy( boidMesh.position)
+                        //         this.debugHalos.protectedCircle.lookAt(this.camera.position);
+                        //         // console.log(this.scene.children) 
+                        //         this.debugHalos.viewCircle.position.copy( boidMesh.position)
+                        //         this.debugHalos.viewCircle.lookAt(this.camera.position);
+            
+                        //     }
+            
+                    })
+            }
+       
     }
 
 

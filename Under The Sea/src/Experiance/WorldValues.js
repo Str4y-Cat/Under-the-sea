@@ -4,7 +4,7 @@ export default
     roofHeight:15,
 
     boids:{
-        count:8
+        count:400
     },
 
     coralVariables:
@@ -19,6 +19,27 @@ export default
         count:50,
         angle:-0.5
 
+    },
+
+    fish:
+    {
+        colors:
+        [
+            '#ffea00',
+            '#ffdd00',
+            '#ffd000',
+            '#ffc300',
+            '#ffb700',
+            '#ffaa00',
+            '#ffa200',
+            '#ff9500',
+            '#ff8800',
+            '#ff7b00',
+            '#ba181b',
+            '#e5383b',
+            '#720026',
+            '#e4b1ab',
+        ]
     }
 
 }

@@ -19,11 +19,14 @@ export default class Fish
         this.perform= this.experience.Perform
         this.start=0
         this.intersectingEvironmentObjects={}
+
     
         this.boids= new BoidController(WorldValues.boids.count,40)
-        // this.setFishGeometry()
-        // this.setFishMaterial()
-        // this.createBoids()
+        this.setFishGeometry()
+        this.setFishMaterial()
+        this.createBoids()
+
+
         console.log('setting model')
         this.setFishInstancedModels()
         
@@ -91,12 +94,12 @@ export default class Fish
                 {
 
                     this.dummy[n].position.set(boid.x,boid.y,boid.z)
-                    this.dummy[n].scale.set(0.3,0.3,0.3)
+                    this.dummy[n].scale.set(0.2,0.2,0.2)
                     this.dummy[n].updateMatrix();
 
                     if(n==1)
                         {
-                        this.fishMesh[n].setColorAt( i, new THREE.Color( `hsl(${Math.random() * 360}, 50%, 66%)` ) );
+                        this.fishMesh[n].setColorAt( i, new THREE.Color( this.randomColor() ) );
                         }
 
                     this.fishMesh[n].setMatrixAt( i, this.dummy[n].matrix );
@@ -147,6 +150,13 @@ export default class Fish
         action.play();
         // console.log('model has been added')
         // this.boids.boidInstancedMesh=//ADD
+    }
+
+    randomColor()
+    {
+        let index=Math.round(Math.random()*WorldValues.fish.colors.length-1)
+        index=Math.min(index,WorldValues.fish.colors.length-1)
+        return WorldValues.fish.colors[index]
     }
 
     createBoids()
@@ -226,9 +236,16 @@ export default class Fish
     update()
     {
         // console.log("updating")
-        this.updateModels()
+        if(this.dummy)
+            {
+                this.updateModels()
 
-        this.dummy
+            }
+        // else{
+        //     this.boids.update()
+        // }
+
+        // this.dummy
 
         // if ( this.mesh1||this.mesh2||this.mesh3 ) {
             
@@ -247,32 +264,32 @@ export default class Fish
         //     this.mesh3.morphTexture.needsUpdate = true;
 
         // }
-        // const currentTime= Date.now()
-        // this.current=currentTime
-        // this.elapsed=this.current-this.start
-        // let slowTick= Math.round(Math.round(this.elapsed)/100)
+        const currentTime= Date.now()
+        this.current=currentTime
+        this.elapsed=this.current-this.start
+        let slowTick= Math.round(Math.round(this.elapsed)/100)
         
-        // if(slowTick!=this.start){
-        //     // perform.timer('check environment')
-        //     // console.log(slowTick)
-        //     this.intersectingEvironmentObjects=this.rayController.update(this.boids.boidMeshes,4)
-        //     // console.log(this.intersectingEvironmentObjects)
-        //     // if(intersectingEvironmentObjects.length>0)
-        //     //     {
-        //     //         console.log(intersectingEvironmentObjects)
-        //     //     }
-        //     // perform.timer('check environment')
-        // }
-        // this.start=slowTick
+        if(slowTick!=this.start){
+            // perform.timer('check environment')
+            // console.log(slowTick)
+            this.intersectingEvironmentObjects=this.rayController.update(this.boids.boidMeshes,4)
+            // console.log(this.intersectingEvironmentObjects)
+            // if(intersectingEvironmentObjects.length>0)
+            //     {
+            //         console.log(intersectingEvironmentObjects)
+            //     }
+            // perform.timer('check environment')
+        }
+        this.start=slowTick
 
 
 
-        // // this.perform.timer('boid Update')
+        // this.perform.timer('boid Update')
         // // console.log(this.intersectingEvironmentObjects)
-        this.boids.update({})
+        // this.boids.update({})
 
-        // this.boids.update(this.intersectingEvironmentObjects)
-        // // this.perform.timer('boid Update')
+        this.boids.update(this.intersectingEvironmentObjects)
+        // this.perform.timer('boid Update')
 
     }
 
