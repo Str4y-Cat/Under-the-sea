@@ -71,7 +71,7 @@ export default class FirstPersonControls {
 
                   break;
                 // ss
-                case "Space": // SPACE
+                case "Space"||"KeyM": // SPACE
                 // console.log(event.code)
 
                   this.Attributes.InputCurrent.space = true;
