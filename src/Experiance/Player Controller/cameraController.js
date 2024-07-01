@@ -9,7 +9,7 @@ export default class CameraController
         // this.params_ = params;
         // this.Attributes=params.Attributes;
         this.camera_ = camera;
-        console.log(this.camera_)
+        // console.log(this.camera_)
         this.currentPosition_ = new THREE.Vector3();
         // this.SetPass(1);
       }

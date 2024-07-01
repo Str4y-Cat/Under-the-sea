@@ -12,7 +12,7 @@ export default class CreateOctree
         this.scene= this.experience.scene
         this.worldObjects=worldObjects
         this.marchCubes=marchCubes||false
-        console.log(marchCubes)
+        // console.log(marchCubes)
         this.minNodeSize= minNodeSize||5
         this.octree= new Octree(this.worldObjects,this.minNodeSize,marchCubes)
         this.drawMeshes=[]

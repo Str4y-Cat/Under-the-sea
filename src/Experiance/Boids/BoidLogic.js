@@ -43,7 +43,7 @@ export default class BoidLogic
         this.addBoids(this.boidCount)
         this.needsUpdate=false
         
-        console.log('success!')
+        // console.log('success!')
     }
 
     setUpTweakableValues()
@@ -365,6 +365,6 @@ class Boid
 }
 
 function defaultValue(x,name){
-    console.log(`Defaulted on ${name}`)
+    // console.log(`Defaulted on ${name}`)
     return x
 }

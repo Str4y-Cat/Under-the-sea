@@ -68,12 +68,12 @@ export default class Resources extends EventEmitter
                 )
             }
             else if(source.type=== 'equirectangular'){
-                console.log(source.path)
+                // console.log(source.path)
                 this.loaders.rgbeLoader.load(
                     source.path,
                     (file)=>
                     {
-                        console.log('loaded')
+                        // console.log('loaded')
                         file.mapping=THREE.EquirectangularReflectionMapping
                         this.sourceLoaded(source,file)
                     }

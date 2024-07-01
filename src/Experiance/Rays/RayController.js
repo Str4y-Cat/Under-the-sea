@@ -12,8 +12,8 @@ export default class
         this.experience=new Experience()
         this.environment= environment
         this.environmentMeshes= environmentMeshes
-        console.log(environmentMeshes)
-        console.log(this.environment)
+        // console.log(environmentMeshes)
+        // console.log(this.environment)
         this.scene=this.experience.scene
         this.debug= this.experience.debug.ui
         // this.raySphere= new RaySphere(count,rayAngleLimit,scene,gui,{environment:environment})
@@ -38,7 +38,7 @@ export default class
         this.debug={}
         this.debug.pointMeshes={}
 
-        console.log("set up ray controller")
+        // console.log("set up ray controller")
         // console.log(this)
         // this.test()
     }

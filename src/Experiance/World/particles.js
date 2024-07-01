@@ -119,7 +119,7 @@ export default class particles
     {
         
         this.pointMesh= new THREE.Points(this.geometry,this.material)
-        console.log(this.pointMesh)
+        // console.log(this.pointMesh)
         this.scene.add(this.pointMesh)
     }
 

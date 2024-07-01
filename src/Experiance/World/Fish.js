@@ -28,7 +28,7 @@ export default class Fish
         this.createBoids()
 
 
-        console.log('setting model')
+        // console.log('setting model')
         this.setFishInstancedModels()
         
         //setUp
@@ -57,7 +57,7 @@ export default class Fish
     {
         //TODO: 
         const glb=this.model
-        console.log(glb)
+        // console.log(glb)
         // console.log(glb)
         this.dummy={}
         this.dummy[1] = glb.scene.children[ 0 ].children[ 0 ].children[ 0 ];
@@ -148,9 +148,9 @@ export default class Fish
         this.scene.add( this.fishMesh[3] );
 
         this.mixer = new THREE.AnimationMixer( glb.scene.children[0] );
-        console.log(glb.scene.children[0])
+        // console.log(glb.scene.children[0])
         const action = this.mixer.clipAction( glb.animations[ 0 ] );
-        console.log(action)
+        // console.log(action)
         action.play();
         // console.log('model has been added')
         // this.boids.boidInstancedMesh=//ADD

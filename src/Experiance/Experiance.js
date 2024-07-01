@@ -29,7 +29,7 @@ export default class Experience{
 
         // stats
         this.stats = new Stats();
-        document.body.appendChild( this.stats.dom );
+        
 
         //options
         this.canvas=canvas
@@ -55,7 +55,11 @@ export default class Experience{
                 this.update()
             })
 
-        console.log(this.scene)
+        // console.log(this.scene)
+        if(this.debug.active){
+            document.body.appendChild( this.stats.dom );
+
+        }
     }
 
     resize(){

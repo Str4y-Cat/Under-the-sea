@@ -54,7 +54,7 @@ export default class RaySphere
         this.rayTargets
         this.rayCaster=this.setUpRayCaster()
        
-        console.log("raysphere set up")
+        // console.log("raysphere set up")
     
         
         // this.test()

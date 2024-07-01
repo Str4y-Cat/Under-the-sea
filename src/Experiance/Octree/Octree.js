@@ -31,7 +31,7 @@ export default class Octree
         const bounds = new THREE.Box3() 
         if(this.marchingCubes)
             {
-                console.log("settingUP")
+                // console.log("settingUP")
                 worldObjects.forEach(mesh => {
 
                     //grow the bounds
