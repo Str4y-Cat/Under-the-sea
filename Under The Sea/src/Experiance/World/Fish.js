@@ -92,11 +92,13 @@ export default class Fish
         for ( let i = 0; i < WorldValues.boids.count; i ++ ) {
             const boid=this.boids.boidLogic.boidArray[i]
 
+            const scale= Math.max(Math.random(),0.6)
+
             for(let n=1; n<=3; n++)
                 {
 
                     this.dummy[n].position.set(boid.x,boid.y,boid.z)
-                    this.dummy[n].scale.set(0.2,0.2,0.2)
+                    this.dummy[n].scale.set(0.2*scale,0.2*scale,0.2*scale)
                     this.dummy[n].updateMatrix();
 
                     if(n==1)
@@ -257,7 +259,7 @@ export default class Fish
         let slowTick= Math.round(Math.round(this.elapsed)/100)
 
         if ( this.fishMesh ) {
-            console.log('doin it')
+            // console.log('doin it')
             for ( let i = 0; i < WorldValues.boids.count; i ++ ) {
 
                 this.mixer.setTime(this.delta);

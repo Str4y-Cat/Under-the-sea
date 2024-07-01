@@ -207,43 +207,58 @@ export default class BoidController
         // values.
     //    const boidsFolder= this.gui.addFolder('Boids')
         
-        gui.add(this.global,'boidCount').step(1). min(0).max(3000).onChange((count)=>
-        {
-            if(count>this.boidMeshes.length)
-                {
-                    this.addBoids(count-this.boidMeshes.length)
-                }
-            if(count<this.boidMeshes.length)
-                {
-                    this.removeBoids(this.boidMeshes.length-count)
-                }
+        // gui.add(this.global,'boidCount').step(1). min(0).max(3000).onChange((count)=>
+        // {
+        //     if(count>this.boidMeshes.length)
+        //         {
+        //             this.addBoids(count-this.boidMeshes.length)
+        //         }
+        //     if(count<this.boidMeshes.length)
+        //         {
+        //             this.removeBoids(this.boidMeshes.length-count)
+        //         }
+        // })
+
+        // objectAvoidFactor:2
+        // visualRange:0.6,
+        // protectedRange:0.2,
+        gui.add(WorldValues.boids,"visualRange").min(0.5).max(3).step(0.00001).onChange((num)=>{
+            this.boidLogic.visualRange=num
         })
+        gui.add(WorldValues.boids,"protectedRange").min(0.1).max(2).step(0.00001).onChange((num)=>{
+            this.boidLogic.protectedRange=num
+        })
+        gui.add(WorldValues.boids,"objectAvoidFactor").min(0).max(10).step(0.00001).onChange((num)=>{
+            this.boidLogic.objectAvoidFactor=num
+        })
+        gui.add(WorldValues.boids,"enviromentVision").min(0).max(5).step(0.00001)
 
-
-
-
-
-        gui.add(startValues,"cohesionFactor").min(0).max(0.05).step(0.00001).onChange((num)=>{
+        // gui.add(WorldValues.boids,"visual").min(0).max(0.05).step(0.00001).onChange((num)=>{
+        //     this.boidLogic.cohesionFactor=num
+        // })
+        gui.add(WorldValues.boids,"cohesionFactor").min(0).max(0.05).step(0.00001).onChange((num)=>{
             this.boidLogic.cohesionFactor=num
         })
-        gui.add(startValues,"matchingFactor").min(0).max(0.1).step(0.00001).onChange((num)=>{
+       
+        
+        gui.add(WorldValues.boids,"matchingFactor").min(0).max(0.1).step(0.00001).onChange((num)=>{
             this.boidLogic.matchingFactor=num
         })
-        gui.add(startValues,"seperationFactor").min(0).max(0.5).step(0.00001).onChange((num)=>{
+        gui.add(WorldValues.boids,"seperationFactor").min(0).max(0.5).step(0.00001).onChange((num)=>{
             this.boidLogic.seperationFactor=num
         })
-        gui.add(startValues,"turnFactor").min(0).max(1).step(0.0001).onChange((num)=>{
+        gui.add(WorldValues.boids,"turnFactor").min(0).max(1).step(0.0001).onChange((num)=>{
             this.boidLogic.turnFactor=num/100
         })
-        gui.add(startValues,"minSpeed").min(0).max(10).step(0.001).onChange((num)=>{
+        gui.add(WorldValues.boids,"minSpeed").min(0).max(10).step(0.001).onChange((num)=>{
             this.boidLogic.minSpeed=num/100
         })
-        gui.add(startValues,"maxSpeed").min(0).max(10).step(0.001).onChange((num)=>{
+        gui.add(WorldValues.boids,"maxSpeed").min(0).max(10).step(0.001).onChange((num)=>{
             this.boidLogic.maxSpeed=num/100
         })
-        gui.add(startValues,"wallTransparent").onChange((bool)=>{
-            this.boidLogic.wallTransparent=bool
-}) 
+//         gui.add(startValues,"wallTransparent").onChange((bool)=>{
+//             this.boidLogic.wallTransparent=bool
+// }) 
     }
 
     /**DEBUG
@@ -363,7 +378,7 @@ const startValues=
 {
     // transPadding : null,
     // solidPadding : null,
-    visualRange:0.6,
+    visualRange:1,
     protectedRange:0.2,
     cohesionFactor:0.00206,
     matchingFactor:0.09385,

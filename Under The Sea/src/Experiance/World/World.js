@@ -21,6 +21,7 @@ export default class World
     THREE.Mesh.prototype.raycast = acceleratedRaycast;
 
     this.experience= new Experience()
+    this.debug= this.experience.debug
     this.scene=this.experience.scene
     this.resources= this.experience.resources
 
@@ -32,7 +33,10 @@ export default class World
                 this.start=0
                 this.coral= new Coral()
                 this.floor=new Floor()
+                
                 this.fish=new Fish()
+
+                    
                 // console.log('created fish')
                 // this.fox=new Fox()
 
@@ -41,13 +45,29 @@ export default class World
                 
                 this.fish.setVision(this.Octree,this.coral.environmentObjects)
                 // FIXME move this into debug
+                if(!this.debug.active)
+                    {
                 this.player= new Player()
+                    }
+
+                // console.log(this.debug)a
+                if(this.debug.active)
+                    {
+                        this.octreeDebug={show:false}
+                        const folder= this.debug.ui.addFolder('Octree Spacial DS')
+                        folder.add(this.octreeDebug,'show').name("Show Octree").onChange((bool)=>
+                        {
+                            if(bool){this.Octree.showOctree()}
+                            else{this.Octree.hideOctree()}
+                        })
+                    }
                 this.environment=new Environment()
                 // this.Octree.debug(this.scene)
             })
 
         //Setup
     }
+    
 
     update()
     {
@@ -68,5 +88,9 @@ export default class World
             {
                 this.player.update()
             }
+        // if(this.environment)
+        // {
+        //     this.environment.update()
+        // }
     }
 }

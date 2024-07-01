@@ -109,12 +109,12 @@ export default class Environment
 
         if(this.debug.active){
             this.debugFolder
-            .add(this.environmentMap,'intensity')
-            .name('envMap Intensity')
-            .min(0)
-            .max(4)
+            .add(this.scene.fog,'far')
+            .name('fog')
+            .min(5)
+            .max(200)
             .step(0.001)
-            .onChange(this.environmentMap.updateMaterial())
+            // .onChange(this)
         }
     }
 
@@ -132,7 +132,9 @@ export default class Environment
         this.scene.add( helper );
     }
 
-
+    update(){
+        this.particles.update()
+    }
 
 
 

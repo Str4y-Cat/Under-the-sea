@@ -43,49 +43,51 @@ export default class FirstPersonControls {
 		this.onKeyDown = function ( event ) {
 
 
-            switch (event.keyCode) {
-                case 87: // w
+            switch (event.code) {
+                case "KeyW": // w
+                  // console.log(event.code)
                   this.Attributes.InputCurrent.axis1Forward = -1.0;
                   this.Attributes.InputCurrent.move1=true
                   break;
-                case 65: // a
+                case "KeyA": // a
+                  // console.log(event.code)
+
                   this.Attributes.InputCurrent.axis1Side = -1.0;
                   this.Attributes.InputCurrent.move1=true
 
                   break;
-                case 83: // s
+                case "KeyS": // s
+                // console.log(event.code)
+
                   this.Attributes.InputCurrent.axis1Forward = 1.0;
                   this.Attributes.InputCurrent.move1=true
 
                   break;
-                case 68: // d
+                case "KeyD": // d
+                // console.log(event.code)
+
                   this.Attributes.InputCurrent.axis1Side = 1.0;
                   this.Attributes.InputCurrent.move1=true
 
                   break;
-                case 33: // PG_UP
-                  this.Attributes.InputCurrent.pageUp = true;
-                  this.Attributes.InputCurrent.move1=true
+                // ss
+                case "Space": // SPACE
+                // console.log(event.code)
 
-                  break;
-                case 34: // PG_DOWN
-                  this.Attributes.InputCurrent.pageDown = true;
-                  this.Attributes.InputCurrent.move1=true
-
-                  break;
-                case 32: // SPACE
                   this.Attributes.InputCurrent.space = true;
                   this.Attributes.InputCurrent.move2=true
 
                   break;
-                case 16: // SHIFT
+                case "ShiftLeft"||"ShiftRight": // SHIFT
+                // console.log(event.code)
+
                   this.Attributes.InputCurrent.shift = true;
                   this.Attributes.InputCurrent.move3=true
 
                   break;
-                case 8: // BACKSPACE
-                  this.Attributes.InputCurrent.backspace = true;
-                  break;
+                // case 8: // BACKSPACE
+                //   this.Attributes.InputCurrent.backspace = true;
+                //   break;
               }
 
 		};
@@ -93,50 +95,50 @@ export default class FirstPersonControls {
 		this.onKeyUp = function ( event ) {
 
 
-            switch(event.keyCode) {
-                case 87: // w
+            switch(event.code) {
+                case "KeyW": // w
                   this.Attributes.InputCurrent.axis1Forward = 0.0;
                   this.Attributes.InputCurrent.move1=false
 
                   break;
-                case 65: // a
+                case "KeyA": // a
                   this.Attributes.InputCurrent.axis1Side = 0.0;
                   this.Attributes.InputCurrent.move1=false
 
                   break;
-                case 83: // s
+                case "KeyS": // s
                   this.Attributes.InputCurrent.axis1Forward = 0.0;
                   this.Attributes.InputCurrent.move1=false
 
                   break;
-                case 68: // d
+                case "KeyD": // d
                   this.Attributes.InputCurrent.axis1Side = 0.0;
                   this.Attributes.InputCurrent.move1=false
 
                   break;
-                case 33: // PG_UP
-                  this.Attributes.InputCurrent.pageUp = false;
-                  this.Attributes.InputCurrent.move1=false
+                // case "Key": // PG_UP
+                //   this.Attributes.InputCurrent.pageUp = false;
+                //   this.Attributes.InputCurrent.move1=false
 
-                  break;
-                case 34: // PG_DOWN
-                  this.Attributes.InputCurrent.pageDown = false;
-                  this.Attributes.InputCurrent.move1=false
+                //   break;
+                // case 34: // PG_DOWN
+                //   this.Attributes.InputCurrent.pageDown = false;
+                //   this.Attributes.InputCurrent.move1=false
 
-                  break;
-                case 32: // SPACE
+                //   break;
+                case "Space": // SPACE
                   this.Attributes.InputCurrent.space = false;
                   this.Attributes.InputCurrent.move2=false
 
                   break;
-                case 16: // SHIFT
+                case "Shift": // SHIFT
                   this.Attributes.InputCurrent.shift = false;
                   this.Attributes.InputCurrent.move3=false
 
                   break;
-                case 8: // BACKSPACE
-                  this.Attributes.InputCurrent.backspace = false;
-                  break;
+                // case 8: // BACKSPACE
+                //   this.Attributes.InputCurrent.backspace = false;
+                //   break;
               }
 
 		};

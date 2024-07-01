@@ -10,10 +10,16 @@ export default class Camera
         this.sizes= this.experience.sizes
         this.scene= this.experience.scene
         this.canvas= this.experience.canvas
+        this.debug=this.experience.debug
 
         // console.log("camera")
 
         this.setInstance()
+        if(this.debug.active)
+            {
+                this.setOrbitControls()
+
+            }
         // this.setOrbitControls()
     }
 
@@ -42,6 +48,12 @@ export default class Camera
     update()
     {
         // console.log("DEBUG: Updating Camera")
-        // this.controls.update()
+        if(this.debug.active)
+            {
+                this.controls.update()
+
+                // this.debugFolder=this.debug.ui.addFolder("Fish")
+                // this.boids.debug(this.debugFolder)
+            }
     }
 }

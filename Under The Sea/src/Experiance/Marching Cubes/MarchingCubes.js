@@ -785,15 +785,11 @@ import * as NOISE  from 'simplex-noise'
      */
     debugMain(scene,gui)
     {
-        this.debug.show=true
+        this.debug.show=false
         console.log(this.debug)
         // const gui= gui.addFolder('Marching Cubes')
 
-        this.debug.tileDivisions.forEach(tileMesh=>
-            {
-                scene.add(tileMesh)
-            }
-        )
+        
 
 
         //update rez
@@ -827,7 +823,7 @@ import * as NOISE  from 'simplex-noise'
                 )
             })
 
-        gui.add(this.debug,'show').onChange(bool=>
+        gui.add(this.debug,'show').name('Show Chunk').onChange(bool=>
             {
                 if(bool)
                     {

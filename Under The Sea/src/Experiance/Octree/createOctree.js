@@ -1,11 +1,15 @@
 import Octree from "./Octree"
 import * as THREE from 'three'
+import Experience from "../Experiance"
+import WorldValues from "../WorldValues"
 
 
 export default class CreateOctree
 {
     constructor(worldObjects,minNodeSize,marchCubes)
     {
+        this.experience= new Experience()
+        this.scene= this.experience.scene
         this.worldObjects=worldObjects
         this.marchCubes=marchCubes||false
         console.log(marchCubes)
@@ -90,13 +94,19 @@ export default class CreateOctree
         
         if(node.children==null)
             {
-                const center= new THREE.Vector3()
-                const scale= new THREE.Vector3()
+                // const center= new THREE.Vector3()
+                // const scale= new THREE.Vector3()
+                
+                const min= new THREE.Vector3()
+                const max= new THREE.Vector3()
 
-                node.nodeBounds.getCenter(center)
-                node.nodeBounds.getSize(scale)
-                scale.multiplyScalar(0.999)
-                const box=new THREE.Box3().setFromCenterAndSize(center,scale)
+
+                min.copy(node.nodeBounds.min).multiplyScalar(0.999)
+                min.y=Math.max(min.y,WorldValues.floorHeight)
+                max.copy(node.nodeBounds.max).multiplyScalar(0.999)
+                // node.nodeBounds.getSize(scale)
+                // scale.multiplyScalar(0.999)
+                const box=new THREE.Box3(min,max)
 
                 let color="white"
                 // console.log(`count:${count}`)
@@ -181,13 +191,13 @@ export default class CreateOctree
         this.removeBox(this.octree.rootNode,this.scene)
     }
 
-    debug(scene)
-    {
+    // debug(scene)
+    // {
         
-        this.scene=scene
-        // this.draw(this.octree.rootNode,scene)
-        this.showOctree()
+    //     this.scene=scene
+    //     // this.draw(this.octree.rootNode,scene)
+    //     this.showOctree()
         
-    }
+    // }
 
 }

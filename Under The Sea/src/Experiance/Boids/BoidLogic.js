@@ -46,18 +46,18 @@ export default class BoidLogic
         console.log('success!')
     }
 
-    setUpTweakableValues(startValues)
+    setUpTweakableValues()
     {
-        this.visualRange=startValues.visualRange || defaultValue(1,"VisualRange")
-        this.protectedRange=startValues.protectedRange|| defaultValue(0.5,"protectedRange")
-        this.cohesionFactor=startValues.cohesionFactor|| defaultValue(0.0039,"cohesionFactor")
-        this.matchingFactor=startValues.matchingFactor|| defaultValue(0.0287,"matchingFactor")
-        this.seperationFactor=startValues.seperationFactor|| defaultValue(0.01395,"seperationFactor")
-        this.minSpeed=startValues.minSpeed/100|| defaultValue(0.005,"minSpeed")
-        this.maxSpeed=startValues.maxSpeed/100  || defaultValue(0.01,"maxSpeed")
-        this.wallTransparent=startValues.wallTransparent|| defaultValue(false,"wallTransparent")
-        this.turnFactor=startValues.turnFactor/100|| defaultValue(0.2,"turnFactor")
-        this.objectAvoidFactor=startValues.objectAvoidFactor/100|| defaultValue(2,"object avoid")
+        this.visualRange=WorldValues.boids.visualRange || defaultValue(1,"VisualRange")
+        this.protectedRange=WorldValues.boids.protectedRange|| defaultValue(0.5,"protectedRange")
+        this.cohesionFactor=WorldValues.boids.cohesionFactor|| defaultValue(0.0039,"cohesionFactor")
+        this.matchingFactor=WorldValues.boids.matchingFactor|| defaultValue(0.0287,"matchingFactor")
+        this.seperationFactor=WorldValues.boids.seperationFactor|| defaultValue(0.01395,"seperationFactor")
+        this.minSpeed=WorldValues.boids.minSpeed/100|| defaultValue(0.005,"minSpeed")
+        this.maxSpeed=WorldValues.boids.maxSpeed/100  || defaultValue(0.01,"maxSpeed")
+        this.wallTransparent=WorldValues.boids.wallTransparent|| defaultValue(false,"wallTransparent")
+        this.turnFactor=WorldValues.boids.turnFactor/100|| defaultValue(0.2,"turnFactor")
+        this.objectAvoidFactor=WorldValues.boids.objectAvoidFactor|| defaultValue(2,"object avoid")
         
     
     }
@@ -200,7 +200,7 @@ export default class BoidLogic
                 else
                 {
                     //avoiding object
-                    const avoidObjExp=(1-environmenObjects[i].distance)**2
+                    const avoidObjExp=(1-environmenObjects[i].distance)**3
 
                     const dx= boid.x - environmenObjects[i].position.x
                     const dy= boid.y - environmenObjects[i].position.y
@@ -365,6 +365,6 @@ class Boid
 }
 
 function defaultValue(x,name){
-    // console.log(`Defaulted on ${name}`)
+    console.log(`Defaulted on ${name}`)
     return x
 }

@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import {acceleratedRaycast } from 'three-mesh-bvh';
+import WorldValues from '../WorldValues';
 // THREE.Mesh.prototype.raycast = acceleratedRaycast;
 
 
@@ -49,7 +50,7 @@ export default class RaySphere
         
 
         //raycaster
-        this.rayFar=rayCastValues.far||0.3
+        
         this.rayTargets
         this.rayCaster=this.setUpRayCaster()
        
@@ -233,7 +234,7 @@ export default class RaySphere
         // if(rayCastValues==undefined){rayCastValues={}}
         const rayCaster= new THREE.Raycaster()
         rayCaster.layers.set( 1 );
-        rayCaster.far=this.rayFar
+        rayCaster.far=WorldValues.boids.enviromentVision
         rayCaster.firstHitOnly = true;
 
         return rayCaster
@@ -319,7 +320,7 @@ export default class RaySphere
                 }
 
             //normalize the distance
-            sum.distance/=this.rayCaster.far
+            sum.distance/=WorldValues.boids.enviromentVision
         }
         // this.timer('castRays')
 
