@@ -265,8 +265,11 @@ export default class FirstPersonControls {
               // const test= new THREE.Quaternion()
               // _R.z=0
               // this.object.quaternion.copy(finalQ);
+              this.velocityMain=velocity.z * timeInSeconds
+
               if(this.normalizeZ&&this.object.quaternion.z!=0)
                 {
+                this.velocityMain=0
                   
                   const newQ=new THREE.Quaternion(this.object.quaternion.x,this.object.quaternion.y,0,this.object.quaternion.w)
                   _R.rotateTowards ( newQ, 0.01 )

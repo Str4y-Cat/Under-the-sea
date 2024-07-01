@@ -25,6 +25,8 @@ export default class Player
         this.setController()
         this.setAnimations()
 
+        // this.prevPosition=0;
+
         
         //setUp
         //create the fish
@@ -66,8 +68,8 @@ export default class Player
 
     setAnimations()
     {
-        console.log(this.resource)
-        this.mixer= new THREE.AnimationMixer(this.resource.scene)
+        // console.log(this.resource.scene.children[0])
+        this.mixer= new THREE.AnimationMixer(this.fishModel)
         const action = this.mixer.clipAction(this.resource.animations[0])
         action.play()
     }
@@ -94,7 +96,13 @@ export default class Player
 
         if(this.mixer)
             {
-                this.mixer.update(this.delta)
+                // if(this.playerController.playerControls.velocityMain)
+                //     {
+                //         console.log(this.playerController.playerControls.velocityMain)
+                //     }
+                // console.log(deltaPos)
+                this.mixer.update((this.delta/200)*Math.abs(this.playerController.playerControls.velocityMain*10))
+
 
             }
         // console.log(this.fishModel.position)
