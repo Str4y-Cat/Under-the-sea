@@ -131,7 +131,7 @@ export default class FirstPersonControls {
                   this.Attributes.InputCurrent.move2=false
 
                   break;
-                case "Shift": // SHIFT
+                case "ShiftLeft"||"ShiftRight": // SHIFT
                   this.Attributes.InputCurrent.shift = false;
                   this.Attributes.InputCurrent.move3=false
 
