@@ -24,6 +24,7 @@ export default class Player
         // this.setPlayerModel()
         this.setController()
         this.setAnimations()
+        this.sound()
 
         // this.prevPosition=0;
 

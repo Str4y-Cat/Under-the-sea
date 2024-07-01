@@ -23,7 +23,15 @@ export default class Environment
 
         this.setEnvironmentMap()
         this.particles= new Particles()
+
+        this.soundBuffer= this.resources.static
+        const sound
         // this.addHelper()
+    }
+
+    setSound()
+    {
+        
     }
 
     setSunLight(){

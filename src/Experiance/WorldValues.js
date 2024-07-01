@@ -54,5 +54,6 @@ export default
         ]
     },
 
+    audio:{playAudio:true}
 
 }

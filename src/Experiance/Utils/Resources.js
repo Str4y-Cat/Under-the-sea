@@ -31,6 +31,7 @@ export default class Resources extends EventEmitter
         this.loaders.textureLoader=new THREE.TextureLoader()
         this.loaders.cubeTextureLoader=new THREE.CubeTextureLoader()
         this.loaders.rgbeLoader=new RGBELoader()
+        this.loaders.audioLoader= new THREE.AudioLoader()
     }
 
     startLoading()
@@ -75,6 +76,17 @@ export default class Resources extends EventEmitter
                     {
                         // console.log('loaded')
                         file.mapping=THREE.EquirectangularReflectionMapping
+                        this.sourceLoaded(source,file)
+                    }
+                )
+            }
+            else if(source.type=== 'audio'){
+                // console.log(source.path)
+                this.loaders.audioLoader.load(
+                    source.path,
+                    (file)=>
+                    {
+                        // console.log('loaded')
                         this.sourceLoaded(source,file)
                     }
                 )

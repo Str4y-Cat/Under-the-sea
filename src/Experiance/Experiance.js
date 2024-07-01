@@ -44,6 +44,9 @@ export default class Experience{
         this.renderer=new Renderer()
         this.world= new World()
         this.Perform= new Perform()
+        const listener= new THREE.AudioListener()
+        this.camera.instance.add(listener)
+        this.sound=new THREE.Audio(listener)
         //sizes resize event
         this.sizes.on('resize',()=>{
             this.resize()

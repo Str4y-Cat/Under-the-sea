@@ -78,4 +78,34 @@ export default[
         type:'texture',
         path:'textures/flour/ao.jpg'
     },
+
+
+    {
+        name:'static',
+        type:'audio',
+        path:   'audio/background_static.mp3'
+
+    },
+    {
+        name:'whale',
+        type:'audio',
+        path:   'audio/background_whale.mp3'
+
+    },
+    {
+        name:'swim1',
+        type:'audio',
+        path:   'audio/swim1.mp3'
+
+    },
+    {
+        name:'swim2',
+        type:'audio',
+        path:   'audio/swim2.mp3'
+
+    },
+
+
+
+
 ]
