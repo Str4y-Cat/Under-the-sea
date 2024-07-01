@@ -101,7 +101,7 @@ export default class Player
                 //         console.log(this.playerController.playerControls.velocityMain)
                 //     }
                 // console.log(deltaPos)
-                this.mixer.update((this.delta/200)*Math.abs(this.playerController.playerControls.velocityMain*10))
+                this.mixer.update((this.delta/200)*Math.max(0.1,Math.abs(this.playerController.playerControls.velocityMain*10)))
 
 
             }
