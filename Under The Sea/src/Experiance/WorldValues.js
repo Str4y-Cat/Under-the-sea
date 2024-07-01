@@ -40,6 +40,7 @@ export default
             '#720026',
             '#e4b1ab',
         ]
-    }
+    },
+
 
 }

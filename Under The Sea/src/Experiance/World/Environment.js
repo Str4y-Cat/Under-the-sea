@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 
 import Experience from "../Experiance";
+import Particles from './particles';
 
 export default class Environment
 {
@@ -20,7 +21,8 @@ export default class Environment
         // this.setSunLight()
             this.setHemisphereLight()
 
-        // this.setEnvironmentMap()
+        this.setEnvironmentMap()
+        this.particles= new Particles()
         // this.addHelper()
     }
 
@@ -81,25 +83,29 @@ export default class Environment
     {
         this.environmentMap={}
         this.environmentMap.intensity=0.4
-        this.environmentMap.texture= this.resources.items.environmentMapTexture
+        this.environmentMap.texture= this.resources.items.oceanTexture
         this.environmentMap.texture.colorSpace = THREE.SRGBColorSpace
 
-        this.scene.environment=this.environmentMap.texture
+        this.scene.fog = new THREE.Fog( new THREE.Color('#153a9e'), 1, 30 );
 
-        this.environmentMap.updateMaterial=()=>
-            {
-                this.scene.traverse((child)=>
-                    {
-                        if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial)
-                            {
-                                child.material.envMap=this.environmentMap.texture
-                                child.material.envMapIntensity=this.environmentMap.intensity
-                                child.material.needsUpdate=true
-                            }
-                    })
-            }
 
-        this.environmentMap.updateMaterial()
+        // this.scene.environment=this.environmentMap.texture
+        this.scene.background=this.environmentMap.texture
+
+        // this.environmentMap.updateMaterial=()=>
+        //     {
+        //         this.scene.traverse((child)=>
+        //             {
+        //                 if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshLambertMaterial)
+        //                     {
+        //                         child.material.envMap=this.environmentMap.texture
+        //                         child.material.envMapIntensity=this.environmentMap.intensity
+        //                         child.material.needsUpdate=true
+        //                     }
+        //             })
+        //     }
+
+        // this.environmentMap.updateMaterial()
 
         if(this.debug.active){
             this.debugFolder
@@ -125,4 +131,11 @@ export default class Environment
         const helper = new THREE.DirectionalLightHelper( this.sunLight, 5 );
         this.scene.add( helper );
     }
+
+
+
+
+
+
+
 }

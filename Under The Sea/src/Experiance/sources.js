@@ -12,12 +12,15 @@ export default[
             'textures/environmentMap/pz.jpg',
             'textures/environmentMap/nz.jpg',
         ]
+        
+        
     },
-    // {
-    //     name:'grassColorTexture',
-    //     type:'texture',
-    //     path:'textures/dirt/color.jpg'
-    // },
+
+    {
+        name:"oceanTexture",
+        type:'equirectangular',
+        path:'textures/environmentMap/oceanEnvMap.hdr'
+    },
     // {
     //     name:'grassNormalTexture',
     //     type:'texture',

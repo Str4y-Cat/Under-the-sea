@@ -2,6 +2,7 @@ import * as THREE from 'three'
 
 import EventEmitter from "./EventEmitter";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 
 
 export default class Resources extends EventEmitter
@@ -29,6 +30,7 @@ export default class Resources extends EventEmitter
         this.loaders.gltfLoader=new GLTFLoader()
         this.loaders.textureLoader=new THREE.TextureLoader()
         this.loaders.cubeTextureLoader=new THREE.CubeTextureLoader()
+        this.loaders.rgbeLoader=new RGBELoader()
     }
 
     startLoading()
@@ -64,6 +66,22 @@ export default class Resources extends EventEmitter
                         this.sourceLoaded(source,file)
                     }
                 )
+            }
+            else if(source.type=== 'equirectangular'){
+                console.log(source.path)
+                this.loaders.rgbeLoader.load(
+                    source.path,
+                    (file)=>
+                    {
+                        console.log('loaded')
+                        file.mapping=THREE.EquirectangularReflectionMapping
+                        this.sourceLoaded(source,file)
+                    }
+                )
+            }
+            else
+            {
+                console.log('error')
             }
         }
     }

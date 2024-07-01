@@ -18,6 +18,7 @@ export default class Fish
         this.debug= this.experience.debug
         this.perform= this.experience.Perform
         this.start=0
+        this.prevTime=0
         this.intersectingEvironmentObjects={}
 
     
@@ -84,6 +85,7 @@ export default class Fish
             color:'black'
         } ), WorldValues.boids.count );
        
+        this.fishMesh[1].updateMorphTargets() 
 
         // mesh.castShadow = true;
         // let temp
@@ -143,10 +145,10 @@ export default class Fish
         this.scene.add( this.fishMesh[2] );
         this.scene.add( this.fishMesh[3] );
 
-        this.mixer = new THREE.AnimationMixer( glb.scene );
-
+        this.mixer = new THREE.AnimationMixer( glb.scene.children[0] );
+        console.log(glb.scene.children[0])
         const action = this.mixer.clipAction( glb.animations[ 0 ] );
-
+        console.log(action)
         action.play();
         // console.log('model has been added')
         // this.boids.boidInstancedMesh=//ADD
@@ -246,28 +248,32 @@ export default class Fish
         // }
 
         // this.dummy
-
-        // if ( this.mesh1||this.mesh2||this.mesh3 ) {
-            
-        //     for ( let i = 0; i < WorldValues.boids.count; i ++ ) {
-
-        //         this.mixer.setTime(1);
-
-        //         this.mesh1.setMorphAt( i, this.dummy1 );
-        //         this.mesh2.setMorphAt( i, this.dummy2 );
-        //         this.mesh3.setMorphAt( i, this.dummy3 );
-
-        //     }
-
-        //     this.mesh1.morphTexture.needsUpdate = true;
-        //     this.mesh2.morphTexture.needsUpdate = true;
-        //     this.mesh3.morphTexture.needsUpdate = true;
-
-        // }
         const currentTime= Date.now()
         this.current=currentTime
+        this.delta=this.current-this.prevTime
+        this.prevTime=this.current
+
         this.elapsed=this.current-this.start
         let slowTick= Math.round(Math.round(this.elapsed)/100)
+
+        if ( this.fishMesh ) {
+            console.log('doin it')
+            for ( let i = 0; i < WorldValues.boids.count; i ++ ) {
+
+                this.mixer.setTime(this.delta);
+                // console.log(this.model.scene)
+                // this.fishMesh[1].setMorphAt( i, this.model.scene.children[0].children[0] );
+                // this.fishMesh[2].setMorphAt( i, this.dummy[2] );
+                // this.fishMesh[3].setMorphAt( i, this.dummy[3] );
+
+            }
+
+            // this.fishMesh[1].morphTexture.needsUpdate = true;
+            // this.fishMesh[2].morphTexture.needsUpdate = true;
+            // this.fishMesh[3].morphTexture.needsUpdate = true;
+
+        }
+        
         
         if(slowTick!=this.start){
             // perform.timer('check environment')
