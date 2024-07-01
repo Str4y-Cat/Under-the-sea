@@ -101,7 +101,23 @@ export default class Player
                 //         console.log(this.playerController.playerControls.velocityMain)
                 //     }
                 // console.log(deltaPos)
-                this.mixer.update((this.delta/200)*Math.max(0.1,Math.abs(this.playerController.playerControls.velocityMain*10)))
+                let move=0.1
+                const attributes= this.playerController.playerControls.Attributes.InputCurrent
+
+                if(attributes.move1){
+                    move+=0.4
+                }
+                if(attributes.move2){
+                    move+=0.7
+                }
+                if(attributes.move3){
+                    move+=1.5
+                    
+                }
+
+
+
+                this.mixer.update((this.delta/200)*move)
 
 
             }

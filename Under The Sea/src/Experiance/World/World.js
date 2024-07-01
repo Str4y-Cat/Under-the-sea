@@ -30,18 +30,18 @@ export default class World
             {
                 // console.log('resourcse are ready')
                 this.start=0
-                // this.coral= new Coral()
+                this.coral= new Coral()
                 this.floor=new Floor()
-                // this.fish=new Fish()
+                this.fish=new Fish()
                 // console.log('created fish')
                 // this.fox=new Fox()
                 this.environment=new Environment()
 
                 
-                // this.Octree=new CreateOctree(this.coral.boundingBoxes,1,true)
+                this.Octree=new CreateOctree(this.coral.boundingBoxes,1,true)
                 
-                // this.fish.setVision(this.Octree,this.coral.environmentObjects)
-                //FIXME move this into debug
+                this.fish.setVision(this.Octree,this.coral.environmentObjects)
+                // FIXME move this into debug
                 this.player= new Player()
 
                 // this.Octree.debug(this.scene)

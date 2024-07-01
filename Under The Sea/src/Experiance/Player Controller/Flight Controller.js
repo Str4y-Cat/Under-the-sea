@@ -15,6 +15,8 @@ export default class FirstPersonControls {
         this.acceleration_ = new THREE.Vector3(100, 0.5, 25000);
         this.velocity_ = new THREE.Vector3(0, 0, 0);
 
+        
+
         this.Attributes={}
         this.Attributes.InputCurrent = {
             axis1Forward: 0.0,
@@ -26,6 +28,9 @@ export default class FirstPersonControls {
             space: false,
             shift: false,
             backspace: false,
+            move1:false,
+            move2:false,
+            move3:false,
           };
         this.Attributes.InputPrevious = {...this.Attributes.InputCurrent};
         // console.log(this.Attributes)
@@ -37,49 +42,46 @@ export default class FirstPersonControls {
 
 		this.onKeyDown = function ( event ) {
 
-			// switch ( event.code ) {
-
-			// 	case 'ArrowUp':
-			// 	case 'KeyW': this.moveForward = true; break;
-
-			// 	case 'ArrowLeft':
-			// 	case 'KeyA': this.moveLeft = true; break;
-
-			// 	case 'ArrowDown':
-			// 	case 'KeyS': this.moveBackward = true; break;
-
-			// 	case 'ArrowRight':
-			// 	case 'KeyD': this.moveRight = true; break;
-
-			// 	case 'KeyR': this.moveUp = true; break;
-			// 	case 'KeyF': this.moveDown = true; break;
-
-			// }
 
             switch (event.keyCode) {
                 case 87: // w
                   this.Attributes.InputCurrent.axis1Forward = -1.0;
+                  this.Attributes.InputCurrent.move1=true
                   break;
                 case 65: // a
                   this.Attributes.InputCurrent.axis1Side = -1.0;
+                  this.Attributes.InputCurrent.move1=true
+
                   break;
                 case 83: // s
                   this.Attributes.InputCurrent.axis1Forward = 1.0;
+                  this.Attributes.InputCurrent.move1=true
+
                   break;
                 case 68: // d
                   this.Attributes.InputCurrent.axis1Side = 1.0;
+                  this.Attributes.InputCurrent.move1=true
+
                   break;
                 case 33: // PG_UP
                   this.Attributes.InputCurrent.pageUp = true;
+                  this.Attributes.InputCurrent.move1=true
+
                   break;
                 case 34: // PG_DOWN
                   this.Attributes.InputCurrent.pageDown = true;
+                  this.Attributes.InputCurrent.move1=true
+
                   break;
                 case 32: // SPACE
                   this.Attributes.InputCurrent.space = true;
+                  this.Attributes.InputCurrent.move2=true
+
                   break;
                 case 16: // SHIFT
                   this.Attributes.InputCurrent.shift = true;
+                  this.Attributes.InputCurrent.move3=true
+
                   break;
                 case 8: // BACKSPACE
                   this.Attributes.InputCurrent.backspace = true;
@@ -90,49 +92,47 @@ export default class FirstPersonControls {
 
 		this.onKeyUp = function ( event ) {
 
-			// switch ( event.code ) {
-
-			// 	case 'ArrowUp':
-			// 	case 'KeyW': this.moveForward = false; break;
-
-			// 	case 'ArrowLeft':
-			// 	case 'KeyA': this.moveLeft = false; break;
-
-			// 	case 'ArrowDown':
-			// 	case 'KeyS': this.moveBackward = false; break;
-
-			// 	case 'ArrowRight':
-			// 	case 'KeyD': this.moveRight = false; break;
-
-			// 	case 'KeyR': this.moveUp = false; break;
-			// 	case 'KeyF': this.moveDown = false; break;
-
-			// }
 
             switch(event.keyCode) {
                 case 87: // w
                   this.Attributes.InputCurrent.axis1Forward = 0.0;
+                  this.Attributes.InputCurrent.move1=false
+
                   break;
                 case 65: // a
                   this.Attributes.InputCurrent.axis1Side = 0.0;
+                  this.Attributes.InputCurrent.move1=false
+
                   break;
                 case 83: // s
                   this.Attributes.InputCurrent.axis1Forward = 0.0;
+                  this.Attributes.InputCurrent.move1=false
+
                   break;
                 case 68: // d
                   this.Attributes.InputCurrent.axis1Side = 0.0;
+                  this.Attributes.InputCurrent.move1=false
+
                   break;
                 case 33: // PG_UP
                   this.Attributes.InputCurrent.pageUp = false;
+                  this.Attributes.InputCurrent.move1=false
+
                   break;
                 case 34: // PG_DOWN
                   this.Attributes.InputCurrent.pageDown = false;
+                  this.Attributes.InputCurrent.move1=false
+
                   break;
                 case 32: // SPACE
                   this.Attributes.InputCurrent.space = false;
+                  this.Attributes.InputCurrent.move2=false
+
                   break;
                 case 16: // SHIFT
                   this.Attributes.InputCurrent.shift = false;
+                  this.Attributes.InputCurrent.move3=false
+
                   break;
                 case 8: // BACKSPACE
                   this.Attributes.InputCurrent.backspace = false;
@@ -265,11 +265,11 @@ export default class FirstPersonControls {
               // const test= new THREE.Quaternion()
               // _R.z=0
               // this.object.quaternion.copy(finalQ);
-              this.velocityMain=velocity.z * timeInSeconds
+              // this.velocityMain=velocity.z * timeInSeconds
 
               if(this.normalizeZ&&this.object.quaternion.z!=0)
                 {
-                this.velocityMain=0
+                // this.velocityMain=0
                   
                   const newQ=new THREE.Quaternion(this.object.quaternion.x,this.object.quaternion.y,0,this.object.quaternion.w)
                   _R.rotateTowards ( newQ, 0.01 )
