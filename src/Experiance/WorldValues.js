@@ -4,7 +4,7 @@ export default
     roofHeight:15,
 
     boids:{
-        count:400,
+        count:600,
         visualRange:1.7523,
         protectedRange:0.87892,
         enviromentVision:2,
